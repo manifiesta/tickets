@@ -13,15 +13,15 @@ async function bootstrap() {
 
   app.enableCors();
 
-  app.useStaticAssets(join(__dirname, '../src/rendering', 'public'));
-  app.setBaseViewsDir(join(__dirname, '../src/rendering', 'views'));
-  hbs.registerPartials(__dirname + '../src/rendering/views/partials');
+  // app.useStaticAssets(join(__dirname, '../src/rendering', 'public'));
+  // app.setBaseViewsDir(join(__dirname, '../src/rendering', 'views'));
+  // hbs.registerPartials(__dirname + '../src/rendering/views/partials');
 
-  hbs.registerHelper('loud', message => {
-    return message.toUpperCase()
-  });
+  // hbs.registerHelper('loud', message => {
+  //   return message.toUpperCase()
+  // });
 
-  app.setViewEngine('hbs');
+  // app.setViewEngine('hbs');
 
   await app.listen(3000);
 
