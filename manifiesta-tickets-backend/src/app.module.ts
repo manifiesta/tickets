@@ -19,7 +19,6 @@ import { SellersModule } from './api/sellers/sellers.module';
     TypeOrmModule.forRoot({
       ...appDataSourceConfig()
     }),
-    RenderingModule,
     HttpModule,
     ApiModule,
     SellersModule
