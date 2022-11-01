@@ -23,6 +23,8 @@ export class Tab3Page {
   }
   
   ionViewDidEnter() {
+    // TODO the uri stay in this page, is dangerous, be carefull
+    // Need to fix that
     console.log(
       'do we have the uri ?',
       this.router.url,

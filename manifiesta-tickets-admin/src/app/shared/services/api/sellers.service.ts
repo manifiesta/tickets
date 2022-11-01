@@ -13,8 +13,4 @@ export class SellersService {
   getAll(): Observable<any[]> {
     return this.http.get<any[]>(`${environment.apiUrl}sellers`);
   }
-
-  addTicketOne(): Observable<any> {
-    return this.http.get<any>(`https://manifiesta-tickets-backend.vercel.app/api/sellers/tickets/samy@manifiesta.com`);
-  }
 }
