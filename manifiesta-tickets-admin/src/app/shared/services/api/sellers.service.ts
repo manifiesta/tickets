@@ -15,6 +15,6 @@ export class SellersService {
   }
 
   addTicketOne(): Observable<any> {
-    return this.http.post<any>(`https://manifiesta-tickets-backend.vercel.app/api/sellers/tickets`, { email: "samy@manifiesta.com" });
+    return this.http.get<any>(`https://manifiesta-tickets-backend.vercel.app/api/sellers/tickets/samy@manifiesta.com`);
   }
 }

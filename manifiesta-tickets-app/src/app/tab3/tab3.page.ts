@@ -36,7 +36,7 @@ export class Tab3Page {
     if (this.status) {
 
       this.isLoading = true;
-      this.http.post<any>(`${environment.apiUrl}sellers/tickets`, { email: "samy@manifiesta.com" }).subscribe(data => {
+      this.http.get<any>(`${environment.apiUrl}sellers/tickets/samy@manifiesta.com`).subscribe(data => {
         console.log('data ?', data.email, data.sellTickets, data.sellTicketsGoal)
         this.user = data;
         setInterval(() => {
