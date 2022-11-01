@@ -12,7 +12,7 @@ export class SellersController {
   }
 
   // TODO for demo purpose
-  @Post('/tickets')
+  @Get('/tickets')
   addTicket(@Body() add: any) {
     return this.sellersService.addTicket(add.emaill);
   }
