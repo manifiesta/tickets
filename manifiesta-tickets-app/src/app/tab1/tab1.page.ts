@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 })
 export class Tab1Page {
 
-  user = {};
+  user: any = {};
 
   isLoading = true;
 
