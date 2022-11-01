@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-tab1',
@@ -6,6 +8,20 @@ import { Component } from '@angular/core';
   styleUrls: ['tab1.page.scss'],
 })
 export class Tab1Page {
+
+  user = {};
+
+  isLoading = true;
+
+  constructor(private http: HttpClient) {}
+
+  ionViewWillEnter() {
+    console.log('init tab one !')
+    this.http.get<any[]>(`${environment.apiUrl}sellers`).subscribe(users => {
+      this.user = users.find(u => u.email === 'samy@manifiesta.com');
+    }).add(() => { this.isLoading = false; });
+  }
+
   openVivaWallet(amount: number) {
     window.open(
       'vivapayclient://pay/v1' +

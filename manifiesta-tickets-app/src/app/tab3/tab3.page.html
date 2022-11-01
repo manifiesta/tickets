@@ -7,13 +7,35 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div>
-    Hello message {{message}}
+  <div *ngIf="status">
+    <ion-spinner *ngIf="isLoading" name="lines"></ion-spinner>
+    <div *ngIf="!isLoading">
+      <div>
+        Hello message {{message}}
+      </div>
+      <div>
+        Hello status {{status}}
+      </div>
+      <div>
+        Hello user mail {{user?.email}}
+      </div>
+      <div>
+        Hello user ticket {{user?.sellTickets}} {{user?.sellTicketsGoal}}
+      </div>
+      <div>
+        <ion-progress-bar [value]="progress" color="danger"></ion-progress-bar>
+      </div>
+      <div *ngIf="status === 'success'">
+        One ticket sell !
+      </div>
+      <div *ngIf="status !== 'success'">
+        Something was wrong ...
+      </div>
+    </div>
   </div>
-  <div>
-    Hello status {{status}}
+
+  <div *ngIf="!status">
+    Where did you come from ?
   </div>
-  <div>
-    <ion-progress-bar [value]="progress" color="danger"></ion-progress-bar>
-  </div>
+
 </ion-content>

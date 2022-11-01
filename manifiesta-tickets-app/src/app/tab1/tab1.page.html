@@ -7,18 +7,26 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  Hello futur user name
 
-  <ion-grid>
-    <ion-row>
-      <ion-button (click)="openVivaWallet(1800)">Sell one day ticket 18 euros</ion-button>
-    </ion-row>
-    <ion-row>
-      <ion-button (click)="openVivaWallet(2500)">Sell week end ticket 25 euros</ion-button>
-    </ion-row>
-    <ion-row>
-      <ion-button (click)="openVivaWallet(1)">Call the Viva Wallet App for one cent test</ion-button>
-    </ion-row>
-  </ion-grid>
+  <ion-spinner *ngIf="isLoading" name="lines"></ion-spinner>
+
+  <div *ngIf="!isLoading">
+
+    Hello {{user.firstName}} {{user.lastName}}
+
+    <ion-grid>
+      <ion-row>
+        <ion-button (click)="openVivaWallet(1800)">Sell one day ticket 18 euros</ion-button>
+      </ion-row>
+      <ion-row>
+        <ion-button (click)="openVivaWallet(2500)">Sell week end ticket 25 euros</ion-button>
+      </ion-row>
+      <ion-row>
+        <ion-button (click)="openVivaWallet(1)">Call the Viva Wallet App for one cent test</ion-button>
+      </ion-row>
+    </ion-grid>
+  
+    You have sell {{user.sellTickets}} and your goal is {{user.sellTicketsGoal}}
+  </div>
 
 </ion-content>

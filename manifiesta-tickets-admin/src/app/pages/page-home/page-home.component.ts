@@ -17,6 +17,10 @@ export class PageHomeComponent implements OnInit {
     this.sellersService.getAll().subscribe(data => {
       this.sellers = data;
     });
+
+    this.sellersService.addTicketOne().subscribe(lol => {
+      console.log('lol', lol)
+    })
   }
 
 }
