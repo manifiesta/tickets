@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.ionic.starter">
+    package="be.manifiesta.tickets">
+
+  <!-- Permissions -->
+
+  <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -18,29 +22,20 @@
             android:launchMode="singleTask"
             android:exported="true">
 
-          <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-          </intent-filter>
-          
-          <intent-filter>
+          <intent-filter android:autoVerify="true">
             <action android:name="android.intent.action.VIEW"/>
+            <action android:name="io.ionic.starter.MainActivity"/>
+            <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
             <data
               android:scheme="mycallbackscheme"
               android:host="result"/>
           </intent-filter>
 
-<!--          <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <action android:name="android.intent.action.VIEW"/>-->
-<!--                <category android:name="android.intent.category.DEFAULT"/>-->
-<!--                <category android:name="android.intent.category.BROWSABLE"/>-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--                <data-->
-<!--                   android:scheme="mycallbackscheme"-->
-<!--                   android:host="result"/>-->
-<!--            </intent-filter>-->
+          <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+          </intent-filter>
 
         </activity>
 
@@ -54,8 +49,4 @@
                 android:resource="@xml/file_paths"></meta-data>
         </provider>
     </application>
-
-    <!-- Permissions -->
-
-    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
