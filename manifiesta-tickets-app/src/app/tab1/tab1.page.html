@@ -1,0 +1,24 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Home
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  Hello futur user name
+
+  <ion-grid>
+    <ion-row>
+      <ion-button (click)="openVivaWallet(1800)">Sell one day ticket 18 euros</ion-button>
+    </ion-row>
+    <ion-row>
+      <ion-button (click)="openVivaWallet(2500)">Sell week end ticket 25 euros</ion-button>
+    </ion-row>
+    <ion-row>
+      <ion-button (click)="openVivaWallet(1)">Call the Viva Wallet App for one cent test</ion-button>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

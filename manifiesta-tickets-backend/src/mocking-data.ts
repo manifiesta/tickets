@@ -14,5 +14,6 @@ export async function mockingData() {
 async function mockSellers() {
   const repo = await (await new DataSource(appDataSourceConfig()).initialize()).getRepository(Seller);
   await repo.delete({});
-  await repo.save(repo.create({ email: 'samy@manifiesta.com', firstName: 'Samy', lastName: 'Gnu', sellTickets: 4 }))
+  await repo.save(repo.create({ email: 'samy@manifiesta.com', firstName: 'Samy', lastName: 'Gnu', sellTickets: 4, sellTicketsGoal: 40 }));
+  await repo.save(repo.create({ email: 'raoul@manifiesta.com', firstName: 'Raoul', lastName: 'Mertens', sellTickets: 7, sellTicketsGoal: 50 }));
 }

@@ -19,4 +19,7 @@ export class Seller {
 
   @Column()
   sellTickets: number;
+
+  @Column()
+  sellTicketsGoal: number;
 }
