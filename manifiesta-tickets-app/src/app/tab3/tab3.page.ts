@@ -12,9 +12,11 @@ export class Tab3Page {
 
   status: string;
   message: string;
+  routerUrl: string;
 
   user: any = {};
   progress = 0;
+  progressDemo = 0;
 
   isLoading = false;
 
@@ -23,6 +25,12 @@ export class Tab3Page {
   }
   
   ionViewDidEnter() {
+    setInterval(() => {
+      if (this.progressDemo < 0.75) {
+        this.progressDemo += 0.025;
+      }
+    }, 50);
+
     // TODO the uri stay in this page, is dangerous, be carefull
     // Need to fix that
     console.log(
@@ -34,16 +42,16 @@ export class Tab3Page {
 
     this.status = this.activatedRoute.snapshot.queryParamMap.get('status');
     this.message = this.activatedRoute.snapshot.queryParamMap.get('message');
+    this.routerUrl = this.router.url;
 
     if (this.status) {
-
       this.isLoading = true;
       this.http.get<any>(`${environment.apiUrl}sellers/tickets/samy@manifiesta.com`).subscribe(data => {
         console.log('data ?', data.email, data.sellTickets, data.sellTicketsGoal)
         this.user = data;
         setInterval(() => {
           if (this.progress < (this.user.sellTickets / this.user.sellTicketsGoal)) {
-            this.progress += 0.05;
+            this.progress += 0.025;
           }
         }, 50);
       }).add(() => { this.isLoading = false; });

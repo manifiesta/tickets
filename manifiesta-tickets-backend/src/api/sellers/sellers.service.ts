@@ -14,7 +14,9 @@ export class SellersService {
   ) { }
 
   findAll(): Promise<Seller[]> {
-    return this.sellerRepository.find();
+    return this.sellerRepository.find({
+      relations: ['department']
+    });
   }
 
   createOne(createSeller: CreateSellerDto) {

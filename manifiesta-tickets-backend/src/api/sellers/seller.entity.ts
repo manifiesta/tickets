@@ -1,11 +1,12 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Department } from "../departments/department.entity";
 
 @Entity()
 export class Seller {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({ nullable: true })
   email: string;
 
   @Column()
@@ -22,4 +23,7 @@ export class Seller {
 
   @Column()
   sellTicketsGoal: number;
+
+  @ManyToOne(type => Department)
+  department: Department;
 }

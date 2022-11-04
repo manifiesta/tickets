@@ -10,32 +10,36 @@
   <div *ngIf="status">
     <ion-spinner *ngIf="isLoading" name="lines"></ion-spinner>
     <div *ngIf="!isLoading">
-      <div>
+      <h1>
         Hello message {{message}}
-      </div>
-      <div>
+      </h1>
+      <h1>
         Hello status {{status}}
-      </div>
-      <div>
+      </h1>
+      <h1>
         Hello user mail {{user?.email}}
-      </div>
-      <div>
+      </h1>
+      <h1>
         Hello user ticket {{user?.sellTickets}} {{user?.sellTicketsGoal}}
-      </div>
-      <div>
+      </h1>
+      <h1>
         <ion-progress-bar [value]="progress" color="danger"></ion-progress-bar>
-      </div>
-      <div *ngIf="status === 'success'">
+      </h1>
+      <h1 *ngIf="status === 'success'">
         One ticket sell !
-      </div>
-      <div *ngIf="status !== 'success'">
+      </h1>
+      <h1 *ngIf="status !== 'success'">
         Something was wrong ...
-      </div>
+      </h1>
     </div>
   </div>
 
-  <div *ngIf="!status">
+  <h1 *ngIf="!status">
     Where did you come from ?
-  </div>
+    <hr>
+    <div>
+      <ion-progress-bar [value]="progressDemo" color="danger"></ion-progress-bar>
+    </div>
+  </h1>
 
 </ion-content>

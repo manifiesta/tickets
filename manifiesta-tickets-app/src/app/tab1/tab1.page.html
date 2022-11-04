@@ -10,7 +10,7 @@
 
   <ion-spinner *ngIf="isLoading" name="lines"></ion-spinner>
 
-  <div *ngIf="!isLoading">
+  <h1 *ngIf="!isLoading">
 
     Hello {{user.firstName}} {{user.lastName}}
 
@@ -27,6 +27,6 @@
     </ion-grid>
   
     You have sell {{user.sellTickets}} and your goal is {{user.sellTicketsGoal}}
-  </div>
+  </h1>
 
 </ion-content>

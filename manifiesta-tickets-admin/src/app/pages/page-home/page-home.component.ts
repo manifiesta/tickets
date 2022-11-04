@@ -8,7 +8,7 @@ import { SellersService } from 'src/app/shared/services/api/sellers.service';
 })
 export class PageHomeComponent implements OnInit {
 
-  displayedColumns: string[] = ['email', 'firstName', 'lastName', 'sellTickets'];
+  displayedColumns: string[] = ['email', 'firstName', 'lastName', 'sellTickets', 'department'];
   sellers: any[] = [];
 
   constructor(private sellersService: SellersService) { }
