@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { ConnectSellerDto } from './dto/connect-seller.dto';
 import { SellersService } from './sellers.service';
 
 @Controller('api/sellers')
@@ -9,6 +10,11 @@ export class SellersController {
   @Get()
   findAll() {
     return this.sellersService.findAll();
+  }
+
+  @Post('/connect')
+  connect(@Body() connectSeller: ConnectSellerDto) {
+    return this.sellersService.connect(connectSeller);
   }
 
   // TODO for demo purpose
