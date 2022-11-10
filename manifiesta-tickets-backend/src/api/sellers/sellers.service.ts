@@ -20,6 +20,14 @@ export class SellersService {
     });
   }
 
+  // TODO we will have something better than an ID later to find
+  findOne(id: string): Promise<Seller> {
+    return this.sellerRepository.findOne({
+      where: {id: parseInt(id)},
+      relations: ['department']
+    });
+  }
+
   createOne(createSeller: CreateSellerDto) {
     return this.sellerRepository.save(this.sellerRepository.create(createSeller));
   }

@@ -12,6 +12,11 @@ export class SellersController {
     return this.sellersService.findAll();
   }
 
+  @Get('/:id')
+  findOne(@Param('id') id: string) {
+    return this.sellersService.findOne(id);
+  }
+
   @Post('/connect')
   connect(@Body() connectSeller: ConnectSellerDto) {
     return this.sellersService.connect(connectSeller);
