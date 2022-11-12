@@ -24,7 +24,7 @@ export class SellersService {
   // TODO we will have something better than an ID later to find
   findOne(id: string): Promise<Seller> {
     return this.sellerRepository.findOne({
-      where: {id: parseInt(id)},
+      where: { id: parseInt(id) },
       relations: ['department']
     });
   }
@@ -44,7 +44,9 @@ export class SellersService {
 
   // TODO for demo purpose
   addTicket(ticketSale: TicketSaleDto) {
-    return from(this.sellerRepository.findOne({ where: { id: parseInt(ticketSale.userId) } })).pipe(
+    return from(this.sellerRepository.findOne({
+      where: { id: parseInt(ticketSale.userId) }, relations: ['department'],
+    })).pipe(
       mergeMap(seller => {
         seller.sellTickets++;
         return this.sellerRepository.save(seller);
