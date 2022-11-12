@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ConnectSellerDto } from './dto/connect-seller.dto';
+import { TicketSaleDto } from './dto/ticket-sale.dto';
 import { SellersService } from './sellers.service';
 
 @Controller('api/sellers')
@@ -23,9 +24,10 @@ export class SellersController {
   }
 
   // TODO for demo purpose
-  @Get('/tickets/:email')
-  addTicket(@Param('email') email: string) {
-    return this.sellersService.addTicket(email);
+  // Will continue later
+  @Post('/tickets-sale')
+  addTicket(@Body() ticketSale: TicketSaleDto) {
+    return this.sellersService.addTicket(ticketSale);
   }
 
 }

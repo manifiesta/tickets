@@ -4,6 +4,7 @@ import { from, mergeMap, of } from 'rxjs';
 import { Repository } from 'typeorm';
 import { ConnectSellerDto } from './dto/connect-seller.dto';
 import { CreateSellerDto } from './dto/create-seller.dto';
+import { TicketSaleDto } from './dto/ticket-sale.dto';
 import { Seller } from './seller.entity';
 
 @Injectable()
@@ -42,8 +43,8 @@ export class SellersService {
   }
 
   // TODO for demo purpose
-  addTicket(email: string) {
-    return from(this.sellerRepository.findOne({ where: { email: email } })).pipe(
+  addTicket(ticketSale: TicketSaleDto) {
+    return from(this.sellerRepository.findOne({ where: { id: parseInt(ticketSale.userId) } })).pipe(
       mergeMap(seller => {
         seller.sellTickets++;
         return this.sellerRepository.save(seller);

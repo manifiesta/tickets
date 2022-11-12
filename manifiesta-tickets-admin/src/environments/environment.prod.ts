@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://manifiesta-tickets-backend.vercel.app/api/'
+  apiUrl: 'https://manifiesta-tickets-backend.onrender.com/api/'
 };
