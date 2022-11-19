@@ -11,6 +11,7 @@ async function bootstrap() {
 
   if (process.env.NODE_ENV == 'dev' || process.env.NODE_ENV == 'test') {
     await mockingData();
+    console.log('DB Init ok');
   }
 
 }
