@@ -8,6 +8,7 @@ import { ConfirmTicketsDto } from './dto/confirm-tickets.dto';
 export class TicketsService {
 
   apiKey = process.env.EVENT_SQUARE_API_KEY;
+  posToken = process.env.EVENT_SQUARE_POS_TOKEN;
 
   constructor(private httpService: HttpService) { }
 
@@ -27,10 +28,11 @@ export class TicketsService {
   }
 
   // TODO try better way with no async shit
+  // TODO manage lang
   async confirmOrder(confirmTickets: ConfirmTicketsDto) {
 
     const cartid = (await firstValueFrom(
-      this.httpService.get<any>('https://api.eventsquare.io/1.0/store/manifiesta-dev/2023', {
+      this.httpService.get<any>('https://api.eventsquare.io/1.0/store/manifiesta-dev/2023/pos?language=nl&pos_token=' + this.posToken, {
         headers: {
           apiKey: this.apiKey,
         }

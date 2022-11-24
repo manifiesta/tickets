@@ -1,6 +1,0 @@
-{
-	"appId": "be.manifiesta.tickets",
-	"appName": "manifiesta-tickets-app",
-	"webDir": "www",
-	"bundledWebRuntime": false
-}

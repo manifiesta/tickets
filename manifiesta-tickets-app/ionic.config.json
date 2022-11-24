@@ -1,7 +1,0 @@
-{
-  "name": "manifiesta-tickets-app",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular"
-}
