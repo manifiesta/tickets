@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
-import { firstValueFrom, map, forkJoin } from 'rxjs';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { firstValueFrom, map, forkJoin, catchError } from 'rxjs';
+import { URLSearchParams } from 'url';
 import { ConfirmTicketsDto } from './dto/confirm-tickets.dto';
 // import FormData from 'form-data';
 
@@ -9,6 +10,9 @@ export class TicketsService {
 
   apiKey = process.env.EVENT_SQUARE_API_KEY;
   posToken = process.env.EVENT_SQUARE_POS_TOKEN;
+
+  vwSecret = process.env.VIVA_WALLET_SMART_CHECKOUT_SECRET;
+  vwClient = process.env.VIVA_WALLET_SMART_CHECKOUT_CLIENT_ID;
 
   constructor(private httpService: HttpService) { }
 
@@ -30,6 +34,41 @@ export class TicketsService {
   // TODO try better way with no async shit
   // TODO manage lang
   async confirmOrder(confirmTickets: ConfirmTicketsDto) {
+
+    // Verification that the transaction id exist in VW
+    // TODO verify that is not already used !
+    const bodyXWWWFORMURLData = new URLSearchParams();
+    bodyXWWWFORMURLData.append('grant_type', 'client_credentials');
+
+    const accessToken = (await firstValueFrom(
+      this.httpService.post<any>(`https://accounts.vivapayments.com/connect/token`,
+        bodyXWWWFORMURLData,
+        {
+          auth: {
+            password: this.vwSecret,
+            username: this.vwClient,
+          }
+        }).pipe(
+          // TODO generic map for the .data from AXIOS
+          map(d => { return d.data }),
+        )
+    )).access_token;
+
+    const transactionVerification = await firstValueFrom(
+      this.httpService.get<any>(`https://api.vivapayments.com/checkout/v2/transactions/${confirmTickets.vwTransactionId}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        }
+      }).pipe(
+        // TODO generic map for the .data from AXIOS
+        map(d => { return d.data }),
+      )
+    ).catch(e => {
+      throw new HttpException({ message: ['error transaction not existing'] }, HttpStatus.NOT_FOUND);
+    });
+
+    // If no error throw here, it's good, we can continue
+    // And command the EventSquare tickets
 
     const cartid = (await firstValueFrom(
       this.httpService.get<any>('https://api.eventsquare.io/1.0/store/manifiesta-dev/2023/pos?language=nl&pos_token=' + this.posToken, {
@@ -94,6 +133,39 @@ export class TicketsService {
       )
     );
 
+  }
+
+  // TODO better error message but for the begin, just not found is good
+  async getTransactionById(id: string) {
+    const bodyXWWWFORMURLData = new URLSearchParams();
+    bodyXWWWFORMURLData.append('grant_type', 'client_credentials');
+
+    const accessToken = (await firstValueFrom(
+      this.httpService.post<any>(`https://accounts.vivapayments.com/connect/token`,
+        bodyXWWWFORMURLData,
+        {
+          auth: {
+            password: this.vwSecret,
+            username: this.vwClient,
+          }
+        }).pipe(
+          // TODO generic map for the .data from AXIOS
+          map(d => { return d.data }),
+        )
+    )).access_token;
+
+    return firstValueFrom(
+      this.httpService.get<any>(`https://api.vivapayments.com/checkout/v2/transactions/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        }
+      }).pipe(
+        // TODO generic map for the .data from AXIOS
+        map(d => { return d.data }),
+      )
+    ).catch(e => {
+      throw new HttpException({ message: ['error transaction not existing'] }, HttpStatus.NOT_FOUND);
+    });
   }
 
 }
