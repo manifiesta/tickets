@@ -20,6 +20,7 @@ export class SellersController {
 
   @Post('/connect')
   connect(@Body() connectSeller: ConnectSellerDto) {
+    return this.sellersService.testConnectBeeple(connectSeller);
     return this.sellersService.connect(connectSeller);
   }
 

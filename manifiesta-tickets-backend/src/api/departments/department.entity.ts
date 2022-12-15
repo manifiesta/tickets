@@ -7,4 +7,7 @@ export class Department {
 
   @Column({ unique: true, nullable: false })
   label: string;
+
+  @Column({ unique: true, nullable: false })
+  code: string;
 }

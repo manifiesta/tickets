@@ -17,7 +17,6 @@ export class IndexController {
   @Post()
   @Render('index')
   async postNew(@Req() req: Request) {
-    console.log(req.body)
     await this.sellersService.createOne(req.body);
     const d = await this.sellersService.findAll();
     return { message: 'world template engine !', sellers: d };

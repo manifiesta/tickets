@@ -21,9 +21,9 @@ export async function mockingData() {
 async function mockDepartments(repo) {
   const departmentRepo = repo.getRepository(Department);
   return [
-    await departmentRepo.save(departmentRepo.create({ label: 'BBW' })),
-    await departmentRepo.save(departmentRepo.create({ label: 'Antwerpen' })),
-    await departmentRepo.save(departmentRepo.create({ label: 'IT - Communication' })),
+    await departmentRepo.save(departmentRepo.create({ label: 'BBW', code: 'BBW' })),
+    await departmentRepo.save(departmentRepo.create({ label: 'Antwerpen', code: 'Antwerpen' })),
+    await departmentRepo.save(departmentRepo.create({ label: 'IT - Communication', code: 'IT' })),
   ];
 }
 

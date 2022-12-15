@@ -3,7 +3,6 @@ import { Department } from "./api/departments/department.entity";
 import { Seller } from "./api/sellers/seller.entity";
 
 export function appDataSourceConfig(): DataSourceOptions {
-  console.log('putain', process.env.DATABASE_NAME)
   return {
     type: 'mysql',
     host: process.env.DATABASE_HOST || 'localhost',
