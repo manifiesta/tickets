@@ -14,11 +14,15 @@ export class TicketsService {
   vwSecret = process.env.VIVA_WALLET_SMART_CHECKOUT_SECRET;
   vwClient = process.env.VIVA_WALLET_SMART_CHECKOUT_CLIENT_ID;
 
+  acceptedShop = ['app', 'comac', 'intal', 'redfox', 'cubanismo', 'vrijwilligers', 'partners-manifiesta'];
+
   constructor(private httpService: HttpService) { }
 
-  getAllTicketTypes() {
+  getAllTicketTypes(shop: string = 'app') {
     return firstValueFrom(
-      this.httpService.get<any>('https://api.eventsquare.io/1.0/store/manifiesta-dev/2023', {
+      this.httpService.get<any>(
+        `https://api.eventsquare.io/1.0/store/manifiesta-dev/2023/${this.acceptedShop.includes(shop.toLowerCase())
+          ? shop.toLowerCase() : 'app'}`, {
         headers: {
           apiKey: this.apiKey,
         }

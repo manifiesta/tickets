@@ -7,9 +7,9 @@ export class TicketsController {
 
   constructor(private readonly ticketsService: TicketsService) { }
   
-  @Get('/types')
-  findAll() {
-    return this.ticketsService.getAllTicketTypes();
+  @Get(['/types/:shop', '/types'])
+  findAll(@Param('shop') shop: string = 'app') {
+    return this.ticketsService.getAllTicketTypes(shop);
   }
 
   // TODO protect with jwt

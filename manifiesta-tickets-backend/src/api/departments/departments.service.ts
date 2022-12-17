@@ -21,6 +21,7 @@ export class DepartmentsService {
         { label: 'Bruxelles & Brabant-Wallon', code: 'P/BBW', id: 2 },
         { label: 'Comac', code: 'O/Comac', id: 3 },
         { label: 'Nationale', code: 'O/N', id: 4 },
+        { label: 'Intal', code: 'O/Intal', id: 3 },
       ])
     });
     return this.sellerRepository.find();
