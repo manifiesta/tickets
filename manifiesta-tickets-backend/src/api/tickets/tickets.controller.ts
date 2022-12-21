@@ -22,5 +22,10 @@ export class TicketsController {
   getTransactionById(@Param('id') id: string) {
     return this.ticketsService.getTransactionById(id);
   }
+
+  @Get('/sellingInformation')
+  getAllSellingInformation() {
+    return this.ticketsService.getAllSellingInformation();
+  }
   
 }

@@ -13,4 +13,8 @@ export class SellersService {
   getAll(): Observable<any[]> {
     return this.http.get<any[]>(`${environment.apiUrl}sellers`);
   }
+
+  getAllSellingInformation(): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}tickets/sellingInformation`);
+  }
 }

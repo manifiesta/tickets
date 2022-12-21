@@ -21,10 +21,17 @@ export class ConfirmTicketsDto {
   @IsNumber()
   readonly testmode: number;
   @IsString()
+  @IsNotEmpty()
   readonly sellerId: string;
   @IsString()
   @IsNotEmpty()
   readonly vwTransactionId: string;
+  @IsString()
+  @IsNotEmpty()
+  readonly sellerDepartmentId: string;
+  @IsString()
+  @IsNotEmpty()
+  readonly sellerPostalCode: string;
   @IsArray()
-  readonly tickets: {ticketId: string, ticketAmount: number}[];
+  readonly tickets: {ticketId: string, ticketAmount: number, ticketName: string}[];
 }

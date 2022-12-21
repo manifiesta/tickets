@@ -1,8 +1,11 @@
 import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { firstValueFrom, map, forkJoin, catchError } from 'rxjs';
+import { Repository } from 'typeorm';
 import { URLSearchParams } from 'url';
 import { ConfirmTicketsDto } from './dto/confirm-tickets.dto';
+import { SellingInformation } from './selling-information.entity';
 // import FormData from 'form-data';
 
 @Injectable()
@@ -16,7 +19,11 @@ export class TicketsService {
 
   acceptedShop = ['app', 'comac', 'intal', 'redfox', 'cubanismo', 'vrijwilligers', 'partners-manifiesta'];
 
-  constructor(private httpService: HttpService) { }
+  constructor(
+    private httpService: HttpService,
+    @InjectRepository(SellingInformation)
+    private readonly sellingInformationRepository: Repository<SellingInformation>,
+  ) { }
 
   getAllTicketTypes(shop: string = 'app') {
     return firstValueFrom(
@@ -38,6 +45,34 @@ export class TicketsService {
   // TODO try better way with no async shit
   // TODO manage lang
   async confirmOrder(confirmTickets: ConfirmTicketsDto) {
+    let quantity = 0;
+    confirmTickets.tickets.forEach(e => {
+      quantity += e.ticketAmount;
+    });
+
+
+    // If we find something, it's an error because we cannot have a vw transaction id already use
+    const sellingWithVwTransactionId = await this.sellingInformationRepository.findOne(
+      { where: { vwTransactionId: confirmTickets.vwTransactionId } }
+    );
+
+    console.log('is there ?', sellingWithVwTransactionId)
+
+    if (sellingWithVwTransactionId) {
+      throw new HttpException({ message: ['error transaction already existing'], code: 'transaction-already-done' }, HttpStatus.CONFLICT);
+    }
+
+    const sellingInformation = await this.sellingInformationRepository.save(this.sellingInformationRepository.create({
+      date: new Date(),
+      sellerDepartmentId: confirmTickets.sellerDepartmentId,
+      sellerId: confirmTickets.sellerId,
+      sellerPostalCode: confirmTickets.sellerPostalCode,
+      vwTransactionId: confirmTickets.vwTransactionId,
+      ticketInfo: confirmTickets.tickets,
+      quantity: quantity,
+    }));
+
+    console.log('begin state', sellingInformation)
 
     // Verification that the transaction id exist in VW
     // TODO verify that is not already used !
@@ -68,7 +103,7 @@ export class TicketsService {
         map(d => { return d.data }),
       )
     ).catch(e => {
-      throw new HttpException({ message: ['error transaction not existing'] }, HttpStatus.NOT_FOUND);
+      throw new HttpException({ message: ['error transaction not existing'], code: 'transaction-not-existing' }, HttpStatus.NOT_FOUND);
     });
 
     // If no error throw here, it's good, we can continue
@@ -126,7 +161,7 @@ export class TicketsService {
         )
     )).order.orderid;
 
-    return firstValueFrom(
+    const finalOrder = await firstValueFrom(
       this.httpService.get<any>(`https://api.eventsquare.io/1.0/checkout/${orderid}`, {
         headers: {
           apiKey: this.apiKey,
@@ -136,10 +171,12 @@ export class TicketsService {
         map(d => { return d.data }),
       )
     );
+    sellingInformation.eventsquareReference = finalOrder.order.reference;
+    await this.sellingInformationRepository.save(sellingInformation);
 
+    return finalOrder;
   }
 
-  // TODO better error message but for the begin, just not found is good
   async getTransactionById(id: string) {
     const bodyXWWWFORMURLData = new URLSearchParams();
     bodyXWWWFORMURLData.append('grant_type', 'client_credentials');
@@ -170,6 +207,15 @@ export class TicketsService {
     ).catch(e => {
       throw new HttpException({ message: ['error transaction not existing'] }, HttpStatus.NOT_FOUND);
     });
+  }
+
+  async getAllSellingInformation() {
+    const data = await this.sellingInformationRepository.find();
+    let totalAmountTicket = 0;
+    data.forEach(t => {
+      totalAmountTicket += t.quantity;
+    })
+    return {data, totalAmountTicket };
   }
 
 }
