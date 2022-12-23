@@ -13,12 +13,17 @@ import { MatTableModule } from '@angular/material/table';
 import { HttpClientModule } from '@angular/common/http';
 import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { PagePhysicalTicketsComponent } from './pages/page-physical-tickets/page-physical-tickets.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { PageDepartmentsComponent } from './pages/page-departments/page-departments.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PageSellerComponent,
-    PageHomeComponent
+    PageHomeComponent,
+    PagePhysicalTicketsComponent,
+    PageDepartmentsComponent,
   ],
   imports: [
     BrowserModule,
@@ -32,6 +37,7 @@ import { MatInputModule } from '@angular/material/input';
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSlideToggleModule,
   ],
   providers: [
     {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'fill'}}

@@ -76,8 +76,11 @@ async function mockSellingInformation(repo) {
       vwTransactionId: '117',
       eventsquareReference: 'JWT-666',
       date: new Date(),
-      quantity: 3,
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal" }, { "ticketId": "2", "ticketAmount": 2, "ticketName": "Weekend Intal" }]
+      quantity: 4,
+      ticketInfo: [
+        { "ticketId": "1", "ticketAmount": 2, "ticketName": "Regular Intal", ticketPrice: 0.01 },
+        { "ticketId": "2", "ticketAmount": 2, "ticketName": "Weekend Intal", ticketPrice: 0.02 }
+      ]
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: '007',
@@ -87,17 +90,7 @@ async function mockSellingInformation(repo) {
       eventsquareReference: 'PTB-666',
       date: new Date(),
       quantity: 1,
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal" }]
-    })),
-    await sellingInformationRepo.save(sellingInformationRepo.create({
-      sellerId: '007',
-      sellerDepartmentId: 'Namur',
-      sellerPostalCode: '5000',
-      vwTransactionId: '119',
-      eventsquareReference: 'PVDA-666',
-      date: new Date(),
-      quantity: 1,
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal" }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: '117',
@@ -107,7 +100,17 @@ async function mockSellingInformation(repo) {
       eventsquareReference: 'CDH-666',
       date: new Date(),
       quantity: 3,
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 3, "ticketName": "Regular Intal" }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 3, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: '007',
+      sellerDepartmentId: 'Namur',
+      sellerPostalCode: '5000',
+      vwTransactionId: '119',
+      eventsquareReference: 'PVDA-666',
+      date: new Date(),
+      quantity: 1,
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
     })),
   ]
 

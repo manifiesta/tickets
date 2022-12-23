@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { firstValueFrom, map, forkJoin, catchError } from 'rxjs';
 import { Repository } from 'typeorm';
 import { URLSearchParams } from 'url';
+import { Address } from './address.entity';
 import { ConfirmTicketsDto } from './dto/confirm-tickets.dto';
 import { SellingInformation } from './selling-information.entity';
 // import FormData from 'form-data';
@@ -23,6 +24,8 @@ export class TicketsService {
     private httpService: HttpService,
     @InjectRepository(SellingInformation)
     private readonly sellingInformationRepository: Repository<SellingInformation>,
+    @InjectRepository(Address)
+    private readonly addressRepository: Repository<Address>,
   ) { }
 
   getAllTicketTypes(shop: string = 'app') {
@@ -45,11 +48,11 @@ export class TicketsService {
   // TODO try better way with no async shit
   // TODO manage lang
   async confirmOrder(confirmTickets: ConfirmTicketsDto) {
+
     let quantity = 0;
     confirmTickets.tickets.forEach(e => {
       quantity += e.ticketAmount;
     });
-
 
     // If we find something, it's an error because we cannot have a vw transaction id already use
     const sellingWithVwTransactionId = await this.sellingInformationRepository.findOne(
@@ -62,6 +65,7 @@ export class TicketsService {
       throw new HttpException({ message: ['error transaction already existing'], code: 'transaction-already-done' }, HttpStatus.CONFLICT);
     }
 
+    // We stock the first information before the command run, in case of, eventSquereReference will come at the end
     const sellingInformation = await this.sellingInformationRepository.save(this.sellingInformationRepository.create({
       date: new Date(),
       sellerDepartmentId: confirmTickets.sellerDepartmentId,
@@ -174,6 +178,25 @@ export class TicketsService {
     sellingInformation.eventsquareReference = finalOrder.order.reference;
     await this.sellingInformationRepository.save(sellingInformation);
 
+    // If the client demand a physical ticket
+    if (confirmTickets.askSendTicket) {
+      console.log('we want ticket by post, here for test')
+      await this.addressRepository.save(
+        await this.addressRepository.create(
+          {
+            city: confirmTickets.address.city,
+            eventsquareReference: finalOrder.order.reference,
+            firstName: confirmTickets.firstname,
+            lastName: confirmTickets.lastname,
+            number: confirmTickets.address.number,
+            postCode: confirmTickets.address.postCode,
+            street: confirmTickets.address.street,
+            sendDone: false,
+          }
+        )
+      )
+    }
+
     return finalOrder;
   }
 
@@ -209,13 +232,79 @@ export class TicketsService {
     });
   }
 
-  async getAllSellingInformation() {
-    const data = await this.sellingInformationRepository.find();
+  private getNumberOfTicket(data: any[]): number {
     let totalAmountTicket = 0;
     data.forEach(t => {
-      totalAmountTicket += t.quantity;
-    })
-    return {data, totalAmountTicket };
+      totalAmountTicket += t.quantity || 0;
+    });
+    return totalAmountTicket;
+  }
+
+  async getAllSellingInformation() {
+    const data = await this.sellingInformationRepository.find();
+    return { data, totalAmountTicket: this.getNumberOfTicket(data) };
+  }
+
+  async getSellerSellingInformation(beepleId: string) {
+    const data = await this.sellingInformationRepository.find({ where: { sellerId: beepleId } });
+    return { data, totalAmountTicket: this.getNumberOfTicket(data) };
+  }
+
+  async getAllSellerSellingInformation() {
+    const data = await this.sellingInformationRepository.find({
+      order: { sellerId: 'ASC' }
+    });
+
+    const dataGroupBySellerId = [];
+
+    data.forEach(d => {
+      const index = dataGroupBySellerId.findIndex(x => x.sellerId === d.sellerId);
+      if (index > -1) {
+        dataGroupBySellerId[index].quantity += d.quantity;
+        dataGroupBySellerId[index].details.push(d);
+      } else {
+        dataGroupBySellerId.push({
+          sellerId: d.sellerId,
+          quantity: d.quantity,
+          details: [d],
+        });
+      }
+    });
+
+    return { data: dataGroupBySellerId, totalAmountTicket: this.getNumberOfTicket(dataGroupBySellerId) };
+  }
+
+  async getAllDepartmentSellingInformation() {
+    const data = await this.sellingInformationRepository.find({
+      order: { sellerDepartmentId: 'ASC' }
+    });
+
+    const dataGroupBySellerDepartmentId = [];
+
+    data.forEach(d => {
+      const index = dataGroupBySellerDepartmentId.findIndex(
+        x => x.sellerDepartmentId === d.sellerDepartmentId
+      );
+      if (index > -1) {
+        dataGroupBySellerDepartmentId[index].quantity += d.quantity;
+        dataGroupBySellerDepartmentId[index].details.push(d);
+      } else {
+        dataGroupBySellerDepartmentId.push({
+          sellerDepartmentId: d.sellerDepartmentId,
+          quantity: d.quantity,
+          details: [d],
+        });
+      }
+    });
+
+    return {
+      data: dataGroupBySellerDepartmentId,
+      totalAmountTicket: this.getNumberOfTicket(dataGroupBySellerDepartmentId)
+    };
+  }
+
+  async getAllPhysicalTickets() {
+    return this.addressRepository.find();
   }
 
 }

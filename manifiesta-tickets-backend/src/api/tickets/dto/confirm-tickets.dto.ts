@@ -1,4 +1,6 @@
-import { IsArray, IsEmail, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsArray, IsEmail, IsNotEmpty, IsNumber, IsString, Validate } from "class-validator";
+import { AddressNeededValidator } from "src/api/shared/validators/addressNeeded.validator";
+import { Address } from "../address.entity";
 
 export class ConfirmTicketsDto {
   @IsString()
@@ -33,5 +35,9 @@ export class ConfirmTicketsDto {
   @IsNotEmpty()
   readonly sellerPostalCode: string;
   @IsArray()
-  readonly tickets: {ticketId: string, ticketAmount: number, ticketName: string}[];
+  readonly tickets: { ticketId: string, ticketAmount: number, ticketName: string, ticketPrice: number }[];
+  
+  readonly askSendTicket: boolean;
+  @Validate(AddressNeededValidator)
+  readonly address: Address;
 }

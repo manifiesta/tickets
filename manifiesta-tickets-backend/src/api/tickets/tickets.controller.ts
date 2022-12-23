@@ -27,5 +27,25 @@ export class TicketsController {
   getAllSellingInformation() {
     return this.ticketsService.getAllSellingInformation();
   }
+
+  @Get('/sellingInformation/seller/:id')
+  getSellerSellingInformation(@Param('id') id: string) {
+    return this.ticketsService.getSellerSellingInformation(id);
+  }
+
+  @Get('/sellingInformation/seller')
+  getAllSellerSellingInformation() {
+    return this.ticketsService.getAllSellerSellingInformation();
+  }
+
+  @Get('/sellingInformation/department')
+  getAllDepartmentSellingInformation() {
+    return this.ticketsService.getAllDepartmentSellingInformation();
+  }
+
+  @Get('/physicalTickets')
+  getAllPhysicalTickets() {
+    return this.ticketsService.getAllPhysicalTickets();
+  }
   
 }

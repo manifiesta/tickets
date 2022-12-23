@@ -36,8 +36,7 @@ export class SellersService {
     return this.sellerRepository.save(this.sellerRepository.create(createSeller));
   }
 
-  // TOODO accept when not anymore in the excell file but prevent the thing for the shift view
-  async testConnectBeeple(connectSeller: ConnectSellerDto) {
+  async connectBeeple(connectSeller: ConnectSellerDto) {
     const beepleUser = (await firstValueFrom(this.httpService.post<any>(
       'https://volunteers.manifiesta.be/api/v1/authenticate',
       {
@@ -49,9 +48,9 @@ export class SellersService {
       }
     ).pipe(
       map(d => { return d.data }),
-    ))).result;
+    )));
 
-    if (!beepleUser) {
+    if (!beepleUser.result) {
       // Beeple API say that the user dont exist
       throw new HttpException({ message: ['error user not existing or bad password'], code: 'auth-bad-combination' }, HttpStatus.NOT_FOUND);
     }
@@ -77,7 +76,7 @@ export class SellersService {
       }
     }
 
-    return { email: user['e-mail'], id: user['id'] };
+    return { email: user['e-mail'], id: user['id'], name: beepleUser.name };
   }
 
   // TODO Manage error

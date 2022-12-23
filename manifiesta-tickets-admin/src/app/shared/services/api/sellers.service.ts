@@ -17,4 +17,16 @@ export class SellersService {
   getAllSellingInformation(): Observable<any> {
     return this.http.get<any>(`${environment.apiUrl}tickets/sellingInformation`);
   }
+
+  getAllSellerSellingInformation(): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}tickets/sellingInformation/seller`);
+  }
+
+  getAllDepartmentSellingInformation(): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}tickets/sellingInformation/department`);
+  }
+
+  getAllPhysicalTickets(): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}tickets/physicalTickets`);
+  }
 }
