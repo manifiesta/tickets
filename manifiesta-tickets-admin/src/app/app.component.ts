@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -6,11 +7,18 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'manifiesta-tickets-admin';
 
+  url = '';
+
+  constructor(private router: Router) {
+  }
 
   ngOnInit() {
-
+    this.router.events.subscribe(r => {
+      if (r instanceof NavigationEnd) {
+        this.url = r.url;
+      }
+    });
   }
 
 }

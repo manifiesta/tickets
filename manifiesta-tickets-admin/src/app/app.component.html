@@ -1,11 +1,12 @@
-<mat-toolbar color="primary">
+<!-- <mat-toolbar color="primary">
   <span>Manifiesta Ticket Admin Panel</span>
   <div>
-    <a mat-button routerLink="/home">Home</a>
-    <a mat-button routerLink="/departments">Departments</a>
-    <!-- <a mat-button routerLink="/sellers">Sellers</a> -->
-    <a mat-button routerLink="/physical-tickets">Physical Tickets</a>
+    <a mat-button routerLink="/home" [class.selected]="url === '/home'">Home</a>
+    <a mat-button routerLink="/departments" [class.selected]="url === '/departments'">Departments</a>
+    <a mat-button routerLink="/physical-tickets" [class.selected]="url === '/physical-tickets'">Physical Tickets</a>
   </div>
-</mat-toolbar>
+</mat-toolbar> -->
 
-<router-outlet></router-outlet>
+<app-menu></app-menu>
+
+<!-- <router-outlet></router-outlet> -->

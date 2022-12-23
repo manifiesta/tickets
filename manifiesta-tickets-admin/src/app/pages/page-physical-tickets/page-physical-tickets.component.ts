@@ -16,7 +16,6 @@ export class PagePhysicalTicketsComponent implements OnInit {
   ngOnInit(): void {
     this.sellersService.getAllPhysicalTickets().subscribe(data => {
       this.physicalTickets = data;
-      console.log('physical tickets', data)
     });
   }
 

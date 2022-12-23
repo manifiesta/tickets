@@ -16,6 +16,12 @@ import { MatInputModule } from '@angular/material/input';
 import { PagePhysicalTicketsComponent } from './pages/page-physical-tickets/page-physical-tickets.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { PageDepartmentsComponent } from './pages/page-departments/page-departments.component';
+import { MatSortModule } from '@angular/material/sort';
+import { MenuComponent } from './menu/menu.component';
+import { LayoutModule } from '@angular/cdk/layout';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 
 @NgModule({
   declarations: [
@@ -24,6 +30,7 @@ import { PageDepartmentsComponent } from './pages/page-departments/page-departme
     PageHomeComponent,
     PagePhysicalTicketsComponent,
     PageDepartmentsComponent,
+    MenuComponent,
   ],
   imports: [
     BrowserModule,
@@ -35,9 +42,14 @@ import { PageDepartmentsComponent } from './pages/page-departments/page-departme
     MatToolbarModule,
     MatButtonModule,
     MatTableModule,
+    MatSortModule,
     MatFormFieldModule,
     MatInputModule,
     MatSlideToggleModule,
+    LayoutModule,
+    MatSidenavModule,
+    MatIconModule,
+    MatListModule,
   ],
   providers: [
     {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'fill'}}

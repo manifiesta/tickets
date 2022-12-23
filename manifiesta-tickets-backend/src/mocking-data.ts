@@ -94,7 +94,7 @@ async function mockSellingInformation(repo) {
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: '117',
-      sellerDepartmentId: 'Namur',
+      sellerDepartmentId: 'NLU',
       sellerPostalCode: '5000',
       vwTransactionId: '120',
       eventsquareReference: 'CDH-666',
@@ -104,7 +104,7 @@ async function mockSellingInformation(repo) {
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: '007',
-      sellerDepartmentId: 'Namur',
+      sellerDepartmentId: 'NLU',
       sellerPostalCode: '5000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',

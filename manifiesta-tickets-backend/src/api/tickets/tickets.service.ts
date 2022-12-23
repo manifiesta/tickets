@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { firstValueFrom, map, forkJoin, catchError } from 'rxjs';
 import { Repository } from 'typeorm';
 import { URLSearchParams } from 'url';
+import { departments } from '../shared/data/departments.list';
 import { Address } from './address.entity';
 import { ConfirmTicketsDto } from './dto/confirm-tickets.dto';
 import { SellingInformation } from './selling-information.entity';
@@ -292,6 +293,7 @@ export class TicketsService {
         dataGroupBySellerDepartmentId.push({
           sellerDepartmentId: d.sellerDepartmentId,
           quantity: d.quantity,
+          name: departments.find(department => department.code === d.sellerDepartmentId)?.label,
           details: [d],
         });
       }

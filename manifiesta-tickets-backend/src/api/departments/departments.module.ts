@@ -7,6 +7,7 @@ import { DepartmentsService } from './departments.service';
 @Module({
   imports: [TypeOrmModule.forFeature([Department]),],
   controllers: [DepartmentsController],
-  providers: [DepartmentsService]
+  providers: [DepartmentsService],
+  exports: [DepartmentsService]
 })
 export class DepartmentsModule {}
