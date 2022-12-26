@@ -29,4 +29,8 @@ export class SellersService {
   getAllPhysicalTickets(): Observable<any> {
     return this.http.get<any>(`${environment.apiUrl}tickets/physicalTickets`);
   }
+
+  physicalTicketSendDone(id: string): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}tickets/physicalTickets/sendDone/${id}`);
+  }
 }

@@ -30,6 +30,6 @@ export class SellingInformation {
 
   // Must seen how to stock that
   // A json string ?
-  @Column("json")
-  ticketInfo: any;
+  @Column("simple-json", {nullable: true, default: null})
+  ticketInfo: { ticketId: string, ticketAmount: number, ticketName: string, ticketPrice: number }[];
 }

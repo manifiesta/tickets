@@ -47,5 +47,10 @@ export class TicketsController {
   getAllPhysicalTickets() {
     return this.ticketsService.getAllPhysicalTickets();
   }
+
+  @Get('/physicalTickets/sendDone/:id')
+  physicalTicketSendDone(@Param('id') id: string) {
+    return this.ticketsService.physicalTicketSendDone(id);
+  }
   
 }

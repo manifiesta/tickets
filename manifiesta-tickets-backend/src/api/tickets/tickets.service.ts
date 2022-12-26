@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { firstValueFrom, map, forkJoin, catchError } from 'rxjs';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { URLSearchParams } from 'url';
 import { departments } from '../shared/data/departments.list';
 import { Address } from './address.entity';
@@ -253,8 +253,10 @@ export class TicketsService {
 
   async getAllSellerSellingInformation() {
     const data = await this.sellingInformationRepository.find({
-      order: { sellerId: 'ASC' }
+      order: { sellerId: 'ASC' },
     });
+
+    console.log('haaa data', data)
 
     const dataGroupBySellerId = [];
 
@@ -307,6 +309,12 @@ export class TicketsService {
 
   async getAllPhysicalTickets() {
     return this.addressRepository.find();
+  }
+
+  async physicalTicketSendDone(id) {
+    const address = await this.addressRepository.findOneBy({ id });
+    address.sendDone = !address.sendDone;
+    return this.addressRepository.save(address);
   }
 
 }
