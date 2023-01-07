@@ -75,6 +75,7 @@ export class TicketsService {
       vwTransactionId: confirmTickets.vwTransactionId,
       ticketInfo: confirmTickets.tickets,
       quantity: quantity,
+      clientName: `${confirmTickets.firstname} ${confirmTickets.lastname}`
     }));
 
     console.log('begin state', sellingInformation)

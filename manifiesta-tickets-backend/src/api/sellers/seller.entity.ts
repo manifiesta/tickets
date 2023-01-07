@@ -10,20 +10,8 @@ export class Seller {
   email: string;
 
   @Column()
-  firstName: string;
+  name: string;
 
   @Column()
-  lastName: string;
-
-  @Column()
-  password: string;
-
-  @Column()
-  sellTickets: number;
-
-  @Column()
-  sellTicketsGoal: number;
-
-  @ManyToOne(type => Department)
-  department: Department;
+  beepleId: string;
 }

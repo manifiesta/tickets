@@ -22,6 +22,9 @@ export class SellingInformation {
   @Column()
   vwTransactionId: string;
 
+  @Column({nullable: true, default: null})
+  clientName: string;
+
   @Column()
   date: Date;
 

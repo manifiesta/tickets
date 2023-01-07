@@ -33,10 +33,13 @@ async function mockDepartments(repo) {
 
 async function mockSellers(repo, departments: Department[]) {
   const sellerRepo = await repo.getRepository(Seller);
+  const mainId = process.env.BEEPLE_TEST_ID || '007';
   return [
-    await sellerRepo.save(sellerRepo.create({ email: 'samy@manifiesta.com', firstName: 'Samy', lastName: 'Gnu', sellTickets: 60, sellTicketsGoal: 90, department: departments[0] })),
-    await sellerRepo.save(sellerRepo.create({ email: 'raoul@manifiesta.com', firstName: 'Raoul', lastName: 'Mertens', sellTickets: 1, sellTicketsGoal: 50, department: departments[1] })),
-    await sellerRepo.save(sellerRepo.create({ email: 'samy@manifiesta.com', firstName: 'Samy', lastName: 'Gnu', sellTickets: 17, sellTicketsGoal: 42, department: departments[2] })),
+    await sellerRepo.save(sellerRepo.create({ email: 'samy@manifiesta.com', name: 'Samy Gnu', beepleId: mainId })),
+    await sellerRepo.save(sellerRepo.create({ email: 'raoul@manifiesta.com', name: 'Raoul Mertens', beepleId: '117' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'rosa@manifiesta.com', name: 'Rosa Monaco', beepleId: '1919' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'louise@manifiesta.com', name: 'Louise Petrole', beepleId: '1871' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'orwell@manifiesta.com', name: 'Eric Arthur Blair', beepleId: '1984' })),
   ];
 }
 
@@ -67,29 +70,32 @@ async function mockAddress(repo) {
 }
 
 async function mockSellingInformation(repo) {
+  const mainId = process.env.BEEPLE_TEST_ID || '007';
   const sellingInformationRepo = await repo.getRepository(SellingInformation);
   return [
     await sellingInformationRepo.save(sellingInformationRepo.create({
-      sellerId: '007',
+      sellerId: mainId,
       sellerDepartmentId: 'BBW',
       sellerPostalCode: '1040',
       vwTransactionId: '117',
       eventsquareReference: 'JWT-666',
       date: new Date(),
       quantity: 4,
+      clientName: 'Random Client 1',
       ticketInfo: [
         { "ticketId": "1", "ticketAmount": 2, "ticketName": "Regular Intal", ticketPrice: 0.01 },
         { "ticketId": "2", "ticketAmount": 2, "ticketName": "Weekend Intal", ticketPrice: 0.02 }
       ]
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
-      sellerId: '007',
+      sellerId: mainId,
       sellerDepartmentId: 'BBW',
       sellerPostalCode: '1040',
       vwTransactionId: '118',
       eventsquareReference: 'PTB-666',
       date: new Date(),
       quantity: 1,
+      clientName: 'Random Client 2',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
@@ -100,16 +106,51 @@ async function mockSellingInformation(repo) {
       eventsquareReference: 'CDH-666',
       date: new Date(),
       quantity: 3,
+      clientName: 'Random Client 3',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 3, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
-      sellerId: '007',
+      sellerId: mainId,
       sellerDepartmentId: 'NLU',
       sellerPostalCode: '5000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',
       date: new Date(),
       quantity: 1,
+      clientName: 'Random Client 4',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: '1919',
+      sellerDepartmentId: 'BBW',
+      sellerPostalCode: '1000',
+      vwTransactionId: '121',
+      eventsquareReference: 'PVDA-667',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 5',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: '1871',
+      sellerDepartmentId: 'BBW',
+      sellerPostalCode: '1000',
+      vwTransactionId: '122',
+      eventsquareReference: 'PVDA-668',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 6',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: '1984',
+      sellerDepartmentId: 'BBW',
+      sellerPostalCode: '1000',
+      vwTransactionId: '122',
+      eventsquareReference: 'PVDA-669',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 7',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
     })),
   ]
