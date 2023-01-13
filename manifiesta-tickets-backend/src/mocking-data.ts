@@ -118,7 +118,7 @@ async function mockSellingInformation(repo) {
       date: new Date(),
       quantity: 1,
       clientName: 'Random Client 4',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: '1919',
@@ -127,9 +127,9 @@ async function mockSellingInformation(repo) {
       vwTransactionId: '121',
       eventsquareReference: 'PVDA-667',
       date: new Date(),
-      quantity: 1,
+      quantity: 3,
       clientName: 'Random Client 5',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 3, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: '1871',
@@ -138,9 +138,9 @@ async function mockSellingInformation(repo) {
       vwTransactionId: '122',
       eventsquareReference: 'PVDA-668',
       date: new Date(),
-      quantity: 1,
+      quantity: 7,
       clientName: 'Random Client 6',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 7, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: '1984',
@@ -149,9 +149,12 @@ async function mockSellingInformation(repo) {
       vwTransactionId: '122',
       eventsquareReference: 'PVDA-669',
       date: new Date(),
-      quantity: 1,
+      quantity: 2,
       clientName: 'Random Client 7',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
+      ticketInfo: [
+        { "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 },
+        { "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 }
+      ]
     })),
   ]
 

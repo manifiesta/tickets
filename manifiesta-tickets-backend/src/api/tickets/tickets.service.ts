@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { firstValueFrom, map, forkJoin, catchError } from 'rxjs';
 import { IsNull, Not, Repository } from 'typeorm';
 import { URLSearchParams } from 'url';
+import { Seller } from '../sellers/seller.entity';
 import { departments } from '../shared/data/departments.list';
 import { Address } from './address.entity';
 import { ConfirmTicketsDto } from './dto/confirm-tickets.dto';
@@ -25,6 +26,8 @@ export class TicketsService {
     private httpService: HttpService,
     @InjectRepository(SellingInformation)
     private readonly sellingInformationRepository: Repository<SellingInformation>,
+    @InjectRepository(Seller)
+    private readonly sellerRepository: Repository<Seller>,
     @InjectRepository(Address)
     private readonly addressRepository: Repository<Address>,
   ) { }
@@ -257,8 +260,6 @@ export class TicketsService {
       order: { sellerId: 'ASC' },
     });
 
-    console.log('haaa data', data)
-
     const dataGroupBySellerId = [];
 
     data.forEach(d => {
@@ -275,7 +276,91 @@ export class TicketsService {
       }
     });
 
+    for (let i = 0; i < dataGroupBySellerId.length; i++) {
+      dataGroupBySellerId[i].name = (await this.sellerRepository.findOne({ where: { beepleId: dataGroupBySellerId[i].sellerId } })).name;
+    }
+
+    dataGroupBySellerId.sort((a, b) => {
+      return b.quantity - a.quantity;
+    });
+
     return { data: dataGroupBySellerId, totalAmountTicket: this.getNumberOfTicket(dataGroupBySellerId) };
+  }
+
+  async getOneDepartmentSellingInformation(sellerdepartmentId: string) {
+    const dataBrut = await this.sellingInformationRepository.find({
+      where: {sellerDepartmentId: sellerdepartmentId}
+    });
+
+    const bestSelling = [];
+
+    dataBrut.forEach(d => {
+      const index = bestSelling.findIndex(
+        x => x.sellerId === d.sellerId
+      );
+      if (index > -1) {
+        bestSelling[index].quantity += d.quantity;
+        bestSelling[index].details.push(d);
+      } else {
+        bestSelling.push({
+          sellerId: d.sellerId,
+          quantity: d.quantity,
+          details: [d],
+        });
+      }
+    });
+
+    for (let i = 0; i < bestSelling.length; i++) {
+      bestSelling[i].name = (await this.sellerRepository.findOne({ where: { beepleId: bestSelling[i].sellerId } })).name;
+    }
+
+    bestSelling.sort((a, b) => {
+      return b.quantity - a.quantity;
+    });
+
+    return {
+      data: dataBrut,
+      bestSelling: bestSelling,
+      totalAmountTicket: this.getNumberOfTicket(bestSelling)
+    };
+  }
+
+  async getOnePostCodeSellingInformation(postalCode: string) {
+    const dataBrut = await this.sellingInformationRepository.find({
+      where: {sellerPostalCode: postalCode}
+    });
+
+    const bestSelling = [];
+
+    dataBrut.forEach(d => {
+      const index = bestSelling.findIndex(
+        x => x.sellerId === d.sellerId
+      );
+      if (index > -1) {
+        bestSelling[index].quantity += d.quantity;
+        bestSelling[index].details.push(d);
+      } else {
+        bestSelling.push({
+          sellerId: d.sellerId,
+          quantity: d.quantity,
+          details: [d],
+        });
+      }
+    });
+
+    for (let i = 0; i < bestSelling.length; i++) {
+      bestSelling[i].name = (await this.sellerRepository.findOne({ where: { beepleId: bestSelling[i].sellerId } })).name;
+    }
+
+    bestSelling.sort((a, b) => {
+      return b.quantity - a.quantity;
+    });
+
+    return {
+      data: dataBrut,
+      bestSelling: bestSelling,
+      totalAmountTicket: this.getNumberOfTicket(bestSelling)
+    };
   }
 
   async getAllDepartmentSellingInformation() {

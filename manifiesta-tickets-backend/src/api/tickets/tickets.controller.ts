@@ -43,6 +43,16 @@ export class TicketsController {
     return this.ticketsService.getAllDepartmentSellingInformation();
   }
 
+  @Get('/sellingInformation/department/:id')
+  getOneDepartmentSellingInformation(@Param('id') id: string) {
+    return this.ticketsService.getOneDepartmentSellingInformation(id);
+  }
+
+  @Get('/sellingInformation/postCode/:id')
+  getOnePostCodeSellingInformation(@Param('id') id: string) {
+    return this.ticketsService.getOnePostCodeSellingInformation(id);
+  }
+
   @Get('/physicalTickets')
   getAllPhysicalTickets() {
     return this.ticketsService.getAllPhysicalTickets();
