@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { firstValueFrom, from, of } from 'rxjs';
 import { Repository } from 'typeorm';
 import { departments } from '../shared/data/departments.list';
 import { Department } from './department.entity';
