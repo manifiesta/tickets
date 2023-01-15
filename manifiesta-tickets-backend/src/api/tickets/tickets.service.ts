@@ -277,7 +277,8 @@ export class TicketsService {
     });
 
     for (let i = 0; i < dataGroupBySellerId.length; i++) {
-      dataGroupBySellerId[i].name = (await this.sellerRepository.findOne({ where: { beepleId: dataGroupBySellerId[i].sellerId } })).name;
+      dataGroupBySellerId[i].name = (await this.sellerRepository.findOne({ where: { beepleId: dataGroupBySellerId[i].sellerId } }))?.name
+        || dataGroupBySellerId[i].sellerId;
     }
 
     dataGroupBySellerId.sort((a, b) => {
@@ -289,7 +290,7 @@ export class TicketsService {
 
   async getOneDepartmentSellingInformation(sellerdepartmentId: string) {
     const dataBrut = await this.sellingInformationRepository.find({
-      where: {sellerDepartmentId: sellerdepartmentId}
+      where: { sellerDepartmentId: sellerdepartmentId }
     });
 
     const bestSelling = [];
@@ -311,7 +312,8 @@ export class TicketsService {
     });
 
     for (let i = 0; i < bestSelling.length; i++) {
-      bestSelling[i].name = (await this.sellerRepository.findOne({ where: { beepleId: bestSelling[i].sellerId } })).name;
+      bestSelling[i].name = (await this.sellerRepository.findOne({ where: { beepleId: bestSelling[i].sellerId } }))?.name
+      || bestSelling[i].sellerId;
     }
 
     bestSelling.sort((a, b) => {
@@ -327,7 +329,7 @@ export class TicketsService {
 
   async getOnePostCodeSellingInformation(postalCode: string) {
     const dataBrut = await this.sellingInformationRepository.find({
-      where: {sellerPostalCode: postalCode}
+      where: { sellerPostalCode: postalCode }
     });
 
     const bestSelling = [];
@@ -349,7 +351,8 @@ export class TicketsService {
     });
 
     for (let i = 0; i < bestSelling.length; i++) {
-      bestSelling[i].name = (await this.sellerRepository.findOne({ where: { beepleId: bestSelling[i].sellerId } })).name;
+      bestSelling[i].name = (await this.sellerRepository.findOne({ where: { beepleId: bestSelling[i].sellerId } }))?.name
+        || bestSelling[i].sellerId;;
     }
 
     bestSelling.sort((a, b) => {
