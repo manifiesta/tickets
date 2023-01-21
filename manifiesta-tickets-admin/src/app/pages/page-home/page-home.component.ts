@@ -10,7 +10,7 @@ import { sortData } from 'src/app/shared/utils/sort-data.utils';
 })
 export class PageHomeComponent implements OnInit {
 
-  displayedSellersColumns: string[] = ['sellerId', 'email', 'name', 'details', 'quantity'];
+  displayedSellersColumns: string[] = ['name', 'sellerId', 'email', 'details', 'quantity'];
   sellerSellingInformationsAll: any[] = [];
   sellingInformationsAmountTickets!: number;
   sortedData: any[] = [];

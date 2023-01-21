@@ -2,7 +2,7 @@ import { IsArray, IsEmail, IsNotEmpty, IsNumber, IsString, Validate } from "clas
 import { AddressNeededValidator } from "src/api/shared/validators/addressNeeded.validator";
 import { Address } from "../address.entity";
 
-export class ConfirmTicketsDto {
+export class PreparTicketsDto {
   @IsString()
   @IsNotEmpty()
   readonly firstname: string;
@@ -25,9 +25,6 @@ export class ConfirmTicketsDto {
   @IsString()
   @IsNotEmpty()
   readonly sellerId: string;
-  @IsString()
-  @IsNotEmpty()
-  readonly vwTransactionId: string;
   @IsString()
   @IsNotEmpty()
   readonly sellerDepartmentId: string;

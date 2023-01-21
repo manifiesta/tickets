@@ -1,5 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ConfirmTicketsDto } from './dto/confirm-tickets.dto';
+import { NewsletterAddDto } from './dto/newsletter-add.dto';
+import { PreparTicketsDto } from './dto/prepar-tickets.dto';
 import { TicketsService } from './tickets.service';
 
 @Controller('api/tickets')
@@ -10,6 +12,11 @@ export class TicketsController {
   @Get(['/types/:shop', '/types'])
   findAll(@Param('shop') shop: string = 'app') {
     return this.ticketsService.getAllTicketTypes(shop);
+  }
+
+  @Post('/prepar')
+  preparOrder(@Body() preparTickets: PreparTicketsDto) {
+    return this.ticketsService.preparOrder(preparTickets);
   }
 
   // TODO protect with jwt
@@ -61,6 +68,11 @@ export class TicketsController {
   @Get('/physicalTickets/sendDone/:id')
   physicalTicketSendDone(@Param('id') id: string) {
     return this.ticketsService.physicalTicketSendDone(id);
+  }
+
+  @Get('/newsletter-add')
+  newsletterAddMember(@Body() newsletterAdd: NewsletterAddDto) {
+    return this.ticketsService.newsletterAddMember(newsletterAdd);
   }
   
 }

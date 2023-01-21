@@ -10,6 +10,9 @@ export class SellingInformation {
   @Column({ nullable: true })
   eventsquareReference: string;
 
+  @Column({nullable: true, default: null})
+  clientTransactionId: string;
+
   @Column()
   sellerId: string;
 
@@ -19,7 +22,7 @@ export class SellingInformation {
   @Column()
   sellerPostalCode: string;
 
-  @Column()
+  @Column({nullable: true, default: null})
   vwTransactionId: string;
 
   @Column({nullable: true, default: null})

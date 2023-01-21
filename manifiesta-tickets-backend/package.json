@@ -23,6 +23,7 @@
   "dependencies": {
     "@fastify/static": "^6.5.0",
     "@fastify/view": "^7.1.1",
+    "@mailchimp/mailchimp_marketing": "^3.0.80",
     "@nestjs/axios": "^0.1.0",
     "@nestjs/common": "^9.1.5",
     "@nestjs/config": "^2.2.0",

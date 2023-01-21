@@ -8,6 +8,8 @@ import { Seller } from '../sellers/seller.entity';
 import { departments } from '../shared/data/departments.list';
 import { Address } from './address.entity';
 import { ConfirmTicketsDto } from './dto/confirm-tickets.dto';
+import { NewsletterAddDto } from './dto/newsletter-add.dto';
+import { PreparTicketsDto } from './dto/prepar-tickets.dto';
 import { SellingInformation } from './selling-information.entity';
 // import FormData from 'form-data';
 
@@ -49,6 +51,26 @@ export class TicketsService {
     );
   }
 
+  async preparOrder(preparTickets: PreparTicketsDto) {
+    let quantity = 0;
+    preparTickets.tickets.forEach(e => {
+      quantity += e.ticketAmount;
+    });
+
+    const sellingInformation = await this.sellingInformationRepository.save(this.sellingInformationRepository.create({
+      date: new Date(),
+      sellerDepartmentId: preparTickets.sellerDepartmentId,
+      sellerId: preparTickets.sellerId,
+      sellerPostalCode: preparTickets.sellerPostalCode,
+      ticketInfo: preparTickets.tickets,
+      quantity: quantity,
+      clientTransactionId: preparTickets.clientTransactionId,
+      clientName: `${preparTickets.firstname} ${preparTickets.lastname}`
+    }));
+
+    return sellingInformation;
+  }
+
   // TODO try better way with no async shit
   // TODO manage lang
   async confirmOrder(confirmTickets: ConfirmTicketsDto) {
@@ -78,6 +100,7 @@ export class TicketsService {
       vwTransactionId: confirmTickets.vwTransactionId,
       ticketInfo: confirmTickets.tickets,
       quantity: quantity,
+      clientTransactionId: confirmTickets.clientTransactionId,
       clientName: `${confirmTickets.firstname} ${confirmTickets.lastname}`
     }));
 
@@ -251,7 +274,13 @@ export class TicketsService {
   }
 
   async getSellerSellingInformation(beepleId: string) {
-    const data = await this.sellingInformationRepository.find({ where: { sellerId: beepleId } });
+    let data = await this.sellingInformationRepository.find({ where: { sellerId: beepleId } });
+    data = data.map(d => {
+      return {
+        ...d,
+        sellerDepartment: departments.find(df => df.code === d.sellerDepartmentId)?.label || d.sellerDepartmentId,
+      }
+    })
     return { data, totalAmountTicket: this.getNumberOfTicket(data) };
   }
 
@@ -277,8 +306,9 @@ export class TicketsService {
     });
 
     for (let i = 0; i < dataGroupBySellerId.length; i++) {
-      dataGroupBySellerId[i].name = (await this.sellerRepository.findOne({ where: { beepleId: dataGroupBySellerId[i].sellerId } }))?.name
-        || dataGroupBySellerId[i].sellerId;
+      const u = await this.sellerRepository.findOne({ where: { beepleId: dataGroupBySellerId[i].sellerId } })
+      dataGroupBySellerId[i].name = u?.name || dataGroupBySellerId[i].sellerId;
+      dataGroupBySellerId[i].email = u?.email
     }
 
     dataGroupBySellerId.sort((a, b) => {
@@ -404,6 +434,37 @@ export class TicketsService {
     const address = await this.addressRepository.findOneBy({ id });
     address.sendDone = !address.sendDone;
     return this.addressRepository.save(address);
+  }
+
+  async newsletterAddMember(newsletterAdd: NewsletterAddDto) {
+    const mailchimp = require("@mailchimp/mailchimp_marketing");
+
+    mailchimp.setConfig({
+      apiKey: process.env.MAILCHIMP_API,
+      server: process.env.MAILCHIMP_SERVER_PREFIX
+    });
+
+    const lists = await mailchimp.lists.getAllLists();
+    const newsId = lists?.lists?.find(l => l.name === "ManiFiesta News")?.id;
+
+    try {
+      const add = await mailchimp.lists.addListMember(
+        newsId,
+        {
+          email_address: newsletterAdd.email,
+          status: "subscribed",
+          merge_fields: {
+            FNAME: newsletterAdd.firstname,
+            LNAME: newsletterAdd.lastname,
+            MMERGE6: newsletterAdd.MMERGE6,
+          }
+        }
+      );
+    } catch (e) {
+      console.error(e)
+    }
+
+    return {hello: 'world'};
   }
 
 }
