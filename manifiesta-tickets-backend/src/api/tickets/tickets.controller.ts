@@ -70,7 +70,7 @@ export class TicketsController {
     return this.ticketsService.physicalTicketSendDone(id);
   }
 
-  @Get('/newsletter-add')
+  @Post('/newsletter-add')
   newsletterAddMember(@Body() newsletterAdd: NewsletterAddDto) {
     return this.ticketsService.newsletterAddMember(newsletterAdd);
   }
