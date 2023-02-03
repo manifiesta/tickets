@@ -290,7 +290,7 @@ export class TicketsService {
   }
 
   async getSellerSellingInformation(beepleId: string) {
-    let data = await this.sellingInformationRepository.find({ where: { sellerId: beepleId } });
+    let data = await this.sellingInformationRepository.find({ where: { sellerId: beepleId, eventsquareReference: Not(IsNull()) } });
     data = data.map(d => {
       return {
         ...d,
@@ -302,6 +302,7 @@ export class TicketsService {
 
   async getAllSellerSellingInformation() {
     const data = await this.sellingInformationRepository.find({
+      where: { eventsquareReference: Not(IsNull()) },
       order: { sellerId: 'ASC' },
     });
 
@@ -338,17 +339,18 @@ export class TicketsService {
     let province;
     const postCodeNumber = parseInt(sellerPostCode);
     if (sellerdepartmentId === 'BASE' && isNumber(parseInt(sellerPostCode))) {
-      province = provinces.find(p => p.ranges.find(r => { return r.start <= postCodeNumber && r.end >= postCodeNumber}));
+      province = provinces.find(p => p.ranges.find(r => { return r.start <= postCodeNumber && r.end >= postCodeNumber }));
     }
 
     let dataBrut = await this.sellingInformationRepository.find({
       where: {
         sellerDepartmentId: sellerdepartmentId,
+        eventsquareReference: Not(IsNull()),
       },
     });
 
     if (province) {
-      dataBrut = dataBrut.filter(d => { return province.ranges.find(r => {return r.start <= d.sellerPostalCode && r.end >= d.sellerPostalCode}) });
+      dataBrut = dataBrut.filter(d => { return province.ranges.find(r => { return r.start <= d.sellerPostalCode && r.end >= d.sellerPostalCode }) });
     }
 
     const bestSelling = [];
@@ -387,7 +389,7 @@ export class TicketsService {
 
   async getOnePostCodeSellingInformation(postalCode: string) {
     const dataBrut = await this.sellingInformationRepository.find({
-      where: { sellerPostalCode: postalCode }
+      where: { sellerPostalCode: postalCode, eventsquareReference: Not(IsNull()) }
     });
 
     const bestSelling = [];
@@ -426,6 +428,7 @@ export class TicketsService {
 
   async getAllDepartmentSellingInformation() {
     const data = await this.sellingInformationRepository.find({
+      where: { eventsquareReference: Not(IsNull()) },
       order: { sellerDepartmentId: 'ASC' }
     });
 

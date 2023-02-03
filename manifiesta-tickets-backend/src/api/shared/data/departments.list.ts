@@ -11,7 +11,7 @@ export const departments = [
   // { label: 'West-Vlaanderen', code: 'WEV', id: 2 },
   { label: 'GVHV', labelFr: 'MPLP', labelNl: 'GVHV', code: 'GVHV', id: 2},
   { label: 'Comac', labelFr: 'Comac', labelNl: 'Comac', code: 'Comac', id: 3 },
-  { label: 'Intal', labelFr: 'MPLP', labelNl: 'GVHV', code: 'Intal', id: 4 },
+  { label: 'Intal', labelFr: 'Intal', labelNl: 'Intal', code: 'Intal', id: 4 },
   { label: 'National', labelFr: 'Nationale', labelNl: 'Nationaal',  code: 'National', id: 5 },
 ];
 

@@ -11,7 +11,7 @@ export class DepartmentsController {
     return this.departmentsService.findAll(lang);
   }
 
-  @Get('/province')
+  @Get('/info/province')
   getAllProvince() {
     return this.departmentsService.getAllProvince();
   }
