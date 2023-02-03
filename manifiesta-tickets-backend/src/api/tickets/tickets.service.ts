@@ -99,7 +99,7 @@ export class TicketsService {
     }
 
     const sellingInformationWithClientTransactionId = await this.sellingInformationRepository.findOne(
-      { where: { vwTransactionId: confirmTickets.clientTransactionId } }
+      { where: { clientTransactionId: confirmTickets.clientTransactionId } }
     );
 
     let sellingInformation;
@@ -195,8 +195,6 @@ export class TicketsService {
     bodyFormData.append('invoice', confirmTickets.invoice.toString());
     bodyFormData.append('customer[sellerId]', confirmTickets.sellerId);
     bodyFormData.append('testmode', confirmTickets.testmode.toString());
-    bodyFormData.append('customer[datatest]', 'just data test from manifiesta api');
-    bodyFormData.append('datatest', 'just data test from manifiesta api');
 
     const orderid = (await firstValueFrom(
       this.httpService.post<any>(`https://api.eventsquare.io/1.0/cart/${cartid}`,
@@ -227,7 +225,6 @@ export class TicketsService {
 
     // If the client demand a physical ticket
     if (confirmTickets.askSendTicket) {
-      console.log('we want ticket by post, here for test')
       await this.addressRepository.save(
         await this.addressRepository.create(
           {
