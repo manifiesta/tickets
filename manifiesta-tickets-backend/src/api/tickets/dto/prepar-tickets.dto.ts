@@ -22,6 +22,11 @@ export class PreparTicketsDto {
   readonly invoice: number;
   @IsNumber()
   readonly testmode: number;
+  // First and lastname in one
+  @IsString()
+  @IsNotEmpty()
+  readonly sellerName: string;
+  // we use the email of the seller
   @IsString()
   @IsNotEmpty()
   readonly sellerId: string;

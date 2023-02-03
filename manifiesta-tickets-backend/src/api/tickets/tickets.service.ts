@@ -1,11 +1,12 @@
 import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { isNumber } from 'class-validator';
 import { firstValueFrom, map, forkJoin, catchError } from 'rxjs';
 import { IsNull, Not, Repository } from 'typeorm';
 import { URLSearchParams } from 'url';
 import { Seller } from '../sellers/seller.entity';
-import { departments } from '../shared/data/departments.list';
+import { departments, provinces } from '../shared/data/departments.list';
 import { Address } from './address.entity';
 import { ConfirmTicketsDto } from './dto/confirm-tickets.dto';
 import { NewsletterAddDto } from './dto/newsletter-add.dto';
@@ -52,6 +53,11 @@ export class TicketsService {
   }
 
   async preparOrder(preparTickets: PreparTicketsDto) {
+    const seller = await this.sellerRepository.findOne({ where: { email: preparTickets.sellerId } });
+    if (!seller) {
+      await this.sellerRepository.save(await this.sellerRepository.create({ email: preparTickets.sellerId, name: preparTickets.sellerName }));
+    }
+
     let quantity = 0;
     preparTickets.tickets.forEach(e => {
       quantity += e.ticketAmount;
@@ -73,6 +79,7 @@ export class TicketsService {
 
   // TODO try better way with no async shit
   // TODO manage lang
+  // TODO change / adapt with the prepar call
   async confirmOrder(confirmTickets: ConfirmTicketsDto) {
 
     let quantity = 0;
@@ -91,18 +98,30 @@ export class TicketsService {
       throw new HttpException({ message: ['error transaction already existing'], code: 'transaction-already-done' }, HttpStatus.CONFLICT);
     }
 
-    // We stock the first information before the command run, in case of, eventSquereReference will come at the end
-    const sellingInformation = await this.sellingInformationRepository.save(this.sellingInformationRepository.create({
-      date: new Date(),
-      sellerDepartmentId: confirmTickets.sellerDepartmentId,
-      sellerId: confirmTickets.sellerId,
-      sellerPostalCode: confirmTickets.sellerPostalCode,
-      vwTransactionId: confirmTickets.vwTransactionId,
-      ticketInfo: confirmTickets.tickets,
-      quantity: quantity,
-      clientTransactionId: confirmTickets.clientTransactionId,
-      clientName: `${confirmTickets.firstname} ${confirmTickets.lastname}`
-    }));
+    const sellingInformationWithClientTransactionId = await this.sellingInformationRepository.findOne(
+      { where: { vwTransactionId: confirmTickets.clientTransactionId } }
+    );
+
+    let sellingInformation;
+
+    if (sellingInformationWithClientTransactionId) {
+      sellingInformation = sellingInformationWithClientTransactionId;
+      sellingInformation.vwTransactionId = confirmTickets.vwTransactionId;
+      await this.sellingInformationRepository.save(sellingInformation);
+    } else {
+      // We stock the first information before the command run, in case of, eventSquereReference will come at the end
+      const sellingInformation = await this.sellingInformationRepository.save(this.sellingInformationRepository.create({
+        date: new Date(),
+        sellerDepartmentId: confirmTickets.sellerDepartmentId,
+        sellerId: confirmTickets.sellerId,
+        sellerPostalCode: confirmTickets.sellerPostalCode,
+        ticketInfo: confirmTickets.tickets,
+        quantity: quantity,
+        clientTransactionId: confirmTickets.clientTransactionId,
+        clientName: `${confirmTickets.firstname} ${confirmTickets.lastname}`,
+        vwTransactionId: confirmTickets.vwTransactionId,
+      }));
+    }
 
     console.log('begin state', sellingInformation)
 
@@ -318,10 +337,22 @@ export class TicketsService {
     return { data: dataGroupBySellerId, totalAmountTicket: this.getNumberOfTicket(dataGroupBySellerId) };
   }
 
-  async getOneDepartmentSellingInformation(sellerdepartmentId: string) {
-    const dataBrut = await this.sellingInformationRepository.find({
-      where: { sellerDepartmentId: sellerdepartmentId }
+  async getOneDepartmentSellingInformation(sellerdepartmentId: string, sellerPostCode: string) {
+    let province;
+    const postCodeNumber = parseInt(sellerPostCode);
+    if (sellerdepartmentId === 'BASE' && isNumber(parseInt(sellerPostCode))) {
+      province = provinces.find(p => p.ranges.find(r => { return r.start <= postCodeNumber && r.end >= postCodeNumber}));
+    }
+
+    let dataBrut = await this.sellingInformationRepository.find({
+      where: {
+        sellerDepartmentId: sellerdepartmentId,
+      },
     });
+
+    if (province) {
+      dataBrut = dataBrut.filter(d => { return province.ranges.find(r => {return r.start <= d.sellerPostalCode && r.end >= d.sellerPostalCode}) });
+    }
 
     const bestSelling = [];
 
@@ -343,7 +374,7 @@ export class TicketsService {
 
     for (let i = 0; i < bestSelling.length; i++) {
       bestSelling[i].name = (await this.sellerRepository.findOne({ where: { beepleId: bestSelling[i].sellerId } }))?.name
-      || bestSelling[i].sellerId;
+        || bestSelling[i].sellerId;
     }
 
     bestSelling.sort((a, b) => {
@@ -464,7 +495,7 @@ export class TicketsService {
       console.error(e)
     }
 
-    return {hello: 'world'};
+    return { hello: 'world' };
   }
 
 }

@@ -22,6 +22,7 @@ export class ConfirmTicketsDto {
   readonly invoice: number;
   @IsNumber()
   readonly testmode: number;
+  // we use the email of the seller
   @IsString()
   @IsNotEmpty()
   readonly sellerId: string;

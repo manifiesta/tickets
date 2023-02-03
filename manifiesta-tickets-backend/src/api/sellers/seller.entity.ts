@@ -1,17 +1,17 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Department } from "../departments/department.entity";
 
 @Entity()
 export class Seller {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
+  @Column()
   email: string;
 
+  // First and lastname in one
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: true, default: null })
   beepleId: string;
 }

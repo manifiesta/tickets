@@ -13,6 +13,7 @@ export class SellingInformation {
   @Column({nullable: true, default: null})
   clientTransactionId: string;
 
+  // we use the email of the seller for that
   @Column()
   sellerId: string;
 

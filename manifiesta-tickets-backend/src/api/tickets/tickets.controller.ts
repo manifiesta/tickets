@@ -19,7 +19,6 @@ export class TicketsController {
     return this.ticketsService.preparOrder(preparTickets);
   }
 
-  // TODO protect with jwt
   @Post('/confirm')
   confirmOrder(@Body() confirmTickets: ConfirmTicketsDto) {
     return this.ticketsService.confirmOrder(confirmTickets);
@@ -50,9 +49,9 @@ export class TicketsController {
     return this.ticketsService.getAllDepartmentSellingInformation();
   }
 
-  @Get('/sellingInformation/department/:id')
-  getOneDepartmentSellingInformation(@Param('id') id: string) {
-    return this.ticketsService.getOneDepartmentSellingInformation(id);
+  @Get('/sellingInformation/department/:id/:postCode')
+  getOneDepartmentSellingInformation(@Param('id') id: string, @Param('postCode') postCode: string) {
+    return this.ticketsService.getOneDepartmentSellingInformation(id, postCode);
   }
 
   @Get('/sellingInformation/postCode/:id')
