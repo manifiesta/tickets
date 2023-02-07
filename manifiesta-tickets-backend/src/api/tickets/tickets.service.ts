@@ -323,7 +323,7 @@ export class TicketsService {
     });
 
     for (let i = 0; i < dataGroupBySellerId.length; i++) {
-      const u = await this.sellerRepository.findOne({ where: { beepleId: dataGroupBySellerId[i].sellerId } })
+      const u = await this.sellerRepository.findOne({ where: { email: dataGroupBySellerId[i].sellerId } })
       dataGroupBySellerId[i].name = u?.name || dataGroupBySellerId[i].sellerId;
       dataGroupBySellerId[i].email = u?.email
     }
@@ -372,7 +372,7 @@ export class TicketsService {
     });
 
     for (let i = 0; i < bestSelling.length; i++) {
-      bestSelling[i].name = (await this.sellerRepository.findOne({ where: { beepleId: bestSelling[i].sellerId } }))?.name
+      bestSelling[i].name = (await this.sellerRepository.findOne({ where: { email: bestSelling[i].sellerId } }))?.name
         || bestSelling[i].sellerId;
     }
 
@@ -411,7 +411,7 @@ export class TicketsService {
     });
 
     for (let i = 0; i < bestSelling.length; i++) {
-      bestSelling[i].name = (await this.sellerRepository.findOne({ where: { beepleId: bestSelling[i].sellerId } }))?.name
+      bestSelling[i].name = (await this.sellerRepository.findOne({ where: { email: bestSelling[i].sellerId } }))?.name
         || bestSelling[i].sellerId;;
     }
 
