@@ -35,11 +35,21 @@ async function mockSellers(repo, departments: Department[]) {
   const sellerRepo = await repo.getRepository(Seller);
   const mainId = process.env.BEEPLE_TEST_ID || '007';
   return [
-    await sellerRepo.save(sellerRepo.create({ email: 'samy@manifiesta.com', name: 'Samy Gnu', beepleId: mainId })),
-    await sellerRepo.save(sellerRepo.create({ email: 'raoul@manifiesta.com', name: 'Raoul Mertens', beepleId: '117' })),
-    await sellerRepo.save(sellerRepo.create({ email: 'rosa@manifiesta.com', name: 'Rosa Monaco', beepleId: '1919' })),
-    await sellerRepo.save(sellerRepo.create({ email: 'louise@manifiesta.com', name: 'Louise Petrole', beepleId: '1871' })),
-    await sellerRepo.save(sellerRepo.create({ email: 'orwell@manifiesta.com', name: 'Eric Arthur Blair', beepleId: '1984' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'samy@manifiesta.com', name: 'Samy Gnu' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'raoul@manifiesta.com', name: 'Raoul Mertens' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'rosa@manifiesta.com', name: 'Rosa Monaco' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'louise@manifiesta.com', name: 'Louise Petrole' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'marx@manifiesta.com', name: 'Karlou' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'karl@manifiesta.com', name: 'Marxou' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'ange@manifiesta.com', name: 'Gélique' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'fritz@manifiesta.com', name: 'Kola' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'ric@manifiesta.com', name: 'Cola' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'republique@manifiesta.com', name: 'Melenchon' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'poutou@manifiesta.com', name: 'Poutou' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'john@manifiesta.com', name: 'Doe' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'doe@manifiesta.com', name: 'John' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'nota@manifiesta.com', name: 'Bene' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'bene@manifiesta.com', name: 'Nota' })),
   ];
 }
 
@@ -90,7 +100,8 @@ async function mockSellingInformation(repo) {
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'samy@manifiesta.com',
       sellerDepartmentId: 'BASE',
-      sellerPostalCode: 'W-BASE',
+      sellerPostalCode: '1040',
+      fromWorkGroup: true,
       vwTransactionId: '118',
       eventsquareReference: 'PTB-666',
       date: new Date(),
@@ -111,7 +122,7 @@ async function mockSellingInformation(repo) {
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'samy@manifiesta.com',
-      sellerDepartmentId: 'BASE',
+      sellerDepartmentId: 'Comac',
       sellerPostalCode: '5000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',
@@ -154,6 +165,163 @@ async function mockSellingInformation(repo) {
       ticketInfo: [
         { "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 },
         { "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 }
+      ]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'samy@manifiesta.com',
+      sellerDepartmentId: 'Comac',
+      sellerPostalCode: '1000',
+      vwTransactionId: '119',
+      eventsquareReference: 'PVDA-666',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 8',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'marx@manifiesta.com',
+      sellerDepartmentId: 'Comac',
+      sellerPostalCode: '1000',
+      vwTransactionId: '119',
+      eventsquareReference: 'PVDA-666',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 9',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'karl@manifiesta.com',
+      sellerDepartmentId: 'Comac',
+      sellerPostalCode: '1000',
+      vwTransactionId: '119',
+      eventsquareReference: 'PVDA-666',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 10',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'ange@manifiesta.com',
+      sellerDepartmentId: 'Comac',
+      sellerPostalCode: '1000',
+      vwTransactionId: '119',
+      eventsquareReference: 'PVDA-666',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 11',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'fritz@manifiesta.com',
+      sellerDepartmentId: 'Comac',
+      sellerPostalCode: '1000',
+      vwTransactionId: '119',
+      eventsquareReference: 'PVDA-666',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 12',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'samy@manifiesta.com',
+      sellerDepartmentId: 'Comac',
+      sellerPostalCode: '1000',
+      vwTransactionId: '119',
+      eventsquareReference: 'PVDA-666',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 13',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'bene@manifiesta.com',
+      sellerDepartmentId: 'Comac',
+      sellerPostalCode: '1000',
+      vwTransactionId: '119',
+      eventsquareReference: 'PVDA-666',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 14',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'nota@manifiesta.com',
+      sellerDepartmentId: 'Comac',
+      sellerPostalCode: '1000',
+      vwTransactionId: '119',
+      eventsquareReference: 'PVDA-666',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 15',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'doe@manifiesta.com',
+      sellerDepartmentId: 'Comac',
+      sellerPostalCode: '1000',
+      vwTransactionId: '119',
+      eventsquareReference: 'PVDA-666',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 16',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'john@manifiesta.com',
+      sellerDepartmentId: 'Comac',
+      sellerPostalCode: '1000',
+      vwTransactionId: '119',
+      eventsquareReference: 'PVDA-666',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 17',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'poutou@manifiesta.com',
+      sellerDepartmentId: 'Comac',
+      sellerPostalCode: '1000',
+      vwTransactionId: '119',
+      eventsquareReference: 'PVDA-666',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 18',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'republique@manifiesta.com',
+      sellerDepartmentId: 'Comac',
+      sellerPostalCode: '1000',
+      vwTransactionId: '119',
+      eventsquareReference: 'PVDA-666',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 19',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'ric@manifiesta.com',
+      sellerDepartmentId: 'Comac',
+      sellerPostalCode: '1000',
+      vwTransactionId: '119',
+      eventsquareReference: 'PVDA-666',
+      date: new Date(),
+      quantity: 1,
+      clientName: 'Random Client 20',
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'samy@manifiesta.com',
+      sellerDepartmentId: 'BASE',
+      sellerPostalCode: '1040',
+      vwTransactionId: '117',
+      eventsquareReference: 'YOLO',
+      date: new Date(),
+      quantity: 4,
+      clientName: 'Random Client 1',
+      ticketInfo: [
+        { "ticketId": "1", "ticketAmount": 2, "ticketName": "Regular Intal", ticketPrice: 0.01 },
+        { "ticketId": "2", "ticketAmount": 2, "ticketName": "Weekend Intal", ticketPrice: 0.02 }
       ]
     })),
   ]

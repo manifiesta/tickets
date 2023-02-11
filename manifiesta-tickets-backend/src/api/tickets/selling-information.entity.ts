@@ -23,6 +23,9 @@ export class SellingInformation {
   @Column()
   sellerPostalCode: string;
 
+  @Column()
+  fromWorkGroup?: boolean;
+
   @Column({nullable: true, default: null})
   vwTransactionId: string;
 

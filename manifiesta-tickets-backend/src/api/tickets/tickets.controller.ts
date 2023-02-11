@@ -34,14 +34,14 @@ export class TicketsController {
     return this.ticketsService.getAllSellingInformation();
   }
 
+  @Get('/sellingInformation/seller/top-ten')
+  getAllSellerSellingInformationTopTen() {
+    return this.ticketsService.getTopTenSeller();
+  }
+
   @Get('/sellingInformation/seller/:id')
   getSellerSellingInformation(@Param('id') id: string) {
     return this.ticketsService.getSellerSellingInformation(id);
-  }
-
-  @Get('/sellingInformation/seller')
-  getAllSellerSellingInformation() {
-    return this.ticketsService.getAllSellerSellingInformation();
   }
 
   @Get('/sellingInformation/department')
@@ -49,14 +49,16 @@ export class TicketsController {
     return this.ticketsService.getAllDepartmentSellingInformation();
   }
 
-  @Get('/sellingInformation/department/:id/:postCode')
-  getOneDepartmentSellingInformation(@Param('id') id: string, @Param('postCode') postCode: string) {
-    return this.ticketsService.getOneDepartmentSellingInformation(id, postCode);
+  @Get('/sellingInformation/department/top-ten/:id/:postCode')
+  getOneDepartmentSellingInformationTopTen(@Param('id') id: string, @Param('postCode') postCode: string) {
+    return this.ticketsService.getMyDepartmentTopTen(id, postCode);
   }
 
-  @Get('/sellingInformation/postCode/:id')
-  getOnePostCodeSellingInformation(@Param('id') id: string) {
-    return this.ticketsService.getOnePostCodeSellingInformation(id);
+  @Get('/sellingInformation/postCode/:postCode/:departmentCode/:fromWorkGroup')
+  getOnePostCodeSellingInformation(
+    @Param('postCode') postCode: string, @Param('departmentCode') departmentCode: string,  @Param('fromWorkGroup') fromWorkGroup: string
+  ) {
+    return this.ticketsService.getOnePostCodeSellingInformation(postCode, departmentCode, fromWorkGroup);
   }
 
   @Get('/physicalTickets')

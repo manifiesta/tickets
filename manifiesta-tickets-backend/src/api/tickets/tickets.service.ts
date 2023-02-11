@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { isNumber } from 'class-validator';
+import { isBoolean, isNumber } from 'class-validator';
 import { firstValueFrom, map, forkJoin, catchError } from 'rxjs';
 import { IsNull, Not, Repository } from 'typeorm';
 import { URLSearchParams } from 'url';
@@ -71,7 +71,8 @@ export class TicketsService {
       ticketInfo: preparTickets.tickets,
       quantity: quantity,
       clientTransactionId: preparTickets.clientTransactionId,
-      clientName: `${preparTickets.firstname} ${preparTickets.lastname}`
+      clientName: `${preparTickets.firstname} ${preparTickets.lastname}`,
+      fromWorkGroup: preparTickets.fromWorkGroup,
     }));
 
     return sellingInformation;
@@ -120,6 +121,7 @@ export class TicketsService {
         clientTransactionId: confirmTickets.clientTransactionId,
         clientName: `${confirmTickets.firstname} ${confirmTickets.lastname}`,
         vwTransactionId: confirmTickets.vwTransactionId,
+        fromWorkGroup: confirmTickets.fromWorkGroup,
       }));
     }
 
@@ -289,8 +291,8 @@ export class TicketsService {
     return { data, totalAmountTicket: this.getNumberOfTicket(data) };
   }
 
-  async getSellerSellingInformation(beepleId: string) {
-    let data = await this.sellingInformationRepository.find({ where: { sellerId: beepleId, eventsquareReference: Not(IsNull()) } });
+  async getSellerSellingInformation(id: string) {
+    let data = await this.sellingInformationRepository.find({ where: { sellerId: id, eventsquareReference: Not(IsNull()) } });
     data = data.map(d => {
       return {
         ...d,
@@ -300,7 +302,12 @@ export class TicketsService {
     return { data, totalAmountTicket: this.getNumberOfTicket(data) };
   }
 
-  async getAllSellerSellingInformation() {
+  async getTopTenSeller() {
+    const myDepartmentInfo = await this.getAllSellerSellingInformation();
+    return myDepartmentInfo.data.slice(0, 10);
+  }
+
+  async getAllSellerSellingInformation(): Promise<{ data: any[], totalAmountTicket: number }> {
     const data = await this.sellingInformationRepository.find({
       where: { eventsquareReference: Not(IsNull()) },
       order: { sellerId: 'ASC' },
@@ -335,7 +342,13 @@ export class TicketsService {
     return { data: dataGroupBySellerId, totalAmountTicket: this.getNumberOfTicket(dataGroupBySellerId) };
   }
 
-  async getOneDepartmentSellingInformation(sellerdepartmentId: string, sellerPostCode: string) {
+  async getMyDepartmentTopTen(sellerdepartmentId: string, sellerPostCode: string) {
+    const myDepartmentInfo = await this.getOneDepartmentSellingInformation(sellerdepartmentId, sellerPostCode);
+    return myDepartmentInfo.bestSelling.slice(0, 10);
+  }
+
+  async getOneDepartmentSellingInformation(sellerdepartmentId: string, sellerPostCode: string):
+    Promise<{ data: any[], bestSelling: any[], totalAmountTicket: number }> {
     let province;
     const postCodeNumber = parseInt(sellerPostCode);
     if (sellerdepartmentId === 'BASE' && isNumber(parseInt(sellerPostCode))) {
@@ -387,9 +400,16 @@ export class TicketsService {
     };
   }
 
-  async getOnePostCodeSellingInformation(postalCode: string) {
+  async getOnePostCodeSellingInformation(postalCode: string, departmentCode: string, fromWorkGroup: string):
+    Promise<{ data: any[], bestSelling: any[], totalAmountTicket: number }> {
+    console.log('from wg', fromWorkGroup, fromWorkGroup === '1', departmentCode, postalCode, fromWorkGroup === 'true')
     const dataBrut = await this.sellingInformationRepository.find({
-      where: { sellerPostalCode: postalCode, eventsquareReference: Not(IsNull()) }
+      where: {
+        sellerPostalCode: postalCode,
+        eventsquareReference: Not(IsNull()),
+        sellerDepartmentId: departmentCode,
+        fromWorkGroup: fromWorkGroup === 'true'
+      }
     });
 
     const bestSelling = [];
