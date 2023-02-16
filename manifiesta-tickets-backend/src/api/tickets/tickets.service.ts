@@ -35,6 +35,17 @@ export class TicketsService {
     private readonly addressRepository: Repository<Address>,
   ) { }
 
+  private reduceName(name: string): string {
+    if (!name) {
+      return undefined;
+    }
+    const split = name.split(' ');
+    const firstName = split.shift();
+    const lastName = split.map(e => e[0]).join('');
+
+    return `${firstName} ${lastName}`
+  }
+
   getAllTicketTypes(shop: string = 'app') {
     return firstValueFrom(
       this.httpService.get<any>(
@@ -331,8 +342,7 @@ export class TicketsService {
 
     for (let i = 0; i < dataGroupBySellerId.length; i++) {
       const u = await this.sellerRepository.findOne({ where: { email: dataGroupBySellerId[i].sellerId } })
-      dataGroupBySellerId[i].name = u?.name || dataGroupBySellerId[i].sellerId;
-      dataGroupBySellerId[i].email = u?.email
+      dataGroupBySellerId[i].name = this.reduceName(u?.name);
     }
 
     dataGroupBySellerId.sort((a, b) => {
@@ -385,8 +395,7 @@ export class TicketsService {
     });
 
     for (let i = 0; i < bestSelling.length; i++) {
-      bestSelling[i].name = (await this.sellerRepository.findOne({ where: { email: bestSelling[i].sellerId } }))?.name
-        || bestSelling[i].sellerId;
+      bestSelling[i].name = this.reduceName((await this.sellerRepository.findOne({ where: { email: bestSelling[i].sellerId } }))?.name);
     }
 
     bestSelling.sort((a, b) => {
@@ -431,8 +440,7 @@ export class TicketsService {
     });
 
     for (let i = 0; i < bestSelling.length; i++) {
-      bestSelling[i].name = (await this.sellerRepository.findOne({ where: { email: bestSelling[i].sellerId } }))?.name
-        || bestSelling[i].sellerId;;
+      bestSelling[i].name = this.reduceName((await this.sellerRepository.findOne({ where: { email: bestSelling[i].sellerId } }))?.name);
     }
 
     bestSelling.sort((a, b) => {
