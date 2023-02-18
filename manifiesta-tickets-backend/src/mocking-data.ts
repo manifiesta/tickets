@@ -37,7 +37,7 @@ async function mockSellers(repo, departments: Department[]) {
   return [
     await sellerRepo.save(sellerRepo.create({ email: 'samy@manifiesta.com', name: 'Samy Gnu' })),
     await sellerRepo.save(sellerRepo.create({ email: 'raoul@manifiesta.com', name: 'Raoul Mertens' })),
-    await sellerRepo.save(sellerRepo.create({ email: 'rosa@manifiesta.com', name: 'Rosa Monaco' })),
+    await sellerRepo.save(sellerRepo.create({ email: 'rosa@manifiesta.com', name: 'Rosa Monaco', workGroup: true })),
     await sellerRepo.save(sellerRepo.create({ email: 'louise@manifiesta.com', name: 'Louise La Petroleuse' })),
     await sellerRepo.save(sellerRepo.create({ email: 'marx@manifiesta.com', name: 'Karlou' })),
     await sellerRepo.save(sellerRepo.create({ email: 'karl@manifiesta.com', name: 'Marxou' })),

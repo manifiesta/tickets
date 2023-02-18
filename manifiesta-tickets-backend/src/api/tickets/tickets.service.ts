@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { isBoolean, isNumber } from 'class-validator';
+import { timeStamp } from 'console';
 import { firstValueFrom, map, forkJoin, catchError } from 'rxjs';
 import { IsNull, Not, Repository } from 'typeorm';
 import { URLSearchParams } from 'url';
@@ -35,7 +36,7 @@ export class TicketsService {
     private readonly addressRepository: Repository<Address>,
   ) { }
 
-  private reduceName(name: string): string {
+  private reduceName(name: string, workGroup = false): string {
     if (!name) {
       return undefined;
     }
@@ -43,7 +44,7 @@ export class TicketsService {
     const firstName = split.shift();
     const lastName = split.map(e => e[0]).join('');
 
-    return `${firstName} ${lastName}`
+    return `${workGroup && firstName ? firstName[0]: firstName} ${lastName}`
   }
 
   getAllTicketTypes(shop: string = 'app') {
@@ -66,7 +67,15 @@ export class TicketsService {
   async preparOrder(preparTickets: PreparTicketsDto) {
     const seller = await this.sellerRepository.findOne({ where: { email: preparTickets.sellerId } });
     if (!seller) {
-      await this.sellerRepository.save(await this.sellerRepository.create({ email: preparTickets.sellerId, name: preparTickets.sellerName }));
+      await this.sellerRepository.save(
+        await this.sellerRepository.create(
+          { email: preparTickets.sellerId, name: preparTickets.sellerName, workGroup: preparTickets.fromWorkGroup }
+        )
+      );
+    } else {
+      seller.name = preparTickets.sellerName;
+      seller.workGroup = preparTickets.fromWorkGroup;
+      this.sellerRepository.save(seller);
     }
 
     let quantity = 0;
@@ -104,8 +113,6 @@ export class TicketsService {
       { where: { vwTransactionId: confirmTickets.vwTransactionId } }
     );
 
-    console.log('is there ?', sellingWithVwTransactionId)
-
     if (sellingWithVwTransactionId) {
       throw new HttpException({ message: ['error transaction already existing'], code: 'transaction-already-done' }, HttpStatus.CONFLICT);
     }
@@ -135,8 +142,6 @@ export class TicketsService {
         fromWorkGroup: confirmTickets.fromWorkGroup,
       }));
     }
-
-    console.log('begin state', sellingInformation)
 
     // Verification that the transaction id exist in VW
     // TODO verify that is not already used !
@@ -308,6 +313,7 @@ export class TicketsService {
       return {
         ...d,
         sellerDepartment: departments.find(df => df.code === d.sellerDepartmentId)?.label || d.sellerDepartmentId,
+        clientName: this.reduceName(d.clientName),
       }
     })
     return { data, totalAmountTicket: this.getNumberOfTicket(data) };
@@ -342,7 +348,7 @@ export class TicketsService {
 
     for (let i = 0; i < dataGroupBySellerId.length; i++) {
       const u = await this.sellerRepository.findOne({ where: { email: dataGroupBySellerId[i].sellerId } })
-      dataGroupBySellerId[i].name = this.reduceName(u?.name);
+      dataGroupBySellerId[i].name = this.reduceName(u?.name, u?.workGroup);
     }
 
     dataGroupBySellerId.sort((a, b) => {
@@ -395,7 +401,8 @@ export class TicketsService {
     });
 
     for (let i = 0; i < bestSelling.length; i++) {
-      bestSelling[i].name = this.reduceName((await this.sellerRepository.findOne({ where: { email: bestSelling[i].sellerId } }))?.name);
+      const u = await this.sellerRepository.findOne({ where: { email: bestSelling[i].sellerId } });
+      bestSelling[i].name = this.reduceName(u?.name, u?.workGroup);
     }
 
     bestSelling.sort((a, b) => {
@@ -411,7 +418,6 @@ export class TicketsService {
 
   async getOnePostCodeSellingInformation(postalCode: string, departmentCode: string, fromWorkGroup: string):
     Promise<{ data: any[], bestSelling: any[], totalAmountTicket: number }> {
-    console.log('from wg', fromWorkGroup, fromWorkGroup === '1', departmentCode, postalCode, fromWorkGroup === 'true')
     const dataBrut = await this.sellingInformationRepository.find({
       where: {
         sellerPostalCode: postalCode,
@@ -440,7 +446,8 @@ export class TicketsService {
     });
 
     for (let i = 0; i < bestSelling.length; i++) {
-      bestSelling[i].name = this.reduceName((await this.sellerRepository.findOne({ where: { email: bestSelling[i].sellerId } }))?.name);
+      const u = await this.sellerRepository.findOne({ where: { email: bestSelling[i].sellerId } });
+      bestSelling[i].name = this.reduceName(u?.name, u?.workGroup);
     }
 
     bestSelling.sort((a, b) => {

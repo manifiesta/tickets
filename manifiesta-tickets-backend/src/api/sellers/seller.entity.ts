@@ -12,6 +12,9 @@ export class Seller {
   @Column()
   name: string;
 
+  @Column()
+  workGroup: boolean;
+
   @Column({ nullable: true, default: null })
   beepleId: string;
 }

@@ -7,9 +7,7 @@ import { ConfirmTicketsDto } from 'src/api/tickets/dto/confirm-tickets.dto';
 @ValidatorConstraint({ name: 'addressNeeded', async: false })
 export class AddressNeededValidator implements ValidatorConstraintInterface {
   validate(address: Address, args: ValidationArguments) {
-    console.log('validate address', address, args)
     if ((args.object as ConfirmTicketsDto).askSendTicket) {
-      console.log('we verify the address now')
       if (address) {
         if (!(!!address.street && !!address.number && !!address.postCode && !!address.city)) {
           return false;
