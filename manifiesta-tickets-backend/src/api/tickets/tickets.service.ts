@@ -129,7 +129,7 @@ export class TicketsService {
       await this.sellingInformationRepository.save(sellingInformation);
     } else {
       // We stock the first information before the command run, in case of, eventSquereReference will come at the end
-      const sellingInformation = await this.sellingInformationRepository.save(this.sellingInformationRepository.create({
+      sellingInformation = await this.sellingInformationRepository.save(this.sellingInformationRepository.create({
         date: new Date(),
         sellerDepartmentId: confirmTickets.sellerDepartmentId,
         sellerId: confirmTickets.sellerId,
@@ -447,7 +447,7 @@ export class TicketsService {
 
     for (let i = 0; i < bestSelling.length; i++) {
       const u = await this.sellerRepository.findOne({ where: { email: bestSelling[i].sellerId } });
-      bestSelling[i].name = this.reduceName(u?.name, u?.workGroup);
+      bestSelling[i].name = this.reduceName(u?.name, fromWorkGroup === 'true');
     }
 
     bestSelling.sort((a, b) => {
