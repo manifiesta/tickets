@@ -29,14 +29,13 @@ export class PageLoginComponent {
     this.token = this.loginService.getToken();
 
     this.loginService.user$.subscribe(u => {
-      this.token = u.token as string;
+      this.token = u?.token as string;
     });
   }
 
   login() {
     this.errorMessage = null as unknown as string;
     this.loginService.login(this.loginForm.value.email, this.loginForm.value.password).subscribe(admin => {
-      console.log('admin ?', admin)
       this.loginService.setUser(admin);
     }, err => {
       console.error('error ?', err);
