@@ -308,7 +308,9 @@ export class TicketsService {
   }
 
   async getSellerSellingInformation(id: string) {
-    let data = await this.sellingInformationRepository.find({ where: { sellerId: id, eventsquareReference: Not(IsNull()) } });
+    let data = await this.sellingInformationRepository.find(
+      { where: { sellerId: id, eventsquareReference: Not(IsNull()) }, order: { date: 'ASC' } }
+    );
     data = data.map(d => {
       return {
         ...d,
@@ -490,16 +492,6 @@ export class TicketsService {
       data: dataGroupBySellerDepartmentId,
       totalAmountTicket: this.getNumberOfTicket(dataGroupBySellerDepartmentId)
     };
-  }
-
-  async getAllPhysicalTickets() {
-    return this.addressRepository.find();
-  }
-
-  async physicalTicketSendDone(id) {
-    const address = await this.addressRepository.findOneBy({ id });
-    address.sendDone = !address.sendDone;
-    return this.addressRepository.save(address);
   }
 
   async newsletterAddMember(newsletterAdd: NewsletterAddDto) {

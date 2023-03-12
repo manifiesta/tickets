@@ -29,11 +29,6 @@ export class TicketsController {
     return this.ticketsService.getTransactionById(id);
   }
 
-  @Get('/sellingInformation')
-  getAllSellingInformation() {
-    return this.ticketsService.getAllSellingInformation();
-  }
-
   @Get('/sellingInformation/seller/top-ten')
   getAllSellerSellingInformationTopTen() {
     return this.ticketsService.getTopTenSeller();
@@ -42,11 +37,6 @@ export class TicketsController {
   @Get('/sellingInformation/seller/:id')
   getSellerSellingInformation(@Param('id') id: string) {
     return this.ticketsService.getSellerSellingInformation(id);
-  }
-
-  @Get('/sellingInformation/department')
-  getAllDepartmentSellingInformation() {
-    return this.ticketsService.getAllDepartmentSellingInformation();
   }
 
   @Get('/sellingInformation/department/top-ten/:id/:postCode')
@@ -59,16 +49,6 @@ export class TicketsController {
     @Param('postCode') postCode: string, @Param('departmentCode') departmentCode: string,  @Param('fromWorkGroup') fromWorkGroup: string
   ) {
     return this.ticketsService.getOnePostCodeSellingInformation(postCode, departmentCode, fromWorkGroup);
-  }
-
-  @Get('/physicalTickets')
-  getAllPhysicalTickets() {
-    return this.ticketsService.getAllPhysicalTickets();
-  }
-
-  @Get('/physicalTickets/sendDone/:id')
-  physicalTicketSendDone(@Param('id') id: string) {
-    return this.ticketsService.physicalTicketSendDone(id);
   }
 
   @Post('/newsletter-add')

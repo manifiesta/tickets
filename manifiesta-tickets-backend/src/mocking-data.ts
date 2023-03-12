@@ -4,7 +4,9 @@
  */
 
 import { DataSource } from "typeorm";
+import { Admin } from "./api/admins/admin.entity";
 import { Department } from "./api/departments/department.entity";
+import { EncryptionsService } from "./api/encryptions/encryptions.service";
 import { Seller } from "./api/sellers/seller.entity";
 import { Address } from "./api/tickets/address.entity";
 import { SellingInformation } from "./api/tickets/selling-information.entity";
@@ -20,6 +22,16 @@ export async function mockingData() {
   const sellers = await mockSellers(repo, departments);
   const address = await mockAddress(repo);
   const sellingInformation = await mockSellingInformation(repo);
+  const admins = await mockAdmins(repo);
+}
+
+async function mockAdmins(repo) {
+  const adminRepo = repo.getRepository(Admin);
+  const e = new EncryptionsService();
+  return [
+    await adminRepo.save(await adminRepo.create({ email: 'samy@manifiesta.com', password: await e.hash('qwerty') })),
+    await adminRepo.save(await adminRepo.create({ email: 'rosa@manifiesta.com', password: await e.hash('qwertz') })),
+  ];
 }
 
 async function mockDepartments(repo) {
@@ -89,7 +101,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1040',
       vwTransactionId: '117',
       eventsquareReference: null,
-      date: new Date(),
+      date: new Date('2021-06-06'),
       quantity: 4,
       clientName: 'Random Client 1',
       ticketInfo: [
@@ -104,7 +116,7 @@ async function mockSellingInformation(repo) {
       fromWorkGroup: true,
       vwTransactionId: '118',
       eventsquareReference: 'PTB-666',
-      date: new Date(),
+      date: new Date('2021-04-04'),
       quantity: 1,
       clientName: 'Random Client 2',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketName": "Regular Intal", ticketPrice: 0.01 }]
@@ -126,7 +138,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '5000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',
-      date: new Date(),
+      date: new Date('2021-08-08'),
       quantity: 1,
       clientName: 'Random Client 4',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
@@ -173,7 +185,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',
-      date: new Date(),
+      date: new Date('2021-06-06'),
       quantity: 1,
       clientName: 'Random Client 8',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]

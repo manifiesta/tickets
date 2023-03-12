@@ -21,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@awesome-cordova-plugins/open-native-settings": "^6.3.0",
     "@fastify/static": "^6.5.0",
     "@fastify/view": "^7.1.1",
     "@mailchimp/mailchimp_marketing": "^3.0.80",

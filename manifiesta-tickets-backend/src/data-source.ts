@@ -1,4 +1,5 @@
 import { DataSource, DataSourceOptions } from "typeorm";
+import { Admin } from "./api/admins/admin.entity";
 import { Department } from "./api/departments/department.entity";
 import { Seller } from "./api/sellers/seller.entity";
 import { Address } from "./api/tickets/address.entity";
@@ -14,7 +15,7 @@ export function appDataSourceConfig(): DataSourceOptions {
     database: process.env.NODE_ENV === 'prod' ?
       process.env.DATABASE_NAME :
       process.env.DATABASE_NAME_TEST,
-    entities: [Seller, Department, Address, SellingInformation],
+    entities: [Seller, Department, Address, SellingInformation, Admin],
     logging: true,
     synchronize: true,
   }

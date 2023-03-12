@@ -15,22 +15,37 @@ export class SellersService {
   }
 
   getAllSellingInformation(): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}tickets/sellingInformation`);
+    return this.http.get<any>(
+      `${environment.apiUrl}admins/sellingsInformations`,
+      { headers: { token: localStorage.getItem('admin-token') as string } }
+    );
   }
 
   getAllSellerSellingInformation(): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}tickets/sellingInformation/seller`);
+    return this.http.get<any>(
+      `${environment.apiUrl}admins/sellingsInformations/sellers`,
+      { headers: { token: localStorage.getItem('admin-token') as string } }
+    );
   }
 
   getAllDepartmentSellingInformation(): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}tickets/sellingInformation/department`);
+    return this.http.get<any>(
+      `${environment.apiUrl}admins/sellingsInformations/departments`,
+      { headers: { token: localStorage.getItem('admin-token') as string } }
+    );
   }
 
   getAllPhysicalTickets(): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}tickets/physicalTickets`);
+    return this.http.get<any>(
+      `${environment.apiUrl}admins/physicalTickets`,
+      { headers: { token: localStorage.getItem('admin-token') as string } }
+    );
   }
 
   physicalTicketSendDone(id: string): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}tickets/physicalTickets/sendDone/${id}`);
+    return this.http.get<any>(
+      `${environment.apiUrl}admins/physicalTickets/sendDone/${id}`,
+      { headers: { token: localStorage.getItem('admin-token') as string } }
+    );
   }
 }
