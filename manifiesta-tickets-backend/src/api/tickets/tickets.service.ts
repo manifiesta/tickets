@@ -24,7 +24,7 @@ export class TicketsService {
   vwSecret = process.env.VIVA_WALLET_SMART_CHECKOUT_SECRET;
   vwClient = process.env.VIVA_WALLET_SMART_CHECKOUT_CLIENT_ID;
 
-  acceptedShop = ['app', 'comac', 'redfox', 'base', 'GVHV', 'other'];
+  acceptedShop = ['app', 'comac', 'redfox', 'base', 'gvhv', 'other'];
 
   constructor(
     private httpService: HttpService,
