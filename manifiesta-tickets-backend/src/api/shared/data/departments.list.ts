@@ -12,8 +12,7 @@ export const departments = [
   { label: 'GVHV', labelFr: 'MPLP', labelNl: 'GVHV', code: 'GVHV', id: 2},
   { label: 'Comac', labelFr: 'Comac', labelNl: 'Comac', code: 'Comac', id: 3 },
   { label: 'Redfox', labelFr: 'Redfox', labelNl: 'Redfox', code: 'Redfox', id: 6 },
-  { label: 'Intal', labelFr: 'Intal', labelNl: 'Intal', code: 'Intal', id: 4 },
-  { label: 'National', labelFr: 'Autres', labelNl: 'Andere',  code: 'National', id: 5 },
+  { label: 'National', labelFr: 'Autres', labelNl: 'Andere',  code: 'Other', id: 5 },
 ];
 
 export const provinces: { label: string, code: string, ranges: { start:number, end:number}[]}[] = [
