@@ -1,5 +1,5 @@
 export const departments = [
-  { label: 'Province', labelFr: 'Province', labelNl: 'Provencie', code: 'BASE', id: 1},
+  { label: 'Province', labelFr: 'PTB', labelNl: 'PVDA', code: 'BASE', id: 1},
   // { label: 'Antwerpen', code: 'ANT', id: 2 },
   // { label: 'Bruxelles & Brabant-Wallon', code: 'BBW', id: 2 },
   // { label: 'Hainaut', code: 'HAI', id: 2 },
@@ -11,8 +11,9 @@ export const departments = [
   // { label: 'West-Vlaanderen', code: 'WEV', id: 2 },
   { label: 'GVHV', labelFr: 'MPLP', labelNl: 'GVHV', code: 'GVHV', id: 2},
   { label: 'Comac', labelFr: 'Comac', labelNl: 'Comac', code: 'Comac', id: 3 },
+  { label: 'Redfox', labelFr: 'Redfox', labelNl: 'Redfox', code: 'Redfox', id: 6 },
   { label: 'Intal', labelFr: 'Intal', labelNl: 'Intal', code: 'Intal', id: 4 },
-  { label: 'National', labelFr: 'Nationale', labelNl: 'Nationaal',  code: 'National', id: 5 },
+  { label: 'National', labelFr: 'Autres', labelNl: 'Andere',  code: 'National', id: 5 },
 ];
 
 export const provinces: { label: string, code: string, ranges: { start:number, end:number}[]}[] = [

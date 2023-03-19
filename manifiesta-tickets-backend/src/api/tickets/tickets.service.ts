@@ -3,7 +3,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { isBoolean, isNumber } from 'class-validator';
 import { timeStamp } from 'console';
-import { firstValueFrom, map, forkJoin, catchError } from 'rxjs';
+import { firstValueFrom, map, forkJoin, catchError, tap } from 'rxjs';
 import { IsNull, Not, Repository } from 'typeorm';
 import { URLSearchParams } from 'url';
 import { Seller } from '../sellers/seller.entity';
@@ -24,7 +24,7 @@ export class TicketsService {
   vwSecret = process.env.VIVA_WALLET_SMART_CHECKOUT_SECRET;
   vwClient = process.env.VIVA_WALLET_SMART_CHECKOUT_CLIENT_ID;
 
-  acceptedShop = ['app', 'comac', 'intal', 'redfox', 'cubanismo', 'vrijwilligers', 'partners-manifiesta'];
+  acceptedShop = ['app', 'comac', 'intal', 'redfox', 'cubanismo', 'vrijwilligers', 'partners-manifiesta', 'base'];
 
   constructor(
     private httpService: HttpService,
@@ -50,7 +50,7 @@ export class TicketsService {
   getAllTicketTypes(shop: string = 'app') {
     return firstValueFrom(
       this.httpService.get<any>(
-        `https://api.eventsquare.io/1.0/store/manifiesta-dev/2023/${this.acceptedShop.includes(shop.toLowerCase())
+        `https://api.eventsquare.io/1.0/store/manifiesta/74ctk6je5s2o/${this.acceptedShop.includes(shop.toLowerCase())
           ? shop.toLowerCase() : 'app'}`, {
         headers: {
           apiKey: this.apiKey,
@@ -60,6 +60,7 @@ export class TicketsService {
         map(d => { return d.data }),
         map(data => { return data.edition.channel.types }),
         map(tickets => { return Array.from(tickets).filter(t => t['type'] === 'ticket') }),
+        
       )
     );
   }
@@ -179,7 +180,7 @@ export class TicketsService {
     // And command the EventSquare tickets
 
     const cartid = (await firstValueFrom(
-      this.httpService.get<any>('https://api.eventsquare.io/1.0/store/manifiesta-dev/2023/pos?language=nl&pos_token=' + this.posToken, {
+      this.httpService.get<any>('https://api.eventsquare.io/1.0/store/manifiesta/74ctk6je5s2o/app?language=nl&pos_token=' + this.posToken, {
         headers: {
           apiKey: this.apiKey,
         }
