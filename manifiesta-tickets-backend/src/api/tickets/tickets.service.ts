@@ -129,7 +129,7 @@ export class TicketsService {
     let sellingInformation;
 
     // If there are some testing ticket, we register nothing
-    if (!ticketTest) {
+    
       const sellingInformationWithClientTransactionId = await this.sellingInformationRepository.findOne(
         { where: { clientTransactionId: confirmTickets.clientTransactionId } }
       );
@@ -153,7 +153,7 @@ export class TicketsService {
           fromWorkGroup: confirmTickets.fromWorkGroup,
         }));
       }
-    }
+
 
     // Verification that the transaction id exist in VW
     // TODO verify that is not already used !
@@ -251,10 +251,10 @@ export class TicketsService {
       )
     );
 
-    if (!ticketTest) {
+
       sellingInformation.eventsquareReference = finalOrder.order.reference;
       await this.sellingInformationRepository.save(sellingInformation);
-    }
+    
 
     // If the client demand a physical ticket
     if (confirmTickets.askSendTicket) {
