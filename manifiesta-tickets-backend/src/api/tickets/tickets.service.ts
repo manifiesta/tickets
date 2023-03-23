@@ -66,7 +66,7 @@ export class TicketsService {
 
   presenceOfTestTicket(preparTickets: PreparTicketsDto | ConfirmTicketsDto): boolean {
     return preparTickets.tickets.findIndex(ts => {
-      return ts.ticketName.includes('[TEST]') || ts['ticketLabel']?.includes('[TEST]')
+      return ts.ticketLabel.includes('[TEST]')
     }) > -1;
   }
 

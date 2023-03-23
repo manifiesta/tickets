@@ -39,7 +39,7 @@ export class PreparTicketsDto {
   @IsString()
   readonly clientTransactionId: string;
   @IsArray()
-  readonly tickets: { ticketId: string, ticketAmount: number, ticketName: string, ticketPrice: number }[];
+  readonly tickets: { ticketId: string, ticketAmount: number, ticketLabel: string, ticketPrice: number }[];
   readonly fromWorkGroup: boolean;
   
   readonly askSendTicket: boolean;
