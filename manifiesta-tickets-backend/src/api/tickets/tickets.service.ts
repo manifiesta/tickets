@@ -44,7 +44,7 @@ export class TicketsService {
     const firstName = split.shift();
     const lastName = split.map(e => e[0]).join('');
 
-    return `${workGroup && firstName ? firstName[0]: firstName} ${lastName}`
+    return `${workGroup && firstName ? firstName[0] : firstName} ${lastName}`
   }
 
   getAllTicketTypes(shop: string = 'app') {
@@ -65,7 +65,10 @@ export class TicketsService {
   }
 
   presenceOfTestTicket(preparTickets: PreparTicketsDto | ConfirmTicketsDto): boolean {
-    return preparTickets.tickets.findIndex(ts => {return ts.ticketName.includes('[TEST]') }) > -1;
+    const test = '[TEST]';
+    return preparTickets.tickets.findIndex(ts => {
+      return ts.ticketName.includes(test) || ts['ticketLabel'].includes(test)
+    }) > -1;
   }
 
   async preparOrder(preparTickets: PreparTicketsDto) {
@@ -82,12 +85,12 @@ export class TicketsService {
         seller.workGroup = preparTickets.fromWorkGroup;
         this.sellerRepository.save(seller);
       }
-  
+
       let quantity = 0;
       preparTickets.tickets.forEach(e => {
         quantity += e.ticketAmount;
       });
-  
+
       const sellingInformation = await this.sellingInformationRepository.save(this.sellingInformationRepository.create({
         date: new Date(),
         sellerDepartmentId: preparTickets.sellerDepartmentId,
@@ -99,7 +102,7 @@ export class TicketsService {
         clientName: `${preparTickets.firstname} ${preparTickets.lastname}`,
         fromWorkGroup: preparTickets.fromWorkGroup,
       }));
-  
+
       return sellingInformation;
     }
 
@@ -108,7 +111,6 @@ export class TicketsService {
 
   // TODO try better way with no async shit
   // TODO manage lang
-  // TODO change / adapt with the prepar call
   async confirmOrder(confirmTickets: ConfirmTicketsDto) {
     const ticketTest = this.presenceOfTestTicket(confirmTickets);
 
@@ -129,11 +131,11 @@ export class TicketsService {
     let sellingInformation;
 
     // If there are some testing ticket, we register nothing
-    
+    if (!ticketTest) {
       const sellingInformationWithClientTransactionId = await this.sellingInformationRepository.findOne(
         { where: { clientTransactionId: confirmTickets.clientTransactionId } }
       );
-  
+
       if (sellingInformationWithClientTransactionId) {
         sellingInformation = sellingInformationWithClientTransactionId;
         sellingInformation.vwTransactionId = confirmTickets.vwTransactionId;
@@ -153,7 +155,7 @@ export class TicketsService {
           fromWorkGroup: confirmTickets.fromWorkGroup,
         }));
       }
-
+    }
 
     // Verification that the transaction id exist in VW
     // TODO verify that is not already used !
@@ -251,10 +253,10 @@ export class TicketsService {
       )
     );
 
-
+    if (!ticketTest) {
       sellingInformation.eventsquareReference = finalOrder.order.reference;
       await this.sellingInformationRepository.save(sellingInformation);
-    
+    }
 
     // If the client demand a physical ticket
     if (confirmTickets.askSendTicket) {
