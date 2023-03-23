@@ -60,49 +60,57 @@ export class TicketsService {
         map(d => { return d.data }),
         map(data => { return data.edition.channel.types }),
         map(tickets => { return Array.from(tickets).filter(t => t['type'] === 'ticket') }),
-        
       )
     );
   }
 
+  presenceOfTestTicket(preparTickets: PreparTicketsDto | ConfirmTicketsDto): boolean {
+    return preparTickets.tickets.findIndex(ts => {return ts.ticketName.includes('[TEST]') }) > -1;
+  }
+
   async preparOrder(preparTickets: PreparTicketsDto) {
-    const seller = await this.sellerRepository.findOne({ where: { email: preparTickets.sellerId } });
-    if (!seller) {
-      await this.sellerRepository.save(
-        await this.sellerRepository.create(
-          { email: preparTickets.sellerId, name: preparTickets.sellerName, workGroup: preparTickets.fromWorkGroup }
-        )
-      );
-    } else {
-      seller.name = preparTickets.sellerName;
-      seller.workGroup = preparTickets.fromWorkGroup;
-      this.sellerRepository.save(seller);
+    if (!this.presenceOfTestTicket(preparTickets)) {
+      const seller = await this.sellerRepository.findOne({ where: { email: preparTickets.sellerId } });
+      if (!seller) {
+        await this.sellerRepository.save(
+          await this.sellerRepository.create(
+            { email: preparTickets.sellerId, name: preparTickets.sellerName, workGroup: preparTickets.fromWorkGroup }
+          )
+        );
+      } else {
+        seller.name = preparTickets.sellerName;
+        seller.workGroup = preparTickets.fromWorkGroup;
+        this.sellerRepository.save(seller);
+      }
+  
+      let quantity = 0;
+      preparTickets.tickets.forEach(e => {
+        quantity += e.ticketAmount;
+      });
+  
+      const sellingInformation = await this.sellingInformationRepository.save(this.sellingInformationRepository.create({
+        date: new Date(),
+        sellerDepartmentId: preparTickets.sellerDepartmentId,
+        sellerId: preparTickets.sellerId,
+        sellerPostalCode: preparTickets.sellerPostalCode,
+        ticketInfo: preparTickets.tickets,
+        quantity: quantity,
+        clientTransactionId: preparTickets.clientTransactionId,
+        clientName: `${preparTickets.firstname} ${preparTickets.lastname}`,
+        fromWorkGroup: preparTickets.fromWorkGroup,
+      }));
+  
+      return sellingInformation;
     }
 
-    let quantity = 0;
-    preparTickets.tickets.forEach(e => {
-      quantity += e.ticketAmount;
-    });
-
-    const sellingInformation = await this.sellingInformationRepository.save(this.sellingInformationRepository.create({
-      date: new Date(),
-      sellerDepartmentId: preparTickets.sellerDepartmentId,
-      sellerId: preparTickets.sellerId,
-      sellerPostalCode: preparTickets.sellerPostalCode,
-      ticketInfo: preparTickets.tickets,
-      quantity: quantity,
-      clientTransactionId: preparTickets.clientTransactionId,
-      clientName: `${preparTickets.firstname} ${preparTickets.lastname}`,
-      fromWorkGroup: preparTickets.fromWorkGroup,
-    }));
-
-    return sellingInformation;
+    return preparTickets;
   }
 
   // TODO try better way with no async shit
   // TODO manage lang
   // TODO change / adapt with the prepar call
   async confirmOrder(confirmTickets: ConfirmTicketsDto) {
+    const ticketTest = this.presenceOfTestTicket(confirmTickets);
 
     let quantity = 0;
     confirmTickets.tickets.forEach(e => {
@@ -118,30 +126,33 @@ export class TicketsService {
       throw new HttpException({ message: ['error transaction already existing'], code: 'transaction-already-done' }, HttpStatus.CONFLICT);
     }
 
-    const sellingInformationWithClientTransactionId = await this.sellingInformationRepository.findOne(
-      { where: { clientTransactionId: confirmTickets.clientTransactionId } }
-    );
-
     let sellingInformation;
 
-    if (sellingInformationWithClientTransactionId) {
-      sellingInformation = sellingInformationWithClientTransactionId;
-      sellingInformation.vwTransactionId = confirmTickets.vwTransactionId;
-      await this.sellingInformationRepository.save(sellingInformation);
-    } else {
-      // We stock the first information before the command run, in case of, eventSquereReference will come at the end
-      sellingInformation = await this.sellingInformationRepository.save(this.sellingInformationRepository.create({
-        date: new Date(),
-        sellerDepartmentId: confirmTickets.sellerDepartmentId,
-        sellerId: confirmTickets.sellerId,
-        sellerPostalCode: confirmTickets.sellerPostalCode,
-        ticketInfo: confirmTickets.tickets,
-        quantity: quantity,
-        clientTransactionId: confirmTickets.clientTransactionId,
-        clientName: `${confirmTickets.firstname} ${confirmTickets.lastname}`,
-        vwTransactionId: confirmTickets.vwTransactionId,
-        fromWorkGroup: confirmTickets.fromWorkGroup,
-      }));
+    // If there are some testing ticket, we register nothing
+    if (!ticketTest) {
+      const sellingInformationWithClientTransactionId = await this.sellingInformationRepository.findOne(
+        { where: { clientTransactionId: confirmTickets.clientTransactionId } }
+      );
+  
+      if (sellingInformationWithClientTransactionId) {
+        sellingInformation = sellingInformationWithClientTransactionId;
+        sellingInformation.vwTransactionId = confirmTickets.vwTransactionId;
+        await this.sellingInformationRepository.save(sellingInformation);
+      } else {
+        // We stock the first information before the command run, in case of, eventSquereReference will come at the end
+        sellingInformation = await this.sellingInformationRepository.save(this.sellingInformationRepository.create({
+          date: new Date(),
+          sellerDepartmentId: confirmTickets.sellerDepartmentId,
+          sellerId: confirmTickets.sellerId,
+          sellerPostalCode: confirmTickets.sellerPostalCode,
+          ticketInfo: confirmTickets.tickets,
+          quantity: quantity,
+          clientTransactionId: confirmTickets.clientTransactionId,
+          clientName: `${confirmTickets.firstname} ${confirmTickets.lastname}`,
+          vwTransactionId: confirmTickets.vwTransactionId,
+          fromWorkGroup: confirmTickets.fromWorkGroup,
+        }));
+      }
     }
 
     // Verification that the transaction id exist in VW
@@ -239,8 +250,11 @@ export class TicketsService {
         map(d => { return d.data }),
       )
     );
-    sellingInformation.eventsquareReference = finalOrder.order.reference;
-    await this.sellingInformationRepository.save(sellingInformation);
+
+    if (!ticketTest) {
+      sellingInformation.eventsquareReference = finalOrder.order.reference;
+      await this.sellingInformationRepository.save(sellingInformation);
+    }
 
     // If the client demand a physical ticket
     if (confirmTickets.askSendTicket) {
