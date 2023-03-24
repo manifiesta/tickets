@@ -50,7 +50,7 @@ export class TicketsService {
   getAllTicketTypes(shop: string = 'app') {
     return firstValueFrom(
       this.httpService.get<any>(
-        `https://api.eventsquare.io/1.0/store/manifiesta/74ctk6je5s2o/${this.acceptedShop.includes(shop.toLowerCase())
+        `https://api.eventsquare.io/1.0/store/manifiesta/2023/${this.acceptedShop.includes(shop.toLowerCase())
           ? shop.toLowerCase() : 'app'}`, {
         headers: {
           apiKey: this.apiKey,
@@ -192,7 +192,7 @@ export class TicketsService {
     // And command the EventSquare tickets
 
     const cartid = (await firstValueFrom(
-      this.httpService.get<any>('https://api.eventsquare.io/1.0/store/manifiesta/74ctk6je5s2o/app?language=nl&pos_token=' + this.posToken, {
+      this.httpService.get<any>('https://api.eventsquare.io/1.0/store/manifiesta/2023/app?language=nl&pos_token=' + this.posToken, {
         headers: {
           apiKey: this.apiKey,
         }
