@@ -24,7 +24,7 @@ export class TicketsService {
   vwSecret = process.env.VIVA_WALLET_SMART_CHECKOUT_SECRET;
   vwClient = process.env.VIVA_WALLET_SMART_CHECKOUT_CLIENT_ID;
 
-  acceptedShop = ['app', 'comac', 'redfox', 'base', 'gvhv', 'other'];
+  acceptedShop = ['app', 'comac', 'redfox', 'base', 'gvhv', 'other', 'cubanismo', 'intal'];
 
   constructor(
     private httpService: HttpService,
@@ -113,6 +113,8 @@ export class TicketsService {
   async confirmOrder(confirmTickets: ConfirmTicketsDto) {
     const ticketTest = this.presenceOfTestTicket(confirmTickets);
 
+    console.log('one 0')
+
     let quantity = 0;
     confirmTickets.tickets.forEach(e => {
       quantity += e.ticketAmount;
@@ -123,9 +125,13 @@ export class TicketsService {
       { where: { vwTransactionId: confirmTickets.vwTransactionId } }
     );
 
+    console.log('one 1')
+
     if (sellingWithVwTransactionId) {
       throw new HttpException({ message: ['error transaction already existing'], code: 'transaction-already-done' }, HttpStatus.CONFLICT);
     }
+
+    console.log('one')
 
     let sellingInformation;
 
@@ -156,37 +162,49 @@ export class TicketsService {
       }
     }
 
+    console.log('one 11')
+
     // Verification that the transaction id exist in VW
     // TODO verify that is not already used !
     const bodyXWWWFORMURLData = new URLSearchParams();
     bodyXWWWFORMURLData.append('grant_type', 'client_credentials');
 
-    const accessToken = (await firstValueFrom(
-      this.httpService.post<any>(`https://accounts.vivapayments.com/connect/token`,
-        bodyXWWWFORMURLData,
-        {
-          auth: {
-            password: this.vwSecret,
-            username: this.vwClient,
-          }
-        }).pipe(
-          // TODO generic map for the .data from AXIOS
-          map(d => { return d.data }),
-        )
-    )).access_token;
+    console.log('one 22')
 
-    const transactionVerification = await firstValueFrom(
-      this.httpService.get<any>(`https://api.vivapayments.com/checkout/v2/transactions/${confirmTickets.vwTransactionId}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-        }
-      }).pipe(
-        // TODO generic map for the .data from AXIOS
-        map(d => { return d.data }),
-      )
-    ).catch(e => {
-      throw new HttpException({ message: ['error transaction not existing'], code: 'transaction-not-existing' }, HttpStatus.NOT_FOUND);
-    });
+    // const accessToken = (await firstValueFrom(
+    //   this.httpService.post<any>(`https://accounts.vivapayments.com/connect/token`,
+    //     bodyXWWWFORMURLData,
+    //     {
+    //       auth: {
+    //         password: this.vwSecret,
+    //         username: this.vwClient,
+    //       }
+    //     }).pipe(
+    //       // TODO generic map for the .data from AXIOS
+    //       map(d => { return d.data }),
+    //       catchError(e => {
+    //         console.log('error', e)
+    //         return e;
+    //       })
+    //     )
+    // )).access_token;
+
+    // console.log('one 2')
+
+    // const transactionVerification = await firstValueFrom(
+    //   this.httpService.get<any>(`https://api.vivapayments.com/checkout/v2/transactions/${confirmTickets.vwTransactionId}`, {
+    //     headers: {
+    //       'Authorization': `Bearer ${accessToken}`,
+    //     }
+    //   }).pipe(
+    //     // TODO generic map for the .data from AXIOS
+    //     map(d => { return d.data }),
+    //   )
+    // ).catch(e => {
+    //   throw new HttpException({ message: ['error transaction not existing'], code: 'transaction-not-existing' }, HttpStatus.NOT_FOUND);
+    // });
+
+    console.log('one 3')
 
     // If no error throw here, it's good, we can continue
     // And command the EventSquare tickets

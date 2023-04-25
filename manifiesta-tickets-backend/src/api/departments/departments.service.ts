@@ -14,12 +14,21 @@ export class DepartmentsService {
 
   findAll(lang: string = 'nl'): Promise<Department[]> {
     return new Promise((resolve) => {
-      resolve(departments.map(d => {
+      const data = departments.map(d => {
         return {
           ...d,
           label: lang === 'fr' ? d.labelFr : d.labelNl
         }
-      }))
+      }).sort((a, b) => {
+        if (a.label < b.label) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      data.unshift(data.splice(data.findIndex(item => item.code === 'GVHV'), 1)[0]);
+      data.push(data.splice(data.findIndex(item => item.code === 'Other'), 1)[0]);
+      resolve(data);
     });
   }
 
