@@ -139,4 +139,10 @@ export class AdminsService {
       totalAmountTicket: this.getNumberOfTicket(dataGroupBySellerDepartmentId)
     };
   }
+
+  async getOrderNotFinish() {
+    return this.sellingInformationRepository.find({
+      where: { vwTransactionId: IsNull() }
+    });
+  }
 }

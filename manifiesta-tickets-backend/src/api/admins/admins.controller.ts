@@ -46,4 +46,10 @@ export class AdminsController {
     return this.adminsService.getAllDepartmentsSellingsInformations();
   }
 
+  @Auth(RoleEnum.Connected)
+  @Get('/sellingsInformations/order-not-finish')
+  getOrderNotFinish() {
+    return this.adminsService.getOrderNotFinish();
+  }
+
 }
