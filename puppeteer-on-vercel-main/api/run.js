@@ -30,7 +30,7 @@ export default async function handler(request, response) {
   const orderCode = request.url.split('?')[1];
   const orderUrl = `https://www.vivapayments.com/web2?ref=${orderCode}&paymentmethod=27`;
 
-  const status = await page.goto(orderUrl);
+  // const status = await page.goto(orderUrl);
   // await page.waitForTimeout(6000);
 
   // const title = await page.title();
