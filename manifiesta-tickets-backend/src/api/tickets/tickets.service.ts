@@ -695,7 +695,7 @@ export class TicketsService {
     const orderCode = await orderCodePromise;
 
     const browser = await puppeteer.launch({
-      headless: 'new',
+      headless: true,
       defaultViewport: null,
       args: [
         '--disable-gpu',
