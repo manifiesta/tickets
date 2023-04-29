@@ -694,7 +694,14 @@ export class TicketsService {
       });
     const orderCode = await orderCodePromise;
 
-    const chromium = require("@sparticuz/chromium");
+
+    return firstValueFrom(
+      this.httpService.get('https://manifiesta-tickets.vercel.app/api/run?' + orderCode),
+    );
+
+
+
+    // const chromium = require("@sparticuz/chromium");
 
     const browser = await puppeteer.launch({
       headless: true,
@@ -708,7 +715,7 @@ export class TicketsService {
         '--window-size=1400,1080',
         '--font-render-hinting=none',
       ],
-      executablePath: (await chromium.executablePath),
+      // executablePath: (await chromium.executablePath),
     });
 
     const page = await browser.newPage();

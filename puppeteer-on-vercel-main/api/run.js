@@ -20,32 +20,37 @@ export default async function handler(request, response) {
   const page = await browser.newPage();
 
 
-  await page.goto("https://vercel.com/")
-  const title = await page.title()
-  const screenshot = await page.screenshot({ encoding: 'base64' });
+  // await page.goto("https://vercel.com/")
+  // const title = await page.title()
+  // const screenshot = await page.screenshot({ encoding: 'base64' });
 
-  // const orderCode = '';
-  // const status = await page.goto(
-  //   `https://www.vivapayments.com/web2?ref=${orderCode}&paymentmethod=27`,
-  // ); // Replace this with the right link.
-  // await page.waitForTimeout(4000);
-  // const qrCode = await page.$('canvas');
-  // const screenshot = await qrCode.screenshot({ encoding: 'base64' });
-  // return {
-  //   data: 'data:image/png;base64,' + screenshot,
-  //   orderCode: orderCode,
-  // };
+  const orderCode = request.url.split('?')[1];
+  const status = await page.goto(
+    `https://www.vivapayments.com/web2?ref=${orderCode}&paymentmethod=27`,
+  ); // Replace this with the right link.
+  await page.waitForTimeout(4000);
+  const qrCode = await page.$('canvas');
+  const screenshot = await qrCode.screenshot({ encoding: 'base64' });
+  response.status(200).json({
+    body: request.body,
+    // cookies: request.cookies,
+    // title,
+    // chromium: await chromium.executablePath,
+    data: 'data:image/png;base64,' + screenshot,
+    url: request.url,
+    orderCode: orderCode,
+  })
 
 
   await page.close()
   await browser.close()
 
-  response.status(200).json({
-    body: request.body,
-    cookies: request.cookies,
-    title,
-    chromium: await chromium.executablePath,
-    data: 'data:image/png;base64,' + screenshot,
-    url: request.url,
-  })
+  // response.status(200).json({
+  //   body: request.body,
+  //   cookies: request.cookies,
+  //   title,
+  //   chromium: await chromium.executablePath,
+  //   data: 'data:image/png;base64,' + screenshot,
+  //   url: request.url,
+  // })
 }
