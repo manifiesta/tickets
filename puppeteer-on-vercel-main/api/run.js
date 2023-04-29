@@ -21,8 +21,7 @@ export default async function handler(request, response) {
   await page.goto("https://vercel.com/")
   const title = await page.title()
 
-  const picture = await page.$('.dashboard_nav__PRmJv');
-  const screenshot = await picture.screenshot({ encoding: 'base64' });
+  const screenshot = await page.screenshot({ encoding: 'base64' });
 
   await page.close()
 
