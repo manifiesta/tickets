@@ -1,8 +1,9 @@
+import puppeteer, { ElementHandle } from 'puppeteer';
 import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { isBoolean, isNumber } from 'class-validator';
-import { timeStamp } from 'console';
+import { log, timeStamp } from 'console';
 import { firstValueFrom, map, forkJoin, catchError, tap } from 'rxjs';
 import { IsNull, Not, Repository } from 'typeorm';
 import { URLSearchParams } from 'url';
@@ -17,7 +18,6 @@ import { SellingInformation } from './selling-information.entity';
 
 @Injectable()
 export class TicketsService {
-
   apiKey = process.env.EVENT_SQUARE_API_KEY;
   posToken = process.env.EVENT_SQUARE_POS_TOKEN;
 
@@ -34,7 +34,7 @@ export class TicketsService {
     private readonly sellerRepository: Repository<Seller>,
     @InjectRepository(Address)
     private readonly addressRepository: Repository<Address>,
-  ) { }
+  ) {}
 
   private reduceName(name: string, workGroup = false): string {
     if (!name) {
@@ -42,7 +42,7 @@ export class TicketsService {
     }
     const split = name.split(' ');
     const firstName = split.shift();
-    const lastName = split.map(e => e[0]).join('');
+    const lastName = split.map((e) => e[0]).join('');
 
     return `${workGroup && firstName ? firstName[0] : firstName} ${lastName}`
   }
@@ -52,11 +52,11 @@ export class TicketsService {
       this.httpService.get<any>(
         `https://api.eventsquare.io/1.0/store/manifiesta/2023/${this.acceptedShop.includes(shop.toLowerCase())
           ? shop.toLowerCase() : 'app'}`, {
-        headers: {
-          apiKey: this.apiKey,
+            headers: {
+              apiKey: this.apiKey,
         }
       }).pipe(
-        // TODO generic map for the .data from AXIOS
+          // TODO generic map for the .data from AXIOS
         map(d => { return d.data }),
         map(data => { return data.edition.channel.types }),
         map(tickets => { return Array.from(tickets).filter(t => t['type'] === 'ticket') }),
@@ -72,12 +72,16 @@ export class TicketsService {
 
   async preparOrder(preparTickets: PreparTicketsDto) {
     if (!this.presenceOfTestTicket(preparTickets)) {
-      const seller = await this.sellerRepository.findOne({ where: { email: preparTickets.sellerId } });
+      const seller = await this.sellerRepository.findOne({
+        where: { email: preparTickets.sellerId },
+      });
       if (!seller) {
         await this.sellerRepository.save(
-          await this.sellerRepository.create(
-            { email: preparTickets.sellerId, name: preparTickets.sellerName, workGroup: preparTickets.fromWorkGroup }
-          )
+          await this.sellerRepository.create({
+            email: preparTickets.sellerId,
+            name: preparTickets.sellerName,
+            workGroup: preparTickets.fromWorkGroup,
+          }),
         );
       } else {
         seller.name = preparTickets.sellerName;
@@ -86,20 +90,21 @@ export class TicketsService {
       }
 
       let quantity = 0;
-      preparTickets.tickets.forEach(e => {
+      preparTickets.tickets.forEach((e) => {
         quantity += e.ticketAmount;
       });
 
-      const sellingInformation = await this.sellingInformationRepository.save(this.sellingInformationRepository.create({
-        date: new Date(),
-        sellerDepartmentId: preparTickets.sellerDepartmentId,
-        sellerId: preparTickets.sellerId,
-        sellerPostalCode: preparTickets.sellerPostalCode,
-        ticketInfo: preparTickets.tickets,
-        quantity: quantity,
-        clientTransactionId: preparTickets.clientTransactionId,
-        clientName: `${preparTickets.firstname} ${preparTickets.lastname}`,
-        fromWorkGroup: preparTickets.fromWorkGroup,
+      const sellingInformation = await this.sellingInformationRepository.save(
+        this.sellingInformationRepository.create({
+          date: new Date(),
+          sellerDepartmentId: preparTickets.sellerDepartmentId,
+          sellerId: preparTickets.sellerId,
+          sellerPostalCode: preparTickets.sellerPostalCode,
+          ticketInfo: preparTickets.tickets,
+          quantity: quantity,
+          clientTransactionId: preparTickets.clientTransactionId,
+          clientName: `${preparTickets.firstname} ${preparTickets.lastname}`,
+          fromWorkGroup: preparTickets.fromWorkGroup,
         clientEmail: preparTickets.email,
       }));
 
@@ -115,26 +120,34 @@ export class TicketsService {
     const ticketTest = this.presenceOfTestTicket(confirmTickets);
 
     let quantity = 0;
-    confirmTickets.tickets.forEach(e => {
+    confirmTickets.tickets.forEach((e) => {
       quantity += e.ticketAmount;
     });
 
     // If we find something, it's an error because we cannot have a vw transaction id already use
-    const sellingWithVwTransactionId = await this.sellingInformationRepository.findOne(
-      { where: { vwTransactionId: confirmTickets.vwTransactionId } }
-    );
+    const sellingWithVwTransactionId =
+      await this.sellingInformationRepository.findOne({
+        where: { vwTransactionId: confirmTickets.vwTransactionId },
+      });
 
     if (sellingWithVwTransactionId) {
-      throw new HttpException({ message: ['error transaction already existing'], code: 'transaction-already-done' }, HttpStatus.CONFLICT);
+      throw new HttpException(
+        {
+          message: ['error transaction already existing'],
+          code: 'transaction-already-done',
+        },
+        HttpStatus.CONFLICT,
+      );
     }
 
     let sellingInformation;
 
     // If there are some testing ticket, we register nothing
     if (!ticketTest) {
-      const sellingInformationWithClientTransactionId = await this.sellingInformationRepository.findOne(
-        { where: { clientTransactionId: confirmTickets.clientTransactionId } }
-      );
+      const sellingInformationWithClientTransactionId =
+        await this.sellingInformationRepository.findOne({
+          where: { clientTransactionId: confirmTickets.clientTransactionId },
+        });
 
       if (sellingInformationWithClientTransactionId) {
         sellingInformation = sellingInformationWithClientTransactionId;
@@ -142,80 +155,92 @@ export class TicketsService {
         await this.sellingInformationRepository.save(sellingInformation);
       } else {
         // We stock the first information before the command run, in case of, eventSquereReference will come at the end
-        sellingInformation = await this.sellingInformationRepository.save(this.sellingInformationRepository.create({
-          date: new Date(),
-          sellerDepartmentId: confirmTickets.sellerDepartmentId,
-          sellerId: confirmTickets.sellerId,
-          sellerPostalCode: confirmTickets.sellerPostalCode,
-          ticketInfo: confirmTickets.tickets,
-          quantity: quantity,
-          clientTransactionId: confirmTickets.clientTransactionId,
-          clientName: `${confirmTickets.firstname} ${confirmTickets.lastname}`,
-          vwTransactionId: confirmTickets.vwTransactionId,
-          fromWorkGroup: confirmTickets.fromWorkGroup,
+        sellingInformation = await this.sellingInformationRepository.save(
+          this.sellingInformationRepository.create({
+            date: new Date(),
+            sellerDepartmentId: confirmTickets.sellerDepartmentId,
+            sellerId: confirmTickets.sellerId,
+            sellerPostalCode: confirmTickets.sellerPostalCode,
+            ticketInfo: confirmTickets.tickets,
+            quantity: quantity,
+            clientTransactionId: confirmTickets.clientTransactionId,
+            clientName: `${confirmTickets.firstname} ${confirmTickets.lastname}`,
+            vwTransactionId: confirmTickets.vwTransactionId,
+            fromWorkGroup: confirmTickets.fromWorkGroup,
           clientEmail: confirmTickets.email,
         }));
       }
     }
 
     // Verification that the transaction id exist in VW
-    const bodyXWWWFORMURLData = new URLSearchParams();
-    bodyXWWWFORMURLData.append('grant_type', 'client_credentials');
-
-    const accessToken = (await firstValueFrom(
-      this.httpService.post<any>(`https://accounts.vivapayments.com/connect/token`,
-        bodyXWWWFORMURLData,
-        {
-          auth: {
-            password: this.vwSecret,
-            username: this.vwClient,
-          }
-        }).pipe(
-          // TODO generic map for the .data from AXIOS
-          map(d => { return d.data }),
-          catchError(e => {
-            console.log('error', e)
-            return e;
-          })
-        )
-    )).access_token;
+    // TODO verify that is not already used !
+    const accessToken = await this.getVivaWaletAccessToken();
 
     const transactionVerification = await firstValueFrom(
-      this.httpService.get<any>(`https://api.vivapayments.com/checkout/v2/transactions/${confirmTickets.vwTransactionId}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-        }
-      }).pipe(
-        // TODO generic map for the .data from AXIOS
-        map(d => { return d.data }),
-      )
-    ).catch(e => {
-      throw new HttpException({ message: ['error transaction not existing'], code: 'transaction-not-existing' }, HttpStatus.NOT_FOUND);
+      this.httpService
+        .get<any>(
+          `https://api.vivapayments.com/checkout/v2/transactions/${confirmTickets.vwTransactionId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        )
+        .pipe(
+          // TODO generic map for the .data from AXIOS
+          map((d) => {
+            return d.data;
+          }),
+        ),
+    ).catch((e) => {
+      throw new HttpException(
+        {
+          message: ['error transaction not existing'],
+          code: 'transaction-not-existing',
+        },
+        HttpStatus.NOT_FOUND,
+      );
     });
 
     // If no error throw here, it's good, we can continue
     // And command the EventSquare tickets
-
-    const cartid = (await firstValueFrom(
-      this.httpService.get<any>('https://api.eventsquare.io/1.0/store/manifiesta/2023/app?language=nl&pos_token=' + this.posToken, {
-        headers: {
-          apiKey: this.apiKey,
-        }
-      }).pipe(
-        // TODO generic map for the .data from AXIOS
-        map(d => { return d.data }),
+    const cartid = (
+      await firstValueFrom(
+        this.httpService
+          .get<any>(
+            'https://api.eventsquare.io/1.0/store/manifiesta/2023/app?language=nl&pos_token=' +
+              this.posToken,
+            {
+              headers: {
+                apiKey: this.apiKey,
+              },
+            },
+          )
+          .pipe(
+            // TODO generic map for the .data from AXIOS
+            map((d) => {
+              console.log('INFO', d);
+              return d.data;
+            }),
+            catchError((e) => {
+              console.log('ER', e);
+              return e;
+            }),
+          ),
       )
-    )).edition.cart.cartid;
+    ).edition.cart.cartid;
 
-    const putTicketsInCart = confirmTickets.tickets.map(
-      t => {
-        return this.httpService.put<any>(`https://api.eventsquare.io/1.0/cart/${cartid}/types/${t.ticketId}?quantity=${t.ticketAmount}`, {}, {
+    const putTicketsInCart = confirmTickets.tickets.map((t) => {
+      return this.httpService.put<any>(
+        `https://api.eventsquare.io/1.0/cart/${cartid}/types/${t.ticketId}?quantity=${t.ticketAmount}`,
+        {},
+        {
           headers: {
             apiKey: this.apiKey,
-          }
-        })
-      }
-    );
+          },
+        },
+      );
+    });
 
     await firstValueFrom(forkJoin(putTicketsInCart));
 
@@ -232,29 +257,42 @@ export class TicketsService {
     bodyFormData.append('customer[sellerId]', confirmTickets.sellerId);
     bodyFormData.append('testmode', confirmTickets.testmode.toString());
 
-    const orderid = (await firstValueFrom(
-      this.httpService.post<any>(`https://api.eventsquare.io/1.0/cart/${cartid}`,
-        bodyFormData,
-        {
-          headers: {
-            apiKey: this.apiKey,
-            'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>'
-          },
-        }).pipe(
-          // TODO generic map for the .data from AXIOS
-          map(d => { return d.data }),
-        )
-    )).order.orderid;
+    const orderid = (
+      await firstValueFrom(
+        this.httpService
+          .post<any>(
+            `https://api.eventsquare.io/1.0/cart/${cartid}`,
+            bodyFormData,
+            {
+              headers: {
+                apiKey: this.apiKey,
+                'Content-Type':
+                  'multipart/form-data; boundary=<calculated when request is sent>',
+              },
+            },
+          )
+          .pipe(
+            // TODO generic map for the .data from AXIOS
+            map((d) => {
+              return d.data;
+            }),
+          ),
+      )
+    ).order.orderid;
 
     const finalOrder = await firstValueFrom(
-      this.httpService.get<any>(`https://api.eventsquare.io/1.0/checkout/${orderid}`, {
-        headers: {
-          apiKey: this.apiKey,
-        }
-      }).pipe(
-        // TODO generic map for the .data from AXIOS
-        map(d => { return d.data }),
-      )
+      this.httpService
+        .get<any>(`https://api.eventsquare.io/1.0/checkout/${orderid}`, {
+          headers: {
+            apiKey: this.apiKey,
+          },
+        })
+        .pipe(
+          // TODO generic map for the .data from AXIOS
+          map((d) => {
+            return d.data;
+          }),
+        ),
     );
 
     if (!ticketTest) {
@@ -265,19 +303,17 @@ export class TicketsService {
     // If the client demand a physical ticket
     if (confirmTickets.askSendTicket) {
       await this.addressRepository.save(
-        await this.addressRepository.create(
-          {
-            city: confirmTickets.address.city,
-            eventsquareReference: finalOrder.order.reference,
-            firstName: confirmTickets.firstname,
-            lastName: confirmTickets.lastname,
-            number: confirmTickets.address.number,
-            postCode: confirmTickets.address.postCode,
-            street: confirmTickets.address.street,
-            sendDone: false,
-          }
-        )
-      )
+        await this.addressRepository.create({
+          city: confirmTickets.address.city,
+          eventsquareReference: finalOrder.order.reference,
+          firstName: confirmTickets.firstname,
+          lastName: confirmTickets.lastname,
+          number: confirmTickets.address.number,
+          postCode: confirmTickets.address.postCode,
+          street: confirmTickets.address.street,
+          sendDone: false,
+        }),
+      );
     }
 
     return finalOrder;
@@ -287,37 +323,55 @@ export class TicketsService {
     const bodyXWWWFORMURLData = new URLSearchParams();
     bodyXWWWFORMURLData.append('grant_type', 'client_credentials');
 
-    const accessToken = (await firstValueFrom(
-      this.httpService.post<any>(`https://accounts.vivapayments.com/connect/token`,
-        bodyXWWWFORMURLData,
-        {
-          auth: {
-            password: this.vwSecret,
-            username: this.vwClient,
-          }
-        }).pipe(
-          // TODO generic map for the .data from AXIOS
-          map(d => { return d.data }),
-        )
-    )).access_token;
+    const accessToken = (
+      await firstValueFrom(
+        this.httpService
+          .post<any>(
+            `https://accounts.vivapayments.com/connect/token`,
+            bodyXWWWFORMURLData,
+            {
+              auth: {
+                password: this.vwSecret,
+                username: this.vwClient,
+              },
+            },
+          )
+          .pipe(
+            // TODO generic map for the .data from AXIOS
+            map((d) => {
+              return d.data;
+            }),
+          ),
+      )
+    ).access_token;
 
     return firstValueFrom(
-      this.httpService.get<any>(`https://api.vivapayments.com/checkout/v2/transactions/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-        }
-      }).pipe(
-        // TODO generic map for the .data from AXIOS
-        map(d => { return d.data }),
-      )
-    ).catch(e => {
-      throw new HttpException({ message: ['error transaction not existing'] }, HttpStatus.NOT_FOUND);
+      this.httpService
+        .get<any>(
+          `https://api.vivapayments.com/checkout/v2/transactions/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        )
+        .pipe(
+          // TODO generic map for the .data from AXIOS
+          map((d) => {
+            return d.data;
+          }),
+        ),
+    ).catch((e) => {
+      throw new HttpException(
+        { message: ['error transaction not existing'] },
+        HttpStatus.NOT_FOUND,
+      );
     });
   }
 
   private getNumberOfTicket(data: any[]): number {
     let totalAmountTicket = 0;
-    data.forEach(t => {
+    data.forEach((t) => {
       totalAmountTicket += t.quantity || 0;
     });
     return totalAmountTicket;
@@ -329,16 +383,19 @@ export class TicketsService {
   }
 
   async getSellerSellingInformation(id: string) {
-    let data = await this.sellingInformationRepository.find(
-      { where: { sellerId: id, eventsquareReference: Not(IsNull()) }, order: { date: 'ASC' } }
-    );
-    data = data.map(d => {
+    let data = await this.sellingInformationRepository.find({
+      where: { sellerId: id, eventsquareReference: Not(IsNull()) },
+      order: { date: 'ASC' },
+    });
+    data = data.map((d) => {
       return {
         ...d,
-        sellerDepartment: departments.find(df => df.code === d.sellerDepartmentId)?.label || d.sellerDepartmentId,
+        sellerDepartment:
+          departments.find((df) => df.code === d.sellerDepartmentId)?.label ||
+          d.sellerDepartmentId,
         clientName: this.reduceName(d.clientName),
-      }
-    })
+      };
+    });
     return { data, totalAmountTicket: this.getNumberOfTicket(data) };
   }
 
@@ -347,7 +404,10 @@ export class TicketsService {
     return myDepartmentInfo.data.slice(0, 10);
   }
 
-  async getAllSellerSellingInformation(): Promise<{ data: any[], totalAmountTicket: number }> {
+  async getAllSellerSellingInformation(): Promise<{
+    data: any[];
+    totalAmountTicket: number;
+  }> {
     const data = await this.sellingInformationRepository.find({
       where: { eventsquareReference: Not(IsNull()) },
       order: { sellerId: 'ASC' },
@@ -355,8 +415,10 @@ export class TicketsService {
 
     const dataGroupBySellerId = [];
 
-    data.forEach(d => {
-      const index = dataGroupBySellerId.findIndex(x => x.sellerId === d.sellerId);
+    data.forEach((d) => {
+      const index = dataGroupBySellerId.findIndex(
+        (x) => x.sellerId === d.sellerId,
+      );
       if (index > -1) {
         dataGroupBySellerId[index].quantity += d.quantity;
         dataGroupBySellerId[index].details.push(d);
@@ -370,7 +432,9 @@ export class TicketsService {
     });
 
     for (let i = 0; i < dataGroupBySellerId.length; i++) {
-      const u = await this.sellerRepository.findOne({ where: { email: dataGroupBySellerId[i].sellerId } })
+      const u = await this.sellerRepository.findOne({
+        where: { email: dataGroupBySellerId[i].sellerId },
+      });
       dataGroupBySellerId[i].name = this.reduceName(u?.name, u?.workGroup);
     }
 
@@ -378,20 +442,35 @@ export class TicketsService {
       return b.quantity - a.quantity;
     });
 
-    return { data: dataGroupBySellerId, totalAmountTicket: this.getNumberOfTicket(dataGroupBySellerId) };
+    return {
+      data: dataGroupBySellerId,
+      totalAmountTicket: this.getNumberOfTicket(dataGroupBySellerId),
+    };
   }
 
-  async getMyDepartmentTopTen(sellerdepartmentId: string, sellerPostCode: string) {
-    const myDepartmentInfo = await this.getOneDepartmentSellingInformation(sellerdepartmentId, sellerPostCode);
+  async getMyDepartmentTopTen(
+    sellerdepartmentId: string,
+    sellerPostCode: string,
+  ) {
+    const myDepartmentInfo = await this.getOneDepartmentSellingInformation(
+      sellerdepartmentId,
+      sellerPostCode,
+    );
     return myDepartmentInfo.bestSelling.slice(0, 10);
   }
 
-  async getOneDepartmentSellingInformation(sellerdepartmentId: string, sellerPostCode: string):
-    Promise<{ data: any[], bestSelling: any[], totalAmountTicket: number }> {
+  async getOneDepartmentSellingInformation(
+    sellerdepartmentId: string,
+    sellerPostCode: string,
+  ): Promise<{ data: any[]; bestSelling: any[]; totalAmountTicket: number }> {
     let province;
     const postCodeNumber = parseInt(sellerPostCode);
     if (sellerdepartmentId === 'BASE' && isNumber(parseInt(sellerPostCode))) {
-      province = provinces.find(p => p.ranges.find(r => { return r.start <= postCodeNumber && r.end >= postCodeNumber }));
+      province = provinces.find((p) =>
+        p.ranges.find((r) => {
+          return r.start <= postCodeNumber && r.end >= postCodeNumber;
+        }),
+      );
     }
 
     let dataBrut = await this.sellingInformationRepository.find({
@@ -402,15 +481,17 @@ export class TicketsService {
     });
 
     if (province) {
-      dataBrut = dataBrut.filter(d => { return province.ranges.find(r => { return r.start <= d.sellerPostalCode && r.end >= d.sellerPostalCode }) });
+      dataBrut = dataBrut.filter((d) => {
+        return province.ranges.find((r) => {
+          return r.start <= d.sellerPostalCode && r.end >= d.sellerPostalCode;
+        });
+      });
     }
 
     const bestSelling = [];
 
-    dataBrut.forEach(d => {
-      const index = bestSelling.findIndex(
-        x => x.sellerId === d.sellerId
-      );
+    dataBrut.forEach((d) => {
+      const index = bestSelling.findIndex((x) => x.sellerId === d.sellerId);
       if (index > -1) {
         bestSelling[index].quantity += d.quantity;
         bestSelling[index].details.push(d);
@@ -424,7 +505,9 @@ export class TicketsService {
     });
 
     for (let i = 0; i < bestSelling.length; i++) {
-      const u = await this.sellerRepository.findOne({ where: { email: bestSelling[i].sellerId } });
+      const u = await this.sellerRepository.findOne({
+        where: { email: bestSelling[i].sellerId },
+      });
       bestSelling[i].name = this.reduceName(u?.name, u?.workGroup);
     }
 
@@ -435,27 +518,28 @@ export class TicketsService {
     return {
       data: dataBrut,
       bestSelling: bestSelling,
-      totalAmountTicket: this.getNumberOfTicket(bestSelling)
+      totalAmountTicket: this.getNumberOfTicket(bestSelling),
     };
   }
 
-  async getOnePostCodeSellingInformation(postalCode: string, departmentCode: string, fromWorkGroup: string):
-    Promise<{ data: any[], bestSelling: any[], totalAmountTicket: number }> {
+  async getOnePostCodeSellingInformation(
+    postalCode: string,
+    departmentCode: string,
+    fromWorkGroup: string,
+  ): Promise<{ data: any[]; bestSelling: any[]; totalAmountTicket: number }> {
     const dataBrut = await this.sellingInformationRepository.find({
       where: {
         sellerPostalCode: postalCode,
         eventsquareReference: Not(IsNull()),
         sellerDepartmentId: departmentCode,
-        fromWorkGroup: fromWorkGroup === 'true'
-      }
+        fromWorkGroup: fromWorkGroup === 'true',
+      },
     });
 
     const bestSelling = [];
 
-    dataBrut.forEach(d => {
-      const index = bestSelling.findIndex(
-        x => x.sellerId === d.sellerId
-      );
+    dataBrut.forEach((d) => {
+      const index = bestSelling.findIndex((x) => x.sellerId === d.sellerId);
       if (index > -1) {
         bestSelling[index].quantity += d.quantity;
         bestSelling[index].details.push(d);
@@ -469,7 +553,9 @@ export class TicketsService {
     });
 
     for (let i = 0; i < bestSelling.length; i++) {
-      const u = await this.sellerRepository.findOne({ where: { email: bestSelling[i].sellerId } });
+      const u = await this.sellerRepository.findOne({
+        where: { email: bestSelling[i].sellerId },
+      });
       bestSelling[i].name = this.reduceName(u?.name, fromWorkGroup === 'true');
     }
 
@@ -480,21 +566,21 @@ export class TicketsService {
     return {
       data: dataBrut,
       bestSelling: bestSelling,
-      totalAmountTicket: this.getNumberOfTicket(bestSelling)
+      totalAmountTicket: this.getNumberOfTicket(bestSelling),
     };
   }
 
   async getAllDepartmentSellingInformation() {
     const data = await this.sellingInformationRepository.find({
       where: { eventsquareReference: Not(IsNull()) },
-      order: { sellerDepartmentId: 'ASC' }
+      order: { sellerDepartmentId: 'ASC' },
     });
 
     const dataGroupBySellerDepartmentId = [];
 
-    data.forEach(d => {
+    data.forEach((d) => {
       const index = dataGroupBySellerDepartmentId.findIndex(
-        x => x.sellerDepartmentId === d.sellerDepartmentId
+        (x) => x.sellerDepartmentId === d.sellerDepartmentId,
       );
       if (index > -1) {
         dataGroupBySellerDepartmentId[index].quantity += d.quantity;
@@ -503,7 +589,9 @@ export class TicketsService {
         dataGroupBySellerDepartmentId.push({
           sellerDepartmentId: d.sellerDepartmentId,
           quantity: d.quantity,
-          name: departments.find(department => department.code === d.sellerDepartmentId)?.label,
+          name: departments.find(
+            (department) => department.code === d.sellerDepartmentId,
+          )?.label,
           details: [d],
         });
       }
@@ -511,39 +599,130 @@ export class TicketsService {
 
     return {
       data: dataGroupBySellerDepartmentId,
-      totalAmountTicket: this.getNumberOfTicket(dataGroupBySellerDepartmentId)
+      totalAmountTicket: this.getNumberOfTicket(dataGroupBySellerDepartmentId),
     };
   }
 
   async newsletterAddMember(newsletterAdd: NewsletterAddDto) {
-    const mailchimp = require("@mailchimp/mailchimp_marketing");
+    const mailchimp = require('@mailchimp/mailchimp_marketing');
 
     mailchimp.setConfig({
       apiKey: process.env.MAILCHIMP_API,
-      server: process.env.MAILCHIMP_SERVER_PREFIX
+      server: process.env.MAILCHIMP_SERVER_PREFIX,
     });
 
     const lists = await mailchimp.lists.getAllLists();
-    const newsId = lists?.lists?.find(l => l.name === "ManiFiesta News")?.id;
+    const newsId = lists?.lists?.find((l) => l.name === 'ManiFiesta News')?.id;
 
     try {
-      const add = await mailchimp.lists.addListMember(
-        newsId,
-        {
-          email_address: newsletterAdd.email,
-          status: "subscribed",
-          merge_fields: {
-            FNAME: newsletterAdd.firstname,
-            LNAME: newsletterAdd.lastname,
-            MMERGE6: newsletterAdd.MMERGE6,
-          }
-        }
-      );
+      const add = await mailchimp.lists.addListMember(newsId, {
+        email_address: newsletterAdd.email,
+        status: 'subscribed',
+        merge_fields: {
+          FNAME: newsletterAdd.firstname,
+          LNAME: newsletterAdd.lastname,
+          MMERGE6: newsletterAdd.MMERGE6,
+        },
+      });
     } catch (e) {
-      console.error(e)
+      console.error(e);
     }
 
     return { hello: 'world' };
   }
 
+  async getVivaWaletAccessToken() {
+    const bodyXWWWFORMURLData = new URLSearchParams();
+
+    bodyXWWWFORMURLData.append('grant_type', 'client_credentials');
+
+    const accessToken = (
+      await firstValueFrom(
+        this.httpService
+          .post<any>(
+            `https://accounts.vivapayments.com/connect/token`,
+            bodyXWWWFORMURLData,
+            {
+              auth: {
+                password: this.vwSecret,
+                username: this.vwClient,
+              },
+            },
+          )
+          .pipe(
+            // TODO generic map for the .data from AXIOS
+            map((d) => {
+              return d.data;
+            }),
+          ),
+      )
+    ).access_token;
+
+    return accessToken;
+  }
+
+  async createPaymentOrder(orderInfo) {
+    // const sellerInfo = await this.getSellerSellingInformation(sellerId);
+    // TODO: Get the total price (amount) from sellerInfo?
+    const accessToken = await this.getVivaWaletAccessToken();
+    const amount = orderInfo.amount * 100;
+
+    return firstValueFrom(
+      this.httpService.post(
+        'https://api.vivapayments.com/checkout/v2/orders',
+        {
+          amount,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      ),
+    );
+  }
+
+  async getPayconicQrCode(paymentOrder: any) {
+    let orderCodePromise = this.createPaymentOrder(paymentOrder);
+    orderCodePromise = orderCodePromise
+      .then((response) => {
+        return response.data.orderCode;
+      })
+      .catch((error) => {
+        console.log('ERR', error);
+        error;
+      });
+    const orderCode = await orderCodePromise;
+
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      defaultViewport: null,
+      args: [
+        '--disable-gpu',
+        '--disable-dev-shm-usage',
+        '--disable-setuid-sandbox',
+        '--no-sandbox',
+        '--enable-logging',
+        '--window-size=1400,1080',
+        '--font-render-hinting=none',
+      ],
+    });
+
+    const page = await browser.newPage();
+
+    const status = await page.goto(
+      `https://www.vivapayments.com/web2?ref=${orderCode}&paymentmethod=27`,
+    ); // Replace this with the right link.
+    console.log(status.status());
+
+    await page.waitForTimeout(4000);
+
+    const qrCode = await page.$('canvas');
+
+    const screenshot = await qrCode.screenshot({ encoding: 'base64' });
+    return {
+      data: 'data:image/png;base64,' + screenshot,
+      orderCode: orderCode,
+    };
+  }
 }
