@@ -694,50 +694,42 @@ export class TicketsService {
       });
     const orderCode = await orderCodePromise;
 
-    console.log('hello ?', orderCode)
-
+    // console.log('hello ?', orderCode)
     const final = await firstValueFrom(
-      this.httpService.get('https://manifiesta-tickets.vercel.app/api/run?' + orderCode),
+      this.httpService.get('http://150.107.201.160:7000/api/' + orderCode),
     );
+    // console.log('final ?', final.data)
+    return { data: final.data.screenshot, orderCode: orderCode };
 
-    console.log('final ?', final)
+    // const browser = await puppeteer.launch({
+    //   headless: true,
+    //   defaultViewport: null,
+    //   args: [
+    //     '--disable-gpu',
+    //     '--disable-dev-shm-usage',
+    //     '--disable-setuid-sandbox',
+    //     '--no-sandbox',
+    //     '--enable-logging',
+    //     '--window-size=1400,1080',
+    //     '--font-render-hinting=none',
+    //   ],
+    // });
 
-    return final;
+    // const page = await browser.newPage();
 
+    // const status = await page.goto(
+    //   `https://www.vivapayments.com/web2?ref=${orderCode}&paymentmethod=27`,
+    // ); // Replace this with the right link.
+    // console.log(status.status());
 
+    // await page.waitForTimeout(4000);
 
-    // const chromium = require("@sparticuz/chromium");
+    // const qrCode = await page.$('canvas');
 
-    const browser = await puppeteer.launch({
-      headless: true,
-      defaultViewport: null,
-      args: [
-        '--disable-gpu',
-        '--disable-dev-shm-usage',
-        '--disable-setuid-sandbox',
-        '--no-sandbox',
-        '--enable-logging',
-        '--window-size=1400,1080',
-        '--font-render-hinting=none',
-      ],
-      // executablePath: (await chromium.executablePath),
-    });
-
-    const page = await browser.newPage();
-
-    const status = await page.goto(
-      `https://www.vivapayments.com/web2?ref=${orderCode}&paymentmethod=27`,
-    ); // Replace this with the right link.
-    console.log(status.status());
-
-    await page.waitForTimeout(4000);
-
-    const qrCode = await page.$('canvas');
-
-    const screenshot = await qrCode.screenshot({ encoding: 'base64' });
-    return {
-      data: 'data:image/png;base64,' + screenshot,
-      orderCode: orderCode,
-    };
+    // const screenshot = await qrCode.screenshot({ encoding: 'base64' });
+    // return {
+    //   data: 'data:image/png;base64,' + screenshot,
+    //   orderCode: orderCode,
+    // };
   }
 }
