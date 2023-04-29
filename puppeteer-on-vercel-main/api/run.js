@@ -33,9 +33,9 @@ export default async function handler(request, response) {
   const status = await page.goto(orderUrl);
   // await page.waitForTimeout(6000);
 
+  const title = await page.title();
   await page.close();
   await browser.close();
-  const title = await page.title();
   response.status(200).json({
     body: request.body,
     cookies: request.cookies,
