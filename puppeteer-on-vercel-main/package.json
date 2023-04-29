@@ -11,6 +11,6 @@
   "dependencies": {
     "@sparticuz/chromium": "^92.0.0",
     "dotenv": "^16.0.3",
-    "puppeteer-core": "^19.11.0"
+    "puppeteer-core": "10.0.0"
   }
 }
