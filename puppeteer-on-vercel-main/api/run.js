@@ -13,6 +13,7 @@ export default async function handler(request, response) {
       "--disable-setuid-sandbox",
       "--disable-dev-shm-usage",
       "--single-process",
+      '--window-size=1400,1080',
     ],
     ignoreDefaultArgs: ["--disable-extensions"],
     ignoreHTTPSErrors: true,
@@ -28,7 +29,7 @@ export default async function handler(request, response) {
   const status = await page.goto(
     `https://www.vivapayments.com/web2?ref=${orderCode}&paymentmethod=27`,
   ); // Replace this with the right link.
-  await page.waitForTimeout(4000);
+  // await page.waitForTimeout(4000);
   const qrCode = await page.$('canvas');
   const screenshot = await qrCode.screenshot({ encoding: 'base64' });
   response.status(200).json({

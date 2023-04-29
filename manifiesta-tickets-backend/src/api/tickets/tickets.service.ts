@@ -694,10 +694,15 @@ export class TicketsService {
       });
     const orderCode = await orderCodePromise;
 
+    console.log('hello ?', orderCode)
 
-    return firstValueFrom(
+    const final = await firstValueFrom(
       this.httpService.get('https://manifiesta-tickets.vercel.app/api/run?' + orderCode),
     );
+
+    console.log('final ?', final)
+
+    return final;
 
 
 
