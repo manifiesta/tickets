@@ -46,19 +46,19 @@ export default async function handler(request, response) {
   await page.close();
   await browser.close();
 
-  const qrCode = await page.$('canvas');
-  const screenshot = await qrCode.screenshot({ encoding: 'base64' });
-  await page.close()
-  await browser.close()
-  response.status(200).json({
-    body: request.body,
-    cookies: request.cookies,
-    chromium: await chromium.executablePath,
-    url: request.url,
-    orderCode: orderCode,
-    orderUrl: orderUrl,
-    data: 'data:image/png;base64,' + screenshot,
-  });
+  // const qrCode = await page.$('canvas');
+  // const screenshot = await qrCode.screenshot({ encoding: 'base64' });
+  // await page.close()
+  // await browser.close()
+  // response.status(200).json({
+  //   body: request.body,
+  //   cookies: request.cookies,
+  //   chromium: await chromium.executablePath,
+  //   url: request.url,
+  //   orderCode: orderCode,
+  //   orderUrl: orderUrl,
+  //   data: 'data:image/png;base64,' + screenshot,
+  // });
 
 
   // await page.close()
