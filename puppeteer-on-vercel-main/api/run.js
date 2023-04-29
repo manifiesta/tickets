@@ -31,7 +31,7 @@ export default async function handler(request, response) {
   const orderUrl = `https://www.vivapayments.com/web2?ref=${orderCode}&paymentmethod=27`;
 
   const status = await page.goto(orderUrl);
-  await page.waitForTimeout(6000);
+  // await page.waitForTimeout(6000);
 
   const title = await page.title();
   response.status(200).json({
@@ -43,6 +43,8 @@ export default async function handler(request, response) {
     orderUrl: orderUrl,
     title,
   });
+  await page.close();
+  await browser.close();
 
   const qrCode = await page.$('canvas');
   const screenshot = await qrCode.screenshot({ encoding: 'base64' });
