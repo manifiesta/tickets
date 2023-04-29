@@ -21,6 +21,9 @@ export default async function handler(request, response) {
   await page.goto("https://vercel.com/")
   const title = await page.title()
 
+  const picture = await page.$('.dashboard_nav__PRmJv');
+  const screenshot = await picture.screenshot({ encoding: 'base64' });
+
   await page.close()
 
   await browser.close()
@@ -30,5 +33,6 @@ export default async function handler(request, response) {
     cookies: request.cookies,
     title,
     chromium: await chromium.executablePath,
+    data: 'data:image/png;base64,' + screenshot,
   })
 }
