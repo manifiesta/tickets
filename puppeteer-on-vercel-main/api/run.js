@@ -21,9 +21,9 @@ export default async function handler(request, response) {
   const page = await browser.newPage();
 
 
-  // await page.goto("https://vercel.com/")
-  // const title = await page.title()
-  // const screenshot = await page.screenshot({ encoding: 'base64' });
+  await page.goto("https://vercel.com/")
+  const title = await page.title()
+  const screenshot = await page.screenshot({ encoding: 'base64' });
 
 
 
@@ -33,18 +33,18 @@ export default async function handler(request, response) {
   const status = await page.goto(orderUrl);
   // await page.waitForTimeout(6000);
 
-  const title = await page.title();
-  response.status(200).json({
-    body: request.body,
-    cookies: request.cookies,
-    chromium: await chromium.executablePath,
-    url: request.url,
-    orderCode: orderCode,
-    orderUrl: orderUrl,
-    title,
-  });
-  await page.close();
-  await browser.close();
+  // const title = await page.title();
+  // response.status(200).json({
+  //   body: request.body,
+  //   cookies: request.cookies,
+  //   chromium: await chromium.executablePath,
+  //   url: request.url,
+  //   orderCode: orderCode,
+  //   orderUrl: orderUrl,
+  //   title,
+  // });
+  // await page.close();
+  // await browser.close();
 
   // const qrCode = await page.$('canvas');
   // const screenshot = await qrCode.screenshot({ encoding: 'base64' });
@@ -61,17 +61,17 @@ export default async function handler(request, response) {
   // });
 
 
-  // await page.close()
-  // await browser.close()
-  // response.status(200).json({
-  //   body: request.body,
-  //   cookies: request.cookies,
-  //   title,
-  //   url: request.url,
-  //   orderCode: orderCode,
-  //   orderUrl: orderUrl,
-  //   chromium: await chromium.executablePath,
-  //   // s: status.status(),
-  //   data: 'data:image/png;base64,' + screenshot,
-  // })
+  await page.close()
+  await browser.close()
+  response.status(200).json({
+    body: request.body,
+    cookies: request.cookies,
+    title,
+    url: request.url,
+    orderCode: orderCode,
+    orderUrl: orderUrl,
+    chromium: await chromium.executablePath,
+    // s: status.status(),
+    data: 'data:image/png;base64,' + screenshot,
+  })
 }
