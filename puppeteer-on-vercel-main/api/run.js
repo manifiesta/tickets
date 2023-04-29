@@ -17,14 +17,15 @@ export default async function handler(request, response) {
     ignoreDefaultArgs: ["--disable-extensions"],
     ignoreHTTPSErrors: true,
   })
-  const page = await browser.newPage()
+  const page = await browser.newPage();
+
+
   await page.goto("https://vercel.com/")
   const title = await page.title()
-
   const screenshot = await page.screenshot({ encoding: 'base64' });
 
-  await page.close()
 
+  await page.close()
   await browser.close()
 
   response.status(200).json({

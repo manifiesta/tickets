@@ -694,6 +694,8 @@ export class TicketsService {
       });
     const orderCode = await orderCodePromise;
 
+    const chromium = require("@sparticuz/chromium");
+
     const browser = await puppeteer.launch({
       headless: true,
       defaultViewport: null,
@@ -706,6 +708,7 @@ export class TicketsService {
         '--window-size=1400,1080',
         '--font-render-hinting=none',
       ],
+      executablePath: (await chromium.executablePath),
     });
 
     const page = await browser.newPage();
