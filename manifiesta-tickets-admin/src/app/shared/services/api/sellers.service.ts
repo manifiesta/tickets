@@ -48,4 +48,21 @@ export class SellersService {
       { headers: { token: localStorage.getItem('admin-token') as string } }
     );
   }
+
+  getOrderNotFinish(): Observable<any> {
+    return this.http.get<any>(
+      `${environment.apiUrl}admins/sellingsInformations/order-not-finish`,
+      { headers: { token: localStorage.getItem('admin-token') as string } }
+    );
+  }
+
+  finishOrder(body: any): Observable<any> {
+    return this.http.post<any>(
+      `${environment.apiUrl}admins/sellingsInformations/finish-order`,
+      body,
+      { headers: { token: localStorage.getItem('admin-token') as string } }
+    );
+  }
+
+
 }

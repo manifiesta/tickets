@@ -32,6 +32,9 @@ export class SellingInformation {
   @Column({nullable: true, default: null})
   clientName: string;
 
+  @Column({nullable: true, default: null})
+  clientEmail: string;
+
   @Column()
   date: Date;
 

@@ -25,6 +25,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageLoginComponent } from './pages/page-login/page-login.component';
+import { FinishOrderModal, PageOrderNotFinishComponent } from './pages/page-order-not-finish/page-order-not-finish.component';
+import { DetailsTicketsComponent } from './shared/components/details-tickets/details-tickets.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -35,6 +38,9 @@ import { PageLoginComponent } from './pages/page-login/page-login.component';
     PageDepartmentsComponent,
     PageLoginComponent,
     MenuComponent,
+    PageOrderNotFinishComponent,
+    DetailsTicketsComponent,
+    FinishOrderModal,
   ],
   imports: [
     BrowserModule,
@@ -57,6 +63,7 @@ import { PageLoginComponent } from './pages/page-login/page-login.component';
     MatIconModule,
     MatListModule,
     MatProgressSpinnerModule,
+    MatDialogModule,
   ],
   providers: [
     {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'fill'}}

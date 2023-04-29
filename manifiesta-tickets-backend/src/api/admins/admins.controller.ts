@@ -3,6 +3,7 @@ import { Auth } from '../shared/decorators/auth.decorator';
 import { RoleEnum } from '../shared/role.enum';
 import { AdminsService } from './admins.service';
 import { LoginDto } from './login.dto';
+import { FinishOrderDto } from './dto/finish-order.dto';
 
 @Controller('api/admins')
 export class AdminsController {
@@ -50,6 +51,12 @@ export class AdminsController {
   @Get('/sellingsInformations/order-not-finish')
   getOrderNotFinish() {
     return this.adminsService.getOrderNotFinish();
+  }
+
+  @Auth(RoleEnum.Connected)
+  @Post('/sellingsInformations/finish-order')
+  finishOrder(@Body() finishOrder: FinishOrderDto) {
+    return this.adminsService.finishOrder(finishOrder);
   }
 
 }

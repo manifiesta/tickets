@@ -5,8 +5,12 @@
     <mat-nav-list>
       <a mat-list-item routerLink="/home" [class.selected]="url === '/home'">Home</a>
       <a mat-list-item routerLink="/departments" [class.selected]="url === '/departments'">Departments</a>
-      <a mat-list-item routerLink="/physical-tickets" [class.selected]="url === '/physical-tickets'">Physical
-        Tickets</a>
+      <a mat-list-item routerLink="/physical-tickets" [class.selected]="url === '/physical-tickets'">
+        Physical Tickets
+      </a>
+      <a mat-list-item routerLink="/order-not-finish" [class.selected]="url === '/order-not-finish'">
+        Order not finish
+      </a>
       <a mat-list-item routerLink="/login" [class.selected]="url === '/login'">
         Login <mat-icon fontIcon="account_circle" [color]="userIconColor"></mat-icon>
       </a>

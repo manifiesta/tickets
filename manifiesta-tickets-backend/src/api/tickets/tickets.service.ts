@@ -100,6 +100,7 @@ export class TicketsService {
         clientTransactionId: preparTickets.clientTransactionId,
         clientName: `${preparTickets.firstname} ${preparTickets.lastname}`,
         fromWorkGroup: preparTickets.fromWorkGroup,
+        clientEmail: preparTickets.email,
       }));
 
       return sellingInformation;
@@ -152,12 +153,12 @@ export class TicketsService {
           clientName: `${confirmTickets.firstname} ${confirmTickets.lastname}`,
           vwTransactionId: confirmTickets.vwTransactionId,
           fromWorkGroup: confirmTickets.fromWorkGroup,
+          clientEmail: confirmTickets.email,
         }));
       }
     }
 
     // Verification that the transaction id exist in VW
-    // TODO verify that is not already used !
     const bodyXWWWFORMURLData = new URLSearchParams();
     bodyXWWWFORMURLData.append('grant_type', 'client_credentials');
 
