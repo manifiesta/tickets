@@ -2,7 +2,10 @@ const chromium = require("@sparticuz/chromium")
 const puppeteer = require("puppeteer-core")
 
 export default async function handler(request, response) {
-  return request;
+  response.status(200).json({
+    body: request.body,
+    r: request,
+  })
   const browser = await puppeteer.launch({
     args: chromium.args,
     executablePath:
