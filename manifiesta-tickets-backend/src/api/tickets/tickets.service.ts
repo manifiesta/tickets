@@ -674,7 +674,7 @@ export class TicketsService {
         {
           amount,
           merchantTrns,
-          sourceCode: '7226'
+          // sourceCode: '7226'
         },
         {
           headers: {
