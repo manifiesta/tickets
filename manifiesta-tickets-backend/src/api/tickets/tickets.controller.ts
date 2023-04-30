@@ -6,6 +6,7 @@ import { TicketsService } from './tickets.service';
 import { TicketsGateway } from './tickets.gateway';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { DepartmentsService } from '../departments/departments.service';
 
 @Controller('api/tickets')
 export class TicketsController {
@@ -16,6 +17,7 @@ export class TicketsController {
     private httpService: HttpService,
     private readonly ticketsService: TicketsService,
     private ticketsGateway: TicketsGateway,
+    private departmentsService: DepartmentsService
   ) {}
 
   @Get(['/types/:shop', '/types'])
@@ -104,7 +106,7 @@ export class TicketsController {
   }
 
   @Post('/webhooks/payment/success')
-  receivePaymentFailedWebhook22(@Body() body: any) {
+  async receivePaymentFailedWebhook22(@Body() body: any) {
     console.log('SUCCESS', body);
 
     // Save this in DB for history.
@@ -115,6 +117,8 @@ export class TicketsController {
       statusId: body.EventData.StatusId,
       transactionId: body.EventData.TransactionId,
     };
+
+    await this.departmentsService.stupidTest(body.EventData.OrderCode, body.EventData.TransactionId);
 
     this.ticketsGateway.emitPayment(notification);
 
