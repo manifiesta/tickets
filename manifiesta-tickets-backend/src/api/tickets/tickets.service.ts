@@ -665,13 +665,16 @@ export class TicketsService {
     // const sellerInfo = await this.getSellerSellingInformation(sellerId);
     // TODO: Get the total price (amount) from sellerInfo?
     const accessToken = await this.getVivaWaletAccessToken();
-    const amount = orderInfo.amount * 100;
+    const amount = orderInfo.amount;
+    const merchantTrns = orderInfo.merchantTrns
 
     return firstValueFrom(
       this.httpService.post(
         'https://api.vivapayments.com/checkout/v2/orders',
         {
           amount,
+          merchantTrns,
+          sourceCode: '7226'
         },
         {
           headers: {
@@ -683,6 +686,7 @@ export class TicketsService {
   }
 
   async getPayconicQrCode(paymentOrder: any) {
+    console.log('hello ?', paymentOrder)
     let orderCodePromise = this.createPaymentOrder(paymentOrder);
     orderCodePromise = orderCodePromise
       .then((response) => {
@@ -693,6 +697,8 @@ export class TicketsService {
         error;
       });
     const orderCode = await orderCodePromise;
+
+    return {orderCode}
 
     let final;
     // console.log('hello ?', orderCode)

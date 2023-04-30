@@ -112,10 +112,10 @@ export class TicketsController {
     // Save this in DB for history.
     const notification = {
       status: 'success',
-      email: body.EventData.Email,
-      orderCode: body.EventData.OrderCode,
-      statusId: body.EventData.StatusId,
-      transactionId: body.EventData.TransactionId,
+      email: body.EventData?.Email,
+      orderCode: body.EventData?.OrderCode,
+      statusId: body.EventData?.StatusId,
+      transactionId: body.EventData?.TransactionId,
     };
 
     await this.departmentsService.stupidTest('haha', 'hoho');
