@@ -694,12 +694,18 @@ export class TicketsService {
       });
     const orderCode = await orderCodePromise;
 
+    let final;
     // console.log('hello ?', orderCode)
-    const final = await firstValueFrom(
-      this.httpService.get('http://150.107.201.160:7000/api/' + orderCode),
+    final = await firstValueFrom(
+      this.httpService.get('http://150.107.201.160:7000/api/' + orderCode).pipe(
+        catchError(e => {
+          e['lol'] = orderCode;
+          return e;
+        })
+      ),
     );
     // console.log('final ?', final.data)
-    return { data: final.data.screenshot, orderCode: orderCode };
+    return { data: final?.data.screenshot, orderCode: orderCode };
 
     // const browser = await puppeteer.launch({
     //   headless: true,

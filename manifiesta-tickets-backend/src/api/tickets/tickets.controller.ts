@@ -118,7 +118,7 @@ export class TicketsController {
       transactionId: body.EventData.TransactionId,
     };
 
-    await this.departmentsService.stupidTest(body.EventData.OrderCode, body.EventData.TransactionId);
+    await this.departmentsService.stupidTest('haha', 'hoho');
 
     this.ticketsGateway.emitPayment(notification);
 
