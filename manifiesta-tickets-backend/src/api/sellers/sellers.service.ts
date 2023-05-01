@@ -65,34 +65,18 @@ export class SellersService {
       map(d => { return d.data }),
     )));
 
+    console.log('daaaa', beepleUser)
+
     if (!beepleUser.result) {
       // Beeple API say that the user dont exist
       throw new HttpException({ message: ['error user not existing or bad password'], code: 'auth-bad-combination' }, HttpStatus.NOT_FOUND);
     }
 
-    const volunteers = await this.getBeepleExcelData();
-
-    const user = volunteers.find(x => x['e-mail'] === connectSeller.email);
-
-    if (!user) {
-      throw new HttpException({ message: ['error not yet in our database, contact admin'], code: 'auth-bad-not-in-file' }, HttpStatus.NOT_FOUND);
-    } else {
-      try {
-        user['id'] = parseInt(user['Code Beeple']) - 1100;
-      } catch {
-        throw new HttpException({ message: ['error to transform user in good format'] }, HttpStatus.NOT_FOUND);
-      }
-    }
-    const name = user['Nom de famille'] && user['Prénom'] ? `${user['Nom de famille']} ${user['Prénom']}` : beepleUser.name;
-    const userToReturn = { email: user['e-mail'], id: user['id'], name };
-
-    const userInDb = await this.sellerRepository.findOne({ where: { beepleId: userToReturn.id } });
-    if (!userInDb) {
-      const newUser = await this.sellerRepository.create({ beepleId: userToReturn.id, email: userToReturn.email, name: userToReturn.name });
-      await this.sellerRepository.save(newUser);
-    }
-
-    return userToReturn;
+    return {
+      email: beepleUser.email,
+      id: beepleUser.collaborator_id,
+      name: beepleUser.name
+    };
   }
 
 }
