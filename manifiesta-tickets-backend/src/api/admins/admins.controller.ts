@@ -42,6 +42,12 @@ export class AdminsController {
   }
 
   @Auth(RoleEnum.Connected)
+  @Get('/sellingsInformations/sellings')
+  getAllFinishSellingsInformation() {
+    return this.adminsService.getAllFinishSellingsInformation();
+  }
+
+  @Auth(RoleEnum.Connected)
   @Get('/sellingsInformations/departments')
   getAllDepartmentsSellingsInformations() {
     return this.adminsService.getAllDepartmentsSellingsInformations();

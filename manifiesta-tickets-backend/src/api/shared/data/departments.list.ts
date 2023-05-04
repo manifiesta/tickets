@@ -1,14 +1,5 @@
 export const departments = [
   { label: 'Province', labelFr: 'PTB', labelNl: 'PVDA', code: 'BASE', id: 1},
-  // { label: 'Antwerpen', code: 'ANT', id: 2 },
-  // { label: 'Bruxelles & Brabant-Wallon', code: 'BBW', id: 2 },
-  // { label: 'Hainaut', code: 'HAI', id: 2 },
-  // { label: 'Liège', code: 'LIE', id: 2 },
-  // { label: 'Limburg', code: 'LIM', id: 2 },
-  // { label: 'Namur & Luxembourg', code: 'NLU', id: 2 },
-  // { label: 'Oost-Vlaanderen', code: 'OOV', id: 2 },
-  // { label: 'Vlaams-Brabant', code: 'VLB', id: 2 },
-  // { label: 'West-Vlaanderen', code: 'WEV', id: 2 },
   { label: 'GVHV', labelFr: 'MPLP', labelNl: 'GVHV', code: 'GVHV', id: 2},
   { label: 'Comac', labelFr: 'Comac', labelNl: 'Comac', code: 'Comac', id: 3 },
   { label: 'Redfox', labelFr: 'Redfox', labelNl: 'Redfox', code: 'Redfox', id: 6 },
@@ -20,22 +11,22 @@ export const departments = [
 
 export const provinces: { label: string, code: string, ranges: { start:number, end:number}[]}[] = [
   {
-    label: 'Brussels-WaalsBrabant',
+    label: 'Brussels-Bruxelles-Brabant Wallon',
     code: 'BBW',
     ranges: [{start: 1000, end: 1299}, {start:1300, end: 1499}]
   },
   {
-    label: 'Namen-Luxemburg',
+    label: 'Namur-Luxembourg',
     code: 'NLU',
     ranges: [{start: 5000, end: 5999},{start:6600, end:6999}]
   },
   {
-    label: 'Henegouwen',
+    label: 'Hainaut',
     code: 'HAI',
     ranges: [{start: 6000, end: 6599},{start:7000, end:7999}]
   },
   {
-    label: 'VlaamsBrabant',
+    label: 'Vlaams Brabant',
     code: 'VLB',
     ranges: [{start: 1500, end: 1999},{start:3000, end:3499}]
   },
@@ -50,17 +41,17 @@ export const provinces: { label: string, code: string, ranges: { start:number, e
     ranges: [{start: 3500, end: 3999}]
   },
   {
-    label: 'Luik',
+    label: 'Liège',
     code: 'LIE',
     ranges: [{start: 4000, end: 4999}]
   },
   {
-    label: 'WestVlaanderen',
+    label: 'West Vlaanderen',
     code: 'WEV',
     ranges: [{start: 8000, end: 8999}]
   },
   {
-    label: 'OostVlaanderen',
+    label: 'Oost Vlaanderen',
     code: 'OOV',
     ranges: [{start: 9000, end: 9999}]
   },

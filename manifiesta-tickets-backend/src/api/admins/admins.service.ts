@@ -120,6 +120,13 @@ export class AdminsService {
     return { data: dataGroupBySellerId, totalAmountTicket: this.getNumberOfTicket(dataGroupBySellerId) };
   }
 
+  async getAllFinishSellingsInformation() {
+    const data = await this.sellingInformationRepository.find({
+      where: { eventsquareReference: Not(IsNull()) },
+    });
+    return { data, totalAmountTicket: this.getNumberOfTicket(data) };
+  }
+
   async getAllDepartmentsSellingsInformations() {
     const data = await this.sellingInformationRepository.find({
       where: { eventsquareReference: Not(IsNull()) },
@@ -137,12 +144,9 @@ export class AdminsService {
             return r.start <= postCodeNumber && r.end >= postCodeNumber;
           }),
         );
-
-        console.log('rpovince ?', province)
         d.sellerDepartmentId = province.code;
         d['name'] = province.label;
       }
-
 
       const index = dataGroupBySellerDepartmentId.findIndex(
         x => x.sellerDepartmentId === d.sellerDepartmentId

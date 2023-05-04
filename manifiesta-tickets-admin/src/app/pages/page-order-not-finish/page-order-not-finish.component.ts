@@ -30,14 +30,11 @@ export class PageOrderNotFinishComponent implements OnInit {
   }
 
   finishProcessModal(element: any) {
-    console.log('open modal to finish process', element)
-
     const dialogRef = this.dialog.open(FinishOrderModal, {
       data: element,
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The modal was closed')
       this.initTable();
     });
   }
@@ -60,11 +57,9 @@ export class FinishOrderModal {
   }
 
   finish() {
-    console.log('data ?', this.data)
     this.sellersService.finishOrder(this.data).pipe(
       take(1)
-    ).subscribe(data => {
-      console.log('ok', data)
+    ).subscribe(() => {
       this.dialogRef.close();
     });
   }

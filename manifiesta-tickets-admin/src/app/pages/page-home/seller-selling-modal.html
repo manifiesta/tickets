@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>detail selling of {{data.name}}</h1>
+
+<div mat-dialog-content>
+  <ng-container *ngFor="let d of data.details">
+    <p>{{d.date | date:'medium'}} </p>
+    <p>{{d.clientName}}</p>
+    <app-details-tickets [tickets]="d.ticketInfo"></app-details-tickets>
+    <br>
+    <br>
+  </ng-container>
+</div>

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Sort } from '@angular/material/sort';
 import { SellersService } from 'src/app/shared/services/api/sellers.service';
 import { sortData } from 'src/app/shared/utils/sort-data.utils';
@@ -10,12 +11,12 @@ import { sortData } from 'src/app/shared/utils/sort-data.utils';
 })
 export class PageHomeComponent implements OnInit {
 
-  displayedSellersColumns: string[] = ['name', 'sellerId', 'email', 'details', 'quantity'];
+  displayedSellersColumns: string[] = ['name', 'sellerId', 'details', 'quantity'];
   sellerSellingInformationsAll: any[] = [];
   sellingInformationsAmountTickets!: number;
   sortedData: any[] = [];
 
-  constructor(private sellersService: SellersService) { }
+  constructor(private sellersService: SellersService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.sellersService.getAllSellerSellingInformation().subscribe(data => {
@@ -29,4 +30,21 @@ export class PageHomeComponent implements OnInit {
     this.sortedData = sortData(sort, this.sellerSellingInformationsAll);
   }
 
+  details(element: any) {
+    const dialogRef = this.dialog.open(SellerSellingModal, {
+      data: element,
+    });
+  }
+
+}
+
+@Component({
+  selector: 'app-seller-selling-modal',
+  templateUrl: 'seller-selling-modal.html',
+})
+export class SellerSellingModal {
+  constructor(
+    public dialogRef: MatDialogRef<SellerSellingModal>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+  ) {}
 }
