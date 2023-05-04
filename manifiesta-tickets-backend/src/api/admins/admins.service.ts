@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Not, Repository } from 'typeorm';
 import { EncryptionsService } from '../encryptions/encryptions.service';
 import { Seller } from '../sellers/seller.entity';
-import { departments } from '../shared/data/departments.list';
+import { departments, provinces } from '../shared/data/departments.list';
 import { Address } from '../tickets/address.entity';
 import { SellingInformation } from '../tickets/selling-information.entity';
 import { Admin } from './admin.entity';
@@ -11,6 +11,7 @@ import { LoginDto } from './login.dto';
 import { FinishOrderDto } from './dto/finish-order.dto';
 import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom, forkJoin, map } from 'rxjs';
+import { isNumber } from 'class-validator';
 
 @Injectable()
 export class AdminsService {
@@ -128,6 +129,21 @@ export class AdminsService {
     const dataGroupBySellerDepartmentId = [];
 
     data.forEach(d => {
+
+      const postCodeNumber = parseInt(d.sellerPostalCode);
+      if (d.sellerDepartmentId === 'BASE' && isNumber(postCodeNumber)) {
+        const province = provinces.find((p) =>
+          p.ranges.find((r) => {
+            return r.start <= postCodeNumber && r.end >= postCodeNumber;
+          }),
+        );
+
+        console.log('rpovince ?', province)
+        d.sellerDepartmentId = province.code;
+        d['name'] = province.label;
+      }
+
+
       const index = dataGroupBySellerDepartmentId.findIndex(
         x => x.sellerDepartmentId === d.sellerDepartmentId
       );
@@ -138,7 +154,7 @@ export class AdminsService {
         dataGroupBySellerDepartmentId.push({
           sellerDepartmentId: d.sellerDepartmentId,
           quantity: d.quantity,
-          name: departments.find(department => department.code === d.sellerDepartmentId)?.label,
+          name:d['name'] || departments.find(department => department.code === d.sellerDepartmentId)?.label,
           details: [d],
         });
       }
