@@ -37,6 +37,14 @@
     <td mat-cell *matCellDef="let element"> {{element.sellerName}} </td>
   </ng-container>
 
+  <ng-container matColumnDef="workGroup">
+    <th mat-header-cell *matHeaderCellDef>From work group ?</th>
+    <td mat-cell *matCellDef="let element">
+      <mat-icon *ngIf="element.workGroup" fontIcon="check_circle">
+      </mat-icon>
+    </td>
+  </ng-container>
+
   <tr mat-header-row *matHeaderRowDef="displayedDepartmentColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedDepartmentColumns;"></tr>
 </table>

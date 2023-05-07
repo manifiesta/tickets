@@ -9,7 +9,7 @@ import { SellersService } from 'src/app/shared/services/api/sellers.service';
 })
 export class PageSellingsTicketsComponent implements OnInit {
 
-  displayedDepartmentColumns: string[] = ['type', 'clientName', 'channel', 'zip', 'date', 'price', 'sellerName'];
+  displayedDepartmentColumns: string[] = ['type', 'clientName', 'channel', 'zip', 'date', 'price', 'sellerName', 'workGroup'];
   sellingInformationsAll: any[] = [];
   sellingInformationsAmountTickets!: number;
 

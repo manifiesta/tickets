@@ -172,6 +172,7 @@ export class AdminsService {
             sellerId: db.sellerId,
             sellerName: db['sellerName'],
             date: db.date,
+            workGroup: db.fromWorkGroup,
           })
         }        
       });
