@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Sort } from '@angular/material/sort';
 import { SellersService } from 'src/app/shared/services/api/sellers.service';
 import { simpleCompare } from 'src/app/shared/utils/simple-compare.utils';
@@ -16,7 +17,10 @@ export class PageDepartmentsComponent implements OnInit {
   sellingInformationsAmountTickets!: number;
   sortedData: any[] = [];
 
-  constructor(private sellersService: SellersService) { }
+  constructor(
+    private sellersService: SellersService,
+    public dialog: MatDialog
+  ) { }
 
   ngOnInit(): void {
     this.sellersService.getAllDepartmentSellingInformation().subscribe(data => {
@@ -30,4 +34,21 @@ export class PageDepartmentsComponent implements OnInit {
     this.sortedData = sortData(sort, this.sellerDepartmentInformationsAll);
   }
 
+  details(element: any) {
+    const dialogRef = this.dialog.open(DepartmentSellingModal, {
+      data: element,
+    });
+  }
+
+}
+
+@Component({
+  selector: 'app-department-selling-modal',
+  templateUrl: 'department-selling-modal.html',
+})
+export class DepartmentSellingModal {
+  constructor(
+    public dialogRef: MatDialogRef<DepartmentSellingModal>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+  ) {}
 }

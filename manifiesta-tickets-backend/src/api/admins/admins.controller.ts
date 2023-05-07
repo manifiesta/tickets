@@ -47,6 +47,13 @@ export class AdminsController {
     return this.adminsService.getAllFinishSellingsInformation();
   }
 
+  // For this route, we extract directly the tickets informations
+  @Auth(RoleEnum.Connected)
+  @Get('/sellingsInformations/sellings-tickets')
+  getAllFinishSellingsInformationTickets() {
+    return this.adminsService.getAllFinishSellingsInformationTickets();
+  }
+
   @Auth(RoleEnum.Connected)
   @Get('/sellingsInformations/departments')
   getAllDepartmentsSellingsInformations() {

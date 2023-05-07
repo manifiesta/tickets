@@ -6,7 +6,7 @@
   <h2>Sellings details</h2>
   <ng-container *ngFor="let d of data.details">
     <p>{{d.date | date:'medium'}} </p>
-    <p><span *ngIf="d.fromWorkGroup">(as work group)</span> {{d.clientName}}</p>
+    <p>{{d.sellerId}} <span *ngIf="d.fromWorkGroup">(work group)</span> to {{d.clientName}} (post code: {{d.sellerPostalCode}})</p>
     <app-details-tickets [tickets]="d.ticketInfo"></app-details-tickets>
     <br>
     <br>

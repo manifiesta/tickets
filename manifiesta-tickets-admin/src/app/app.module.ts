@@ -15,7 +15,7 @@ import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/mat
 import { MatInputModule } from '@angular/material/input';
 import { PagePhysicalTicketsComponent } from './pages/page-physical-tickets/page-physical-tickets.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { PageDepartmentsComponent } from './pages/page-departments/page-departments.component';
+import { DepartmentSellingModal, PageDepartmentsComponent } from './pages/page-departments/page-departments.component';
 import { MatSortModule } from '@angular/material/sort';
 import { MenuComponent } from './menu/menu.component';
 import { LayoutModule } from '@angular/cdk/layout';
@@ -28,6 +28,8 @@ import { PageLoginComponent } from './pages/page-login/page-login.component';
 import { FinishOrderModal, PageOrderNotFinishComponent } from './pages/page-order-not-finish/page-order-not-finish.component';
 import { DetailsTicketsComponent } from './shared/components/details-tickets/details-tickets.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { TicketsTypesCountComponent } from './shared/components/tickets-types-count/tickets-types-count.component';
+import { PageSellingsTicketsComponent } from './pages/page-sellings-tickets/page-sellings-tickets.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +44,9 @@ import { MatDialogModule } from '@angular/material/dialog';
     DetailsTicketsComponent,
     FinishOrderModal,
     SellerSellingModal,
+    DepartmentSellingModal,
+    TicketsTypesCountComponent,
+    PageSellingsTicketsComponent,
   ],
   imports: [
     BrowserModule,

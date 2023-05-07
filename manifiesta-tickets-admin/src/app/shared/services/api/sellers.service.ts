@@ -64,5 +64,12 @@ export class SellersService {
     );
   }
 
+  getAllFinishSellingsInformationTickets(): Observable<any> {
+    return this.http.get<any>(
+      `${environment.apiUrl}admins/sellingsInformations/sellings-tickets`,
+      { headers: { token: localStorage.getItem('admin-token') as string } }
+    );
+  }
+
 
 }

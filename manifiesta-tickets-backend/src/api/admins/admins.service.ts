@@ -10,7 +10,7 @@ import { Admin } from './admin.entity';
 import { LoginDto } from './login.dto';
 import { FinishOrderDto } from './dto/finish-order.dto';
 import { HttpService } from '@nestjs/axios';
-import { catchError, firstValueFrom, forkJoin, map } from 'rxjs';
+import { catchError, firstValueFrom, forkJoin, from, map } from 'rxjs';
 import { isNumber } from 'class-validator';
 
 @Injectable()
@@ -121,10 +121,58 @@ export class AdminsService {
   }
 
   async getAllFinishSellingsInformation() {
-    const data = await this.sellingInformationRepository.find({
-      where: { eventsquareReference: Not(IsNull()) },
-    });
-    return { data, totalAmountTicket: this.getNumberOfTicket(data) };
+    const sellers = await this.sellerRepository.find();
+    const data = await firstValueFrom(
+      from(this.sellingInformationRepository.find({
+        where: { eventsquareReference: Not(IsNull()) },
+      })).pipe(
+        map(dataPipe => {
+          return dataPipe.map(d => {
+            const postCodeNumber = parseInt(d.sellerPostalCode);
+            let sellerDepartmentLabel = '';
+            if (d.sellerDepartmentId === 'BASE' && isNumber(postCodeNumber)) {
+              const province = provinces.find((p) =>
+                p.ranges.find((r) => {
+                  return r.start <= postCodeNumber && r.end >= postCodeNumber;
+                }),
+              );
+              sellerDepartmentLabel = province.label;
+            } else {
+              sellerDepartmentLabel = departments.find(dep => dep.code === d.sellerDepartmentId).labelNl;
+            }
+            const sellerName = sellers.find(s => s.email === d.sellerId)?.name;
+            return {
+              ...d, sellerDepartmentLabel, sellerName
+            }
+          })
+        })
+      )
+    );
+
+    return {
+      data,
+      totalAmountTicket: this.getNumberOfTicket(data)
+    };
+  }
+
+  async getAllFinishSellingsInformationTickets() {
+    const dataNet = [];
+    const dataBrut = await this.getAllFinishSellingsInformation();
+    dataBrut.data.forEach(db => {
+      db.ticketInfo.forEach(ti => {
+        dataNet.push({
+          type: ti.ticketLabel,
+          channel: db['sellerDepartmentLabel'],
+          zip: db.sellerPostalCode,
+          price: ti.ticketPrice,
+          clientName: db.clientName,
+          sellerId: db.sellerId,
+          sellerName: db['sellerName'],
+          date: db.date,
+        })
+      });
+    })
+    return dataNet;
   }
 
   async getAllDepartmentsSellingsInformations() {
@@ -158,7 +206,7 @@ export class AdminsService {
         dataGroupBySellerDepartmentId.push({
           sellerDepartmentId: d.sellerDepartmentId,
           quantity: d.quantity,
-          name:d['name'] || departments.find(department => department.code === d.sellerDepartmentId)?.label,
+          name: d['name'] || departments.find(department => department.code === d.sellerDepartmentId)?.label,
           details: [d],
         });
       }
