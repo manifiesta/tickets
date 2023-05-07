@@ -158,18 +158,22 @@ export class AdminsService {
   async getAllFinishSellingsInformationTickets() {
     const dataNet = [];
     const dataBrut = await this.getAllFinishSellingsInformation();
+    console.log('heeeeello', dataBrut.totalAmountTicket)
     dataBrut.data.forEach(db => {
       db.ticketInfo.forEach(ti => {
-        dataNet.push({
-          type: ti.ticketLabel,
-          channel: db['sellerDepartmentLabel'],
-          zip: db.sellerPostalCode,
-          price: ti.ticketPrice,
-          clientName: db.clientName,
-          sellerId: db.sellerId,
-          sellerName: db['sellerName'],
-          date: db.date,
-        })
+        // TODO Check if we can put the field ticketAmount instead of push one by amount ...
+        for (let i = 0; i < ti.ticketAmount; i++) {
+          dataNet.push({
+            type: ti.ticketLabel,
+            channel: db['sellerDepartmentLabel'],
+            zip: db.sellerPostalCode,
+            price: ti.ticketPrice,
+            clientName: db.clientName,
+            sellerId: db.sellerId,
+            sellerName: db['sellerName'],
+            date: db.date,
+          })
+        }        
       });
     })
     return dataNet;
