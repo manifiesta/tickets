@@ -1,6 +1,8 @@
 <h1>All tickets</h1>
 <h2>Total selling: {{sellingInformationsAmountTickets}}</h2>
 
+<button mat-raised-button color="primary" (click)="export()">Export</button>
+
 <table mat-table [dataSource]="sellingInformationsAll" class="mb-2">
   <ng-container matColumnDef="type">
     <th mat-header-cell *matHeaderCellDef>Type</th>

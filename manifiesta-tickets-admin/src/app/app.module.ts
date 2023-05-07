@@ -30,6 +30,7 @@ import { DetailsTicketsComponent } from './shared/components/details-tickets/det
 import { MatDialogModule } from '@angular/material/dialog';
 import { TicketsTypesCountComponent } from './shared/components/tickets-types-count/tickets-types-count.component';
 import { PageSellingsTicketsComponent } from './pages/page-sellings-tickets/page-sellings-tickets.component';
+import { ExcelService } from './shared/services/communication/excel.service';
 
 @NgModule({
   declarations: [
@@ -72,7 +73,8 @@ import { PageSellingsTicketsComponent } from './pages/page-sellings-tickets/page
     MatDialogModule,
   ],
   providers: [
-    {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'fill'}}
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },
+    ExcelService,
   ],
   bootstrap: [AppComponent]
 })
