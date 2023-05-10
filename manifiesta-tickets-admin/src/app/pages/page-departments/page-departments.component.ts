@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Sort } from '@angular/material/sort';
 import { SellersService } from 'src/app/shared/services/api/sellers.service';
+import { ExcelService } from 'src/app/shared/services/communication/excel.service';
 import { simpleCompare } from 'src/app/shared/utils/simple-compare.utils';
 import { sortData } from 'src/app/shared/utils/sort-data.utils';
 
@@ -50,5 +51,31 @@ export class DepartmentSellingModal {
   constructor(
     public dialogRef: MatDialogRef<DepartmentSellingModal>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-  ) {}
+    private excelService: ExcelService,
+  ) { }
+  
+  export() {
+    const toExport: any[] = [];
+    // so many loop <3
+    this.data.details.forEach((d: any) => {
+      d.ticketInfo.forEach((t: any) => {
+        for (let i = 0; i < t.ticketAmount; i++) {
+          toExport.push({
+            type: t.ticketLabel,
+            channel: d.name,
+            zip: d.sellerPostalCode,
+            price: t.ticketPrice,
+            clientName: d.clientName,
+            sellerId: d.sellerId,
+            // do they really need the name here ?
+            sellerName: d.sellerId,
+            date: d.date,
+            workGroup: d.fromWorkGroup,
+            eventsquareReference: d.eventsquareReference,
+          })
+        }
+      })
+    });
+    this.excelService.exportAsExcelFile(toExport, `department-${this.data.name}-tickets-sellings-snapshot`);
+  }
 }

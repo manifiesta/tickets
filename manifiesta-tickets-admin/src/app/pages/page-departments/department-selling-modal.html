@@ -1,5 +1,7 @@
 <h1 mat-dialog-title>Detail selling of {{data.name}} - Total: {{data.quantity}}</h1>
 
+<button mat-raised-button color="primary" (click)="export()">Export</button>
+
 <div mat-dialog-content>
   <h2>Tickets types summary</h2>
   <app-tickets-types-count [details]="data.details"></app-tickets-types-count>

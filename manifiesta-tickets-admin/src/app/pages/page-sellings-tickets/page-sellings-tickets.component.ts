@@ -28,8 +28,6 @@ export class PageSellingsTicketsComponent implements OnInit {
   }
 
   export() {
-    console.log('data to export', this.sellingInformationsAll)
-
     this.excelService.exportAsExcelFile(this.sellingInformationsAll, 'all-tickets-sellings-snapshot');
   }
 
