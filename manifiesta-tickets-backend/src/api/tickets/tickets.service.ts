@@ -661,21 +661,25 @@ export class TicketsService {
     return accessToken;
   }
 
-  async createPaymentOrder(orderInfo) {
+  async createPaymentOrder(orderInfo, forApp = false) {
     // const sellerInfo = await this.getSellerSellingInformation(sellerId);
     // TODO: Get the total price (amount) from sellerInfo?
     const accessToken = await this.getVivaWaletAccessToken();
     const amount = orderInfo.amount;
-    const merchantTrns = orderInfo.merchantTrns
+    const merchantTrns = orderInfo.merchantTrns;
+    const body = forApp ? {
+      amount,
+      merchantTrns,
+      sourceCode: '7226'
+    } : {
+      amount,
+      merchantTrns,
+    };
 
     return firstValueFrom(
       this.httpService.post(
         'https://api.vivapayments.com/checkout/v2/orders',
-        {
-          amount,
-          merchantTrns,
-          // sourceCode: '7226'
-        },
+        body,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -685,9 +689,9 @@ export class TicketsService {
     );
   }
 
-  async getPayconicQrCode(paymentOrder: any) {
+  async getPayconicQrCode(paymentOrder: any, forApp = false) {
     console.log('hello ?', paymentOrder)
-    let orderCodePromise = this.createPaymentOrder(paymentOrder);
+    let orderCodePromise = this.createPaymentOrder(paymentOrder, true);
     orderCodePromise = orderCodePromise
       .then((response) => {
         return response.data.orderCode;
@@ -699,19 +703,6 @@ export class TicketsService {
     const orderCode = await orderCodePromise;
 
     return {orderCode}
-
-    let final;
-    // console.log('hello ?', orderCode)
-    final = await firstValueFrom(
-      this.httpService.get('http://150.107.201.160:7000/api/' + orderCode).pipe(
-        catchError(e => {
-          e['lol'] = orderCode;
-          return e;
-        })
-      ),
-    );
-    // console.log('final ?', final.data)
-    return { data: final?.data.screenshot, orderCode: orderCode };
 
     // const browser = await puppeteer.launch({
     //   headless: true,

@@ -76,9 +76,14 @@ export class TicketsController {
     return this.ticketsService.newsletterAddMember(newsletterAdd);
   }
 
+  @Post('/seller/qrcode/app')
+  getSellerQrCodeApp(@Body() paymentOrder: any) {
+    return this.ticketsService.getPayconicQrCode(paymentOrder, true);
+  }
+
   @Post('/seller/qrcode')
   getSellerQrCode(@Body() paymentOrder: any) {
-    return this.ticketsService.getPayconicQrCode(paymentOrder);
+    return this.ticketsService.getPayconicQrCode(paymentOrder, false);
   }
 
   getWebhookKey() {
