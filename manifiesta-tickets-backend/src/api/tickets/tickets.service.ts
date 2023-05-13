@@ -692,7 +692,7 @@ export class TicketsService {
 
   async getPayconicQrCode(paymentOrder: any, forApp = false) {
     console.log('hello ?', paymentOrder)
-    let orderCodePromise = this.createPaymentOrder(paymentOrder, true);
+    let orderCodePromise = this.createPaymentOrder(paymentOrder, forApp);
     orderCodePromise = orderCodePromise
       .then((response) => {
         return response.data.orderCode;
