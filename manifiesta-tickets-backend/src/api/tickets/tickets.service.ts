@@ -34,7 +34,7 @@ export class TicketsService {
     private readonly sellerRepository: Repository<Seller>,
     @InjectRepository(Address)
     private readonly addressRepository: Repository<Address>,
-  ) {}
+  ) { }
 
   private reduceName(name: string, workGroup = false): string {
     if (!name) {
@@ -52,11 +52,11 @@ export class TicketsService {
       this.httpService.get<any>(
         `https://api.eventsquare.io/1.0/store/manifiesta/2023/${this.acceptedShop.includes(shop.toLowerCase())
           ? shop.toLowerCase() : 'app'}`, {
-            headers: {
-              apiKey: this.apiKey,
+        headers: {
+          apiKey: this.apiKey,
         }
       }).pipe(
-          // TODO generic map for the .data from AXIOS
+        // TODO generic map for the .data from AXIOS
         map(d => { return d.data }),
         map(data => { return data.edition.channel.types }),
         map(tickets => { return Array.from(tickets).filter(t => t['type'] === 'ticket') }),
@@ -105,8 +105,8 @@ export class TicketsService {
           clientTransactionId: preparTickets.clientTransactionId,
           clientName: `${preparTickets.firstname} ${preparTickets.lastname}`,
           fromWorkGroup: preparTickets.fromWorkGroup,
-        clientEmail: preparTickets.email,
-      }));
+          clientEmail: preparTickets.email,
+        }));
 
       return sellingInformation;
     }
@@ -167,8 +167,8 @@ export class TicketsService {
             clientName: `${confirmTickets.firstname} ${confirmTickets.lastname}`,
             vwTransactionId: confirmTickets.vwTransactionId,
             fromWorkGroup: confirmTickets.fromWorkGroup,
-          clientEmail: confirmTickets.email,
-        }));
+            clientEmail: confirmTickets.email,
+          }));
       }
     }
 
@@ -209,7 +209,7 @@ export class TicketsService {
         this.httpService
           .get<any>(
             'https://api.eventsquare.io/1.0/store/manifiesta/2023/app?language=nl&pos_token=' +
-              this.posToken,
+            this.posToken,
             {
               headers: {
                 apiKey: this.apiKey,
@@ -667,20 +667,23 @@ export class TicketsService {
     const accessToken = await this.getVivaWaletAccessToken();
     const amount = orderInfo.amount;
     const merchantTrns = orderInfo.merchantTrns;
-    const body = forApp ? {
-      amount,
-      merchantTrns,
-      sourceCode: '7226'
-    } : {
-      amount,
-      merchantTrns,
-      sourceCode: 'Default'
-    };
+    // const body = forApp ? {
+    //   amount,
+    //   merchantTrns,
+    //   sourceCode: '7226'
+    // } : {
+    //   amount,
+    //   merchantTrns,
+    //   sourceCode: 'Default'
+    // };
 
     return firstValueFrom(
       this.httpService.post(
         'https://api.vivapayments.com/checkout/v2/orders',
-        body,
+        {
+          amount,
+          merchantTrns,
+        },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -703,7 +706,7 @@ export class TicketsService {
       });
     const orderCode = await orderCodePromise;
 
-    return {orderCode}
+    return { orderCode }
 
     // const browser = await puppeteer.launch({
     //   headless: true,
