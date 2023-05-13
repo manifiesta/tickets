@@ -674,6 +674,7 @@ export class TicketsService {
     } : {
       amount,
       merchantTrns,
+      sourceCode: 'Default'
     };
 
     return firstValueFrom(
