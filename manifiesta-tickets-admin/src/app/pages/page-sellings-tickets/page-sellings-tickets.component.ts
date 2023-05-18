@@ -37,9 +37,9 @@ export class PageSellingsTicketsComponent implements OnInit {
       this.sellingInformationsAmountTickets = this.sellingInformationsAllBase.length;
       this.table = this.sellingInformationsAllBase;
 
-      this.zipList = [...new Set(this.sellingInformationsAllBase.map(s => s.zip))];
-      this.channelList = [...new Set(this.sellingInformationsAllBase.map(s => s.channel))];
-      this.sellerNameList = [...new Set(this.sellingInformationsAllBase.map(s => s.sellerName))];
+      this.zipList = [...new Set(this.sellingInformationsAllBase.map(s => s.zip))].sort();
+      this.channelList = [...new Set(this.sellingInformationsAllBase.map(s => s.channel))].sort();
+      this.sellerNameList = [...new Set(this.sellingInformationsAllBase.map(s => s.sellerName))].sort();
 
       console.log('all lists', this.sellingInformationsAllBase, this.zipList, this.channelList, this.sellerNameList)
     });
@@ -50,8 +50,6 @@ export class PageSellingsTicketsComponent implements OnInit {
   }
 
   filtering() {
-    console.log('the filter ?', this.sellingInformationsAllBase, this.isWorkingGroup, this.zipSelected.value, this.channelSelected.value, this.sellerNameSelected.value)
-
     this.table = this.sellingInformationsAllBase;
 
     if (this.isWorkingGroup) {
