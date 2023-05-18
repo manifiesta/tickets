@@ -2,8 +2,43 @@
 <h2>Total selling: {{sellingInformationsAmountTickets}}</h2>
 
 <button mat-raised-button color="primary" (click)="export()">Export</button>
+<div style="margin-top: 25px;">
+  <h3>Filter</h3>
 
-<table mat-table [dataSource]="sellingInformationsAll" class="mb-2">
+  <mat-slide-toggle [checked]="isWorkingGroup" (toggleChange)="changeWorkingGroup()" >
+    Working group
+  </mat-slide-toggle>
+
+  <mat-form-field style="margin-left: 15px;">
+    <mat-label>Postal Code</mat-label>
+    <mat-select multiple (selectionChange)="filtering()" [formControl]="zipSelected" >
+      <mat-option *ngFor="let zip of zipList" [value]="zip">
+        {{zip}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field style="margin-left: 15px;">
+    <mat-label>Channel</mat-label>
+    <mat-select multiple (selectionChange)="filtering()" [formControl]="channelSelected" >
+      <mat-option *ngFor="let channel of channelList" [value]="channel">
+        {{channel}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field style="margin-left: 15px;">
+    <mat-label>Seller Name</mat-label>
+    <mat-select multiple (selectionChange)="filtering()" [formControl]="sellerNameSelected" >
+      <mat-option *ngFor="let sellerName of sellerNameList" [value]="sellerName">
+        {{sellerName}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</div>
+
+<table mat-table [dataSource]="table" class="mb-2">
   <ng-container matColumnDef="type">
     <th mat-header-cell *matHeaderCellDef>Type</th>
     <td mat-cell *matCellDef="let element"> {{element.type}} </td>

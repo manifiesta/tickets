@@ -31,6 +31,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { TicketsTypesCountComponent } from './shared/components/tickets-types-count/tickets-types-count.component';
 import { PageSellingsTicketsComponent } from './pages/page-sellings-tickets/page-sellings-tickets.component';
 import { ExcelService } from './shared/services/communication/excel.service';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import { ExcelService } from './shared/services/communication/excel.service';
     MatListModule,
     MatProgressSpinnerModule,
     MatDialogModule,
+    MatSelectModule,
   ],
   providers: [
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },

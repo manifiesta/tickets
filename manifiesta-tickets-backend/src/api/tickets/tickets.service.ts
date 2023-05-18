@@ -662,20 +662,10 @@ export class TicketsService {
   }
 
   async createPaymentOrder(orderInfo, forApp = false) {
-    // const sellerInfo = await this.getSellerSellingInformation(sellerId);
     // TODO: Get the total price (amount) from sellerInfo?
     const accessToken = await this.getVivaWaletAccessToken();
     const amount = orderInfo.amount;
     const merchantTrns = orderInfo.merchantTrns;
-    // const body = forApp ? {
-    //   amount,
-    //   merchantTrns,
-    //   sourceCode: '7226'
-    // } : {
-    //   amount,
-    //   merchantTrns,
-    //   sourceCode: 'Default'
-    // };
 
     return firstValueFrom(
       this.httpService.post(
@@ -707,36 +697,5 @@ export class TicketsService {
     const orderCode = await orderCodePromise;
 
     return { orderCode }
-
-    // const browser = await puppeteer.launch({
-    //   headless: true,
-    //   defaultViewport: null,
-    //   args: [
-    //     '--disable-gpu',
-    //     '--disable-dev-shm-usage',
-    //     '--disable-setuid-sandbox',
-    //     '--no-sandbox',
-    //     '--enable-logging',
-    //     '--window-size=1400,1080',
-    //     '--font-render-hinting=none',
-    //   ],
-    // });
-
-    // const page = await browser.newPage();
-
-    // const status = await page.goto(
-    //   `https://www.vivapayments.com/web2?ref=${orderCode}&paymentmethod=27`,
-    // ); // Replace this with the right link.
-    // console.log(status.status());
-
-    // await page.waitForTimeout(4000);
-
-    // const qrCode = await page.$('canvas');
-
-    // const screenshot = await qrCode.screenshot({ encoding: 'base64' });
-    // return {
-    //   data: 'data:image/png;base64,' + screenshot,
-    //   orderCode: orderCode,
-    // };
   }
 }
