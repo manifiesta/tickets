@@ -17,6 +17,11 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
+  <mat-form-field>
+    <mat-icon matSuffix>search</mat-icon>
+    <mat-label>Postal Code Search</mat-label>
+    <input matInput [(ngModel)]="zipAsked" (input)="filtering()">
+  </mat-form-field>
 
   <mat-form-field style="margin-left: 15px;">
     <mat-label>Channel</mat-label>
@@ -34,6 +39,11 @@
         {{sellerName}}
       </mat-option>
     </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-icon matSuffix>search</mat-icon>
+    <mat-label>Seller Name Search</mat-label>
+    <input matInput [(ngModel)]="sellerNameAsked" (input)="filtering()">
   </mat-form-field>
 
 </div>

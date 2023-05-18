@@ -20,10 +20,12 @@ export class PageSellingsTicketsComponent implements OnInit {
   isWorkingGroup = false;
   zipList: string[] = [];
   zipSelected = new FormControl([]);
+  zipAsked = '';
   channelList: string[] = [];
   channelSelected = new FormControl([]);
   sellerNameList: string[] = [];
   sellerNameSelected = new FormControl([]);
+  sellerNameAsked = '';
 
   constructor(
     private sellersService: SellersService,
@@ -40,8 +42,6 @@ export class PageSellingsTicketsComponent implements OnInit {
       this.zipList = [...new Set(this.sellingInformationsAllBase.map(s => s.zip))].sort();
       this.channelList = [...new Set(this.sellingInformationsAllBase.map(s => s.channel))].sort();
       this.sellerNameList = [...new Set(this.sellingInformationsAllBase.map(s => s.sellerName))].sort();
-
-      console.log('all lists', this.sellingInformationsAllBase, this.zipList, this.channelList, this.sellerNameList)
     });
   }
 
@@ -50,6 +50,7 @@ export class PageSellingsTicketsComponent implements OnInit {
   }
 
   filtering() {
+    console.log('eeee')
     this.table = this.sellingInformationsAllBase;
 
     if (this.isWorkingGroup) {
@@ -66,6 +67,14 @@ export class PageSellingsTicketsComponent implements OnInit {
 
     if (this.sellerNameSelected?.value && this.sellerNameSelected?.value?.length > 0) {
       this.table = this.table.filter(x => { return this.sellerNameSelected.value?.includes(x.sellerName as never) });
+    }
+
+    if (this.zipAsked && this.zipAsked !== '') {
+      this.table = this.table.filter(x => { return x.zip?.toLowerCase().includes(this.zipAsked.toLowerCase()) });
+    }
+
+    if (this.sellerNameAsked && this.sellerNameAsked !== '') {
+      this.table = this.table.filter(x => { return x?.sellerName?.toLowerCase().includes(this.sellerNameAsked.toLowerCase()) });
     }
   }
 
