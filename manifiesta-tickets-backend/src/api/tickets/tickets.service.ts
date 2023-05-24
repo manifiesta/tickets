@@ -696,6 +696,6 @@ export class TicketsService {
       });
     const orderCode = await orderCodePromise;
 
-    return { orderCode }
+    return { orderCode: orderCode.toString() }
   }
 }
