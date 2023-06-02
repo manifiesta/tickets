@@ -23,4 +23,14 @@ export class SellersController {
     return this.sellersService.connectBeeple(connectSeller);
   }
 
+  @Get('/user-shifts/:id')
+  getAllShifsByUserId(@Param('id') id: string) {
+    return this.sellersService.getAllShifsByUserId(id);
+  }
+
+  @Get('/shift/:id')
+  getOneShiftId(@Param('id') id: string) {
+    return this.sellersService.getOneShiftId(id);
+  }
+
 }

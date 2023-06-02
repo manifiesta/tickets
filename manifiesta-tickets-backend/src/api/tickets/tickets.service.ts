@@ -662,7 +662,6 @@ export class TicketsService {
   }
 
   async createPaymentOrder(orderInfo, forApp = false) {
-    // TODO: Get the total price (amount) from sellerInfo?
     const accessToken = await this.getVivaWaletAccessToken();
     const amount = orderInfo.amount;
     const merchantTrns = orderInfo.merchantTrns;
@@ -684,17 +683,15 @@ export class TicketsService {
   }
 
   async getPayconicQrCode(paymentOrder: any, forApp = false) {
-    console.log('hello ?', paymentOrder)
-    let orderCodePromise = this.createPaymentOrder(paymentOrder, forApp);
-    orderCodePromise = orderCodePromise
-      .then((response) => {
-        return response.data.orderCode;
-      })
-      .catch((error) => {
-        console.log('ERR', error);
-        error;
-      });
-    const orderCode = await orderCodePromise;
+    // stupid bug with viva wallet and some order number that begin by 9
+    let isBadOrderCode = false;
+    let orderCodePromise;
+    let orderCode;
+    do {
+      orderCodePromise = await this.createPaymentOrder(paymentOrder, forApp);
+      orderCode = orderCodePromise.data.orderCode.toString();
+      isBadOrderCode = orderCode[0] == '9';
+    } while(isBadOrderCode)
 
     return { orderCode: orderCode.toString() }
   }

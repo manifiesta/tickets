@@ -65,8 +65,6 @@ export class SellersService {
       map(d => { return d.data }),
     )));
 
-    console.log('daaaa', beepleUser)
-
     if (!beepleUser.result) {
       // Beeple API say that the user dont exist
       throw new HttpException({ message: ['error user not existing or bad password'], code: 'auth-bad-combination' }, HttpStatus.NOT_FOUND);
@@ -75,8 +73,27 @@ export class SellersService {
     return {
       email: beepleUser.email,
       id: beepleUser.collaborator_id,
-      name: beepleUser.name
+      name: beepleUser.name,
+      token: beepleUser.token,
     };
+  }
+
+  async getAllShifsByUserId(id) {
+    const token = (await this.connectBeeple({ email: env.BEEPLE_ADMIN_MAIL, password: env.BEEPLE_ADMIN_PASSWORD, department: null })).token;
+    return this.httpService.get<any>(`https://volunteers.manifiesta.be/api/v1/admin/collaborators/${id}/enrolments`, { headers: { Token: token } }).pipe(
+      map(d => {
+        return d.data;
+      })
+    );
+  }
+
+  async getOneShiftId(id) {
+    const token = (await this.connectBeeple({ email: env.BEEPLE_ADMIN_MAIL, password: env.BEEPLE_ADMIN_PASSWORD, department: null })).token;
+    return this.httpService.get<any>(`https://volunteers.manifiesta.be/api/v1/admin/collaborators/enrolments/${id}`, { headers: { Token: token } }).pipe(
+      map(d => {
+        return d.data;
+      })
+    );
   }
 
 }
