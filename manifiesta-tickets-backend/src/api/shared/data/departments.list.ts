@@ -16,14 +16,14 @@ export const provinces: { label: string, code: string, ranges: { start:number, e
     ranges: [{start: 1000, end: 1299}, {start:1300, end: 1499}]
   },
   {
-    label: 'Namur-Luxembourg',
+    label: 'Namur',
     code: 'NLU',
-    ranges: [{start: 5000, end: 5999},{start:6600, end:6999}]
+    ranges: [{start: 5000, end: 5599},{start:5700, end:5999}]
   },
   {
     label: 'Hainaut',
     code: 'HAI',
-    ranges: [{start: 6000, end: 6599},{start:7000, end:7999}]
+    ranges: [{start: 6000, end: 6599},{start:7000, end:7999},{start:5600, end:5699}]
   },
   {
     label: 'Vlaams Brabant',
@@ -41,9 +41,9 @@ export const provinces: { label: string, code: string, ranges: { start:number, e
     ranges: [{start: 3500, end: 3999}]
   },
   {
-    label: 'Liège',
+    label: 'Liège-Luxembourg',
     code: 'LIE',
-    ranges: [{start: 4000, end: 4999}]
+    ranges: [{start: 4000, end: 4999},{start:6600, end:6999}]
   },
   {
     label: 'West Vlaanderen',
