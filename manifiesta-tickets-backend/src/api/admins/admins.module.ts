@@ -8,10 +8,11 @@ import { Admin } from './admin.entity';
 import { AdminsController } from './admins.controller';
 import { AdminsService } from './admins.service';
 import { HttpModule } from '@nestjs/axios';
+import { LongText } from './long-text.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Admin, Address, SellingInformation, Seller]),
+    TypeOrmModule.forFeature([Admin, Address, SellingInformation, Seller, LongText]),
     EncryptionsModule,
     HttpModule,
   ],

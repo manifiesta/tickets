@@ -12,6 +12,8 @@ import { FinishOrderDto } from './dto/finish-order.dto';
 import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom, forkJoin, from, map } from 'rxjs';
 import { isNumber } from 'class-validator';
+import { LongText } from './long-text.entity';
+import { EditLongtextDto } from './dto/edit-long-text.dto';
 
 @Injectable()
 export class AdminsService {
@@ -33,6 +35,8 @@ export class AdminsService {
     private readonly sellingInformationRepository: Repository<SellingInformation>,
     @InjectRepository(Seller)
     private readonly sellerRepository: Repository<Seller>,
+    @InjectRepository(LongText)
+    private readonly longtextRepository: Repository<LongText>,
     private readonly encryptionService: EncryptionsService,
     private httpService: HttpService,
   ) { }
@@ -158,7 +162,6 @@ export class AdminsService {
   async getAllFinishSellingsInformationTickets() {
     const dataNet = [];
     const dataBrut = await this.getAllFinishSellingsInformation();
-    console.log('heeeeello', dataBrut.totalAmountTicket)
     dataBrut.data.forEach(db => {
       db.ticketInfo.forEach(ti => {
         // TODO Check if we can put the field ticketAmount instead of push one by amount ...
@@ -340,4 +343,15 @@ export class AdminsService {
 
     return { order, finalOrder };
   }
+
+  getOneLongText(label: string, lang: string) {
+    return this.longtextRepository.findOne({ where: { label, lang } });
+  }
+
+  async editOneLongText(longtext: EditLongtextDto) {
+    let longtextEdit = await this.longtextRepository.findOne({ where: { label: longtext.label, lang: longtext.lang } });
+    longtextEdit.text = longtext.text;
+    return this.longtextRepository.save(longtextEdit);
+  }
+
 }

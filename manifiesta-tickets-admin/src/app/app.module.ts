@@ -32,11 +32,14 @@ import { TicketsTypesCountComponent } from './shared/components/tickets-types-co
 import { PageSellingsTicketsComponent } from './pages/page-sellings-tickets/page-sellings-tickets.component';
 import { ExcelService } from './shared/services/communication/excel.service';
 import { MatSelectModule } from '@angular/material/select';
+import { PageLongTextComponent } from './pages/page-volunteer/page-volunteer.component';
+import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 
 @NgModule({
   declarations: [
     AppComponent,
     PageSellerComponent,
+    PageLongTextComponent,
     PageHomeComponent,
     PagePhysicalTicketsComponent,
     PageDepartmentsComponent,
@@ -57,6 +60,7 @@ import { MatSelectModule } from '@angular/material/select';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    EditorModule,
 
     // Ng Material stuff
     MatToolbarModule,
@@ -77,6 +81,7 @@ import { MatSelectModule } from '@angular/material/select';
   providers: [
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },
     ExcelService,
+    { provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js' }
   ],
   bootstrap: [AppComponent]
 })

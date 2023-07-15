@@ -11,6 +11,7 @@ import { Seller } from "./api/sellers/seller.entity";
 import { Address } from "./api/tickets/address.entity";
 import { SellingInformation } from "./api/tickets/selling-information.entity";
 import { appDataSourceConfig } from "./data-source";
+import { LongText } from "./api/admins/long-text.entity";
 
 export async function mockingData() {
   const repo = await new DataSource(appDataSourceConfig()).initialize();
@@ -23,6 +24,15 @@ export async function mockingData() {
   const address = await mockAddress(repo);
   const sellingInformation = await mockSellingInformation(repo);
   const admins = await mockAdmins(repo);
+  const longtexts = await mockLongtext(repo);
+}
+
+async function mockLongtext(repo) {
+  const longtextRepo = repo.getRepository(LongText);
+  return [
+    await longtextRepo.save(await longtextRepo.create({ label: 'volunteers-benefits', lang: 'fr', text: '<h1>Bonjour</h1>un tshirt' })),
+    await longtextRepo.save(await longtextRepo.create({ label: 'volunteers-benefits', lang: 'nl', text: '<h1>Hallo</h1>een tshirt' })),
+  ];
 }
 
 async function mockAdmins(repo) {

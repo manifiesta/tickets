@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { Auth } from '../shared/decorators/auth.decorator';
 import { RoleEnum } from '../shared/role.enum';
 import { AdminsService } from './admins.service';
 import { LoginDto } from './login.dto';
 import { FinishOrderDto } from './dto/finish-order.dto';
+import { EditLongtextDto } from './dto/edit-long-text.dto';
 
 @Controller('api/admins')
 export class AdminsController {
@@ -70,6 +71,17 @@ export class AdminsController {
   @Post('/sellingsInformations/finish-order')
   finishOrder(@Body() finishOrder: FinishOrderDto) {
     return this.adminsService.finishOrder(finishOrder);
+  }
+
+  @Get('/longtext/:label/:lang')
+  getOneLongText(@Param('label') label: string, @Param('lang') lang: string) {
+    return this.adminsService.getOneLongText(label, lang);
+  }
+
+  @Auth(RoleEnum.Connected)
+  @Put('/longtext')
+  editOneLongText(@Body() longtext: EditLongtextDto) {
+    return this.adminsService.editOneLongText(longtext);
   }
 
 }
