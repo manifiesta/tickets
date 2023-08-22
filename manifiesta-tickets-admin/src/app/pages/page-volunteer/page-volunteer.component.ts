@@ -10,6 +10,8 @@ export class PageLongTextComponent implements OnInit {
 
   volunteerFr: string = '';
   volunteerNl: string = '';
+  newInfosFr: string = '';
+  newInfosNl: string = '';
 
   tinyMceConfig = {
     base_url: '/tinymce',
@@ -17,6 +19,7 @@ export class PageLongTextComponent implements OnInit {
   };
 
   volunteersBenefits = 'volunteers-benefits';
+  generalNewInfos = 'general-new-infos';
 
   constructor(private longtextService: LongtextService) { }
 
@@ -24,9 +27,13 @@ export class PageLongTextComponent implements OnInit {
     forkJoin([
       this.longtextService.getOneLongtext(this.volunteersBenefits, 'fr'),
       this.longtextService.getOneLongtext(this.volunteersBenefits, 'nl'),
-    ]).subscribe(([vbFr, vbNl]) => {
+      this.longtextService.getOneLongtext(this.generalNewInfos, 'fr'),
+      this.longtextService.getOneLongtext(this.generalNewInfos, 'nl'),
+    ]).subscribe(([vbFr, vbNl, niFr, niNl]) => {
       this.volunteerFr = vbFr.text;
       this.volunteerNl = vbNl.text;
+      this.newInfosFr = niFr.text;
+      this.newInfosNl = niNl.text;
     });
   }
 
@@ -36,6 +43,14 @@ export class PageLongTextComponent implements OnInit {
 
   saveVbNl() {
     this.saveGlobal(this.volunteersBenefits, 'nl', this.volunteerNl);
+  }
+
+  saveNiFr() {
+    this.saveGlobal(this.generalNewInfos, 'fr', this.newInfosFr);
+  }
+
+  saveNiNl() {
+    this.saveGlobal(this.generalNewInfos, 'nl', this.newInfosNl);
   }
 
   saveGlobal(label: string, lang: string, text: string) {
