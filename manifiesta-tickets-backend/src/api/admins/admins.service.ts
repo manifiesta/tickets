@@ -228,7 +228,7 @@ export class AdminsService {
 
   async getOrderNotFinish() {
     return this.sellingInformationRepository.find({
-      where: { vwTransactionId: IsNull() }
+      where: { eventsquareReference: IsNull() }
     });
   }
 
