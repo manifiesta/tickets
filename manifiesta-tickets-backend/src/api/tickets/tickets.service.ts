@@ -48,6 +48,7 @@ export class TicketsService {
   }
 
   getAllTicketTypes(shop: string = 'app') {
+    return [];
     return firstValueFrom(
       this.httpService.get<any>(
         `https://api.eventsquare.io/1.0/store/manifiesta/2023/${this.acceptedShop.includes(shop.toLowerCase())
@@ -219,11 +220,9 @@ export class TicketsService {
           .pipe(
             // TODO generic map for the .data from AXIOS
             map((d) => {
-              console.log('INFO', d);
               return d.data;
             }),
             catchError((e) => {
-              console.log('ER', e);
               return e;
             }),
           ),
@@ -253,9 +252,11 @@ export class TicketsService {
     bodyFormData.append('customer[agent]', confirmTickets.agent);
     bodyFormData.append('customer[language]', confirmTickets.language);
     bodyFormData.append('customer[ip]', confirmTickets.ip);
-    bodyFormData.append('invoice', confirmTickets.invoice.toString());
+    bodyFormData.append('invoice', 'false');
     bodyFormData.append('customer[sellerId]', confirmTickets.sellerId);
     bodyFormData.append('testmode', confirmTickets.testmode.toString());
+
+    // console.log('ok 2', bodyFormData)
 
     const orderid = (
       await firstValueFrom(
@@ -267,7 +268,7 @@ export class TicketsService {
               headers: {
                 apiKey: this.apiKey,
                 'Content-Type':
-                  'multipart/form-data; boundary=<calculated when request is sent>',
+                  'application/x-www-form-urlencoded',
               },
             },
           )
@@ -275,6 +276,10 @@ export class TicketsService {
             // TODO generic map for the .data from AXIOS
             map((d) => {
               return d.data;
+            }),
+            catchError((e) => {
+              // console.log('perkele', e, e.response, e.response.data)
+              return e.response.data;
             }),
           ),
       )
