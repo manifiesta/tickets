@@ -249,12 +249,12 @@ export class TicketsService {
     bodyFormData.append('customer[firstname]', confirmTickets.firstname);
     bodyFormData.append('customer[lastname]', confirmTickets.lastname);
     bodyFormData.append('customer[email]', confirmTickets.email);
-    bodyFormData.append('customer[agent]', confirmTickets.agent);
-    bodyFormData.append('customer[language]', confirmTickets.language);
-    bodyFormData.append('customer[ip]', confirmTickets.ip);
-    bodyFormData.append('invoice', 'false');
+    bodyFormData.append('customer[agent]', 'ManifiestApp');
+    bodyFormData.append('customer[language]', 'nl');
+    bodyFormData.append('customer[ip]', '127.0.0.1');
+    bodyFormData.append('invoice', 0);
     bodyFormData.append('customer[sellerId]', confirmTickets.sellerId);
-    bodyFormData.append('testmode', confirmTickets.testmode.toString());
+    bodyFormData.append('testmode', 0);
 
     // console.log('ok 2', bodyFormData)
 
@@ -267,8 +267,7 @@ export class TicketsService {
             {
               headers: {
                 apiKey: this.apiKey,
-                'Content-Type':
-                  'application/x-www-form-urlencoded',
+                'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>'
               },
             },
           )
@@ -284,6 +283,8 @@ export class TicketsService {
           ),
       )
     ).order.orderid;
+
+    // console.log('ok 3', orderid)
 
     const finalOrder = await firstValueFrom(
       this.httpService
