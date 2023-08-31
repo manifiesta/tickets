@@ -48,7 +48,7 @@ export class TicketsService {
   }
 
   getAllTicketTypes(shop: string = 'app') {
-    return [];
+    // return [];
     return firstValueFrom(
       this.httpService.get<any>(
         `https://api.eventsquare.io/1.0/store/manifiesta/2023/${this.acceptedShop.includes(shop.toLowerCase())
@@ -277,10 +277,10 @@ export class TicketsService {
             map((d) => {
               return d.data;
             }),
-            catchError((e) => {
-              // console.log('perkele', e, e.response, e.response.data)
-              return e.response.data;
-            }),
+            // catchError((e) => {
+            //   console.log('perkele', e, e.response, e.response.data)
+            //   return e.response.data;
+            // }),
           ),
       )
     ).order.orderid;
