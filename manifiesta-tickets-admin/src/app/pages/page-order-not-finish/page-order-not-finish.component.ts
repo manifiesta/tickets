@@ -2,6 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { SellersService } from 'src/app/shared/services/api/sellers.service';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { take } from 'rxjs';
+import readXlsxFile from 'read-excel-file';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-page-order-not-finish',
@@ -37,6 +39,33 @@ export class PageOrderNotFinishComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       this.initTable();
     });
+  }
+
+  receiveExcelFile(event: any) {
+    try {
+      console.log('Begin of take the data from the excel')
+      let reader = new FileReader();
+      reader.readAsArrayBuffer(event.target.files[0]);
+      reader.onload = function (e) {
+        let data = new Uint8Array(reader.result as ArrayBuffer);
+        let workbook = XLSX.read(data, { type: 'array' });
+        XLSX.utils.sheet_to_json(workbook)
+        let jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]])
+        console.log('Data brut', workbook, jsonData)
+
+        jsonData = jsonData.map((jd: any) => {
+          let merchantRef = jd['Merchant Reference'].toString();
+          return {
+            vwTransactionId: jd['Transaction ID'],
+            clientTransactionId: merchantRef.replace('="', '').replace('"', ''),
+          }
+        });
+
+        console.log('the final json', jsonData)
+      }
+    } catch (e) {
+      console.warn('error for upload file', e)
+    }
   }
 
 }

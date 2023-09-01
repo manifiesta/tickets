@@ -1,5 +1,9 @@
 <h1>Order not finish</h1>
 
+<hr>
+Provide a VivaWallet Excel (in beta) <input type="file" class="file-upload" (change)="receiveExcelFile($event)" #fileUpload>
+<hr>
+
 <table mat-table [dataSource]="data" class="mb-2" matSort>
   <ng-container matColumnDef="merchantReference">
     <th mat-header-cell *matHeaderCellDef>Merchant Ref.</th>
