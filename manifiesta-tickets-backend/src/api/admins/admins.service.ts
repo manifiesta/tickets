@@ -366,6 +366,15 @@ export class AdminsService {
       }
     })
 
+    for (let i = 0; i < ordersNotFinishFixedNeeded.length; i++) {
+      const orderNotFinishFixedNeeded = ordersNotFinishFixedNeeded[i];
+      const order = await this.sellingInformationRepository.findOne(
+        { where: { clientTransactionId: orderNotFinishFixedNeeded.clientTransactionId } }
+      );
+      order.vwTransactionId = orderNotFinishFixedNeeded.vwTransactionId;
+      await this.sellingInformationRepository.save(order);
+    }
+
     return ordersNotFinishFixedNeeded;
 
     for (let i = 0; i < ordersNotFinishFixedNeeded.length; i++) {
