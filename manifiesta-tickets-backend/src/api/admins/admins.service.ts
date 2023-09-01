@@ -371,6 +371,9 @@ export class AdminsService {
       const order = await this.sellingInformationRepository.findOne(
         { where: { clientTransactionId: orderNotFinishFixedNeeded.clientTransactionId } }
       );
+      order.vwTransactionId = null;
+      await this.sellingInformationRepository.save(order);
+      
       const otherVwTransaction = await this.sellingInformationRepository.findOne(
         { where: { vwTransactionId: orderNotFinishFixedNeeded.vwTransactionId } }
       );
