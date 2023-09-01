@@ -2,7 +2,6 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { SellersService } from 'src/app/shared/services/api/sellers.service';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { take } from 'rxjs';
-import readXlsxFile from 'read-excel-file';
 import * as XLSX from 'xlsx';
 
 @Component({
