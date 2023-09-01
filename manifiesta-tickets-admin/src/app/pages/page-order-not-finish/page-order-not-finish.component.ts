@@ -15,6 +15,8 @@ export class PageOrderNotFinishComponent implements OnInit {
   data: any[] = [];
   sellingInformationsAmountTickets!: number;
 
+  verificationOccur = false;
+
   constructor(
     private sellersService: SellersService,
     public dialog: MatDialog,
@@ -41,11 +43,12 @@ export class PageOrderNotFinishComponent implements OnInit {
   }
 
   receiveExcelFile(event: any) {
+    this.verificationOccur = true;
     try {
       console.log('Begin of take the data from the excel')
       let reader = new FileReader();
       reader.readAsArrayBuffer(event.target.files[0]);
-      reader.onload = function (e) {
+      reader.onload = () => {
         let data = new Uint8Array(reader.result as ArrayBuffer);
         let workbook = XLSX.read(data, { type: 'array' });
         XLSX.utils.sheet_to_json(workbook)
@@ -61,9 +64,14 @@ export class PageOrderNotFinishComponent implements OnInit {
         });
 
         console.log('the final json', jsonData)
+        this.sellersService.finishOrders(jsonData).subscribe(dataR => {
+          console.log('dataR', dataR)
+          this.initTable();
+        }).add(() => { this.verificationOccur = false; })
       }
     } catch (e) {
       console.warn('error for upload file', e)
+      this.verificationOccur = false;
     }
   }
 

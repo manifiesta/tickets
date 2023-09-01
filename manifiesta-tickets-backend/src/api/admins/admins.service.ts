@@ -14,6 +14,7 @@ import { catchError, firstValueFrom, forkJoin, from, map } from 'rxjs';
 import { isNumber } from 'class-validator';
 import { LongText } from './long-text.entity';
 import { EditLongtextDto } from './dto/edit-long-text.dto';
+import { FinishOrderTransactionIdDto } from './dto/finish-order-transaction-id.dto';
 
 @Injectable()
 export class AdminsService {
@@ -238,7 +239,7 @@ export class AdminsService {
       { where: { clientTransactionId: finishOrder.clientTransactionId } }
     );
 
-    console.log('the order', order, finishOrder, finishOrder.clientTransactionId)
+    // console.log('the order', order, finishOrder, finishOrder.clientTransactionId)
 
     // Verification that the transaction id exist in VW
     const bodyXWWWFORMURLData = new URLSearchParams();
@@ -352,6 +353,23 @@ export class AdminsService {
     let longtextEdit = await this.longtextRepository.findOne({ where: { label: longtext.label, lang: longtext.lang } });
     longtextEdit.text = longtext.text;
     return this.longtextRepository.save(longtextEdit);
+  }
+
+  async finishOrderWithArrayOfTransactionId(finishOrders: FinishOrderTransactionIdDto[]) {
+    const ordersNotFinish = await this.getOrderNotFinish();
+    const ordersNotFinishFixedNeeded = ordersNotFinish.filter(onf => finishOrders.find(fo => fo.clientTransactionId === onf.clientTransactionId));
+
+    for (let i = 0; i < ordersNotFinishFixedNeeded.length; i++) {
+      const orderNotFinishFixedNeeded = ordersNotFinishFixedNeeded[i];
+      const dto: FinishOrderDto = {
+        clientTransactionId: orderNotFinishFixedNeeded.clientTransactionId,
+        vwTransactionId: orderNotFinishFixedNeeded.vwTransactionId,
+        ticketInfo: orderNotFinishFixedNeeded.ticketInfo,
+      };
+      await this.finishOrder(dto)
+    }
+
+    return ordersNotFinishFixedNeeded;
   }
 
 }

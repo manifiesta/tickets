@@ -2,6 +2,7 @@
 
 <hr>
 Provide a VivaWallet Excel (in beta) <input type="file" class="file-upload" (change)="receiveExcelFile($event)" #fileUpload>
+<h1 *ngIf="verificationOccur" class="loading-color">Verification pending - Loading - Wait please</h1>
 <hr>
 
 <table mat-table [dataSource]="data" class="mb-2" matSort>

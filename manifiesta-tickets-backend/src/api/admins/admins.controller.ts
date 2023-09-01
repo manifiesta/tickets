@@ -5,6 +5,7 @@ import { AdminsService } from './admins.service';
 import { LoginDto } from './login.dto';
 import { FinishOrderDto } from './dto/finish-order.dto';
 import { EditLongtextDto } from './dto/edit-long-text.dto';
+import { FinishOrderTransactionIdDto } from './dto/finish-order-transaction-id.dto';
 
 @Controller('api/admins')
 export class AdminsController {
@@ -82,6 +83,12 @@ export class AdminsController {
   @Put('/longtext')
   editOneLongText(@Body() longtext: EditLongtextDto) {
     return this.adminsService.editOneLongText(longtext);
+  }
+
+  @Auth(RoleEnum.Connected)
+  @Post('/sellingsInformations/finish-order-array')
+  finishOrderWithArrayOfTransactionId(@Body() finishOrders: FinishOrderTransactionIdDto[]) {
+    return this.adminsService.finishOrderWithArrayOfTransactionId(finishOrders);
   }
 
 }

@@ -71,5 +71,12 @@ export class SellersService {
     );
   }
 
+  finishOrders(arrayOfBody: any[]): Observable<any> {
+    return this.http.post<any>(
+      `${environment.apiUrl}admins/sellingsInformations/finish-order-array`,
+      arrayOfBody,
+      { headers: { token: localStorage.getItem('admin-token') as string } }
+    );
+  }
 
 }
