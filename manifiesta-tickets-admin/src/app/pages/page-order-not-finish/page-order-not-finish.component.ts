@@ -3,6 +3,7 @@ import { SellersService } from 'src/app/shared/services/api/sellers.service';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { take } from 'rxjs';
 import * as XLSX from 'xlsx';
+import { ExcelService } from 'src/app/shared/services/communication/excel.service';
 
 @Component({
   selector: 'app-page-order-not-finish',
@@ -20,6 +21,7 @@ export class PageOrderNotFinishComponent implements OnInit {
   constructor(
     private sellersService: SellersService,
     public dialog: MatDialog,
+    private excelService: ExcelService,
   ) { }
 
   ngOnInit(): void {
@@ -67,6 +69,8 @@ export class PageOrderNotFinishComponent implements OnInit {
         this.sellersService.finishOrders(jsonData).subscribe(dataR => {
           console.log('dataR', dataR)
           this.initTable();
+
+          this.excelService.exportAsExcelFile(dataR, 'order-not-finished');
         }).add(() => { this.verificationOccur = false; })
       }
     } catch (e) {
