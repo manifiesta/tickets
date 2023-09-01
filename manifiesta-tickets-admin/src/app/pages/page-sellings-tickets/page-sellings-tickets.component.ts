@@ -11,7 +11,7 @@ import { ExcelService } from 'src/app/shared/services/communication/excel.servic
 })
 export class PageSellingsTicketsComponent implements OnInit {
 
-  displayedDepartmentColumns: string[] = ['type', 'clientName', 'channel', 'zip', 'date', 'price', 'sellerName', 'workGroup'];
+  displayedDepartmentColumns: string[] = ['type', 'clientName', 'channel', 'zip', 'date', 'price', 'sellerName', 'workGroup', 'merchRef'];
   sellingInformationsAllBase: any[] = [];
   sellingInformationsAmountTickets!: number;
 

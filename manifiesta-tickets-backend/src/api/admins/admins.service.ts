@@ -177,6 +177,7 @@ export class AdminsService {
             sellerName: db['sellerName'],
             date: db.date,
             workGroup: db.fromWorkGroup,
+            merchRef: db.clientTransactionId,
           })
         }        
       });
