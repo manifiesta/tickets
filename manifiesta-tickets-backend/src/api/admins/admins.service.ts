@@ -357,7 +357,14 @@ export class AdminsService {
 
   async finishOrderWithArrayOfTransactionId(finishOrders: FinishOrderTransactionIdDto[]) {
     const ordersNotFinish = await this.getOrderNotFinish();
-    const ordersNotFinishFixedNeeded = ordersNotFinish.filter(onf => finishOrders.find(fo => fo.clientTransactionId === onf.clientTransactionId));
+    let ordersNotFinishFixedNeeded = ordersNotFinish.filter(onf => finishOrders.find(fo => fo.clientTransactionId === onf.clientTransactionId));
+    
+    ordersNotFinishFixedNeeded = ordersNotFinishFixedNeeded.map(o => {
+      return {
+        ...o,
+        vwTransactionId: finishOrders.find(fo => fo.clientTransactionId === o.clientTransactionId).vwTransactionId
+      }
+    })
 
     return ordersNotFinishFixedNeeded;
 
