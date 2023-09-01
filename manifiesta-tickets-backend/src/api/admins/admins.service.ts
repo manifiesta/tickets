@@ -371,8 +371,15 @@ export class AdminsService {
       const order = await this.sellingInformationRepository.findOne(
         { where: { clientTransactionId: orderNotFinishFixedNeeded.clientTransactionId } }
       );
-      order.vwTransactionId = orderNotFinishFixedNeeded.vwTransactionId;
-      await this.sellingInformationRepository.save(order);
+      const otherVwTransaction = await this.sellingInformationRepository.findOne(
+        { where: { vwTransactionId: orderNotFinishFixedNeeded.vwTransactionId } }
+      );
+      if (!otherVwTransaction) {
+        order.vwTransactionId = orderNotFinishFixedNeeded.vwTransactionId;
+        await this.sellingInformationRepository.save(order);
+      } else {
+        ordersNotFinishFixedNeeded[i]['maybeDuplicate'] = true;
+      }
     }
 
     return ordersNotFinishFixedNeeded;
