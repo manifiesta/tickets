@@ -359,6 +359,8 @@ export class AdminsService {
     const ordersNotFinish = await this.getOrderNotFinish();
     const ordersNotFinishFixedNeeded = ordersNotFinish.filter(onf => finishOrders.find(fo => fo.clientTransactionId === onf.clientTransactionId));
 
+    return ordersNotFinishFixedNeeded;
+
     for (let i = 0; i < ordersNotFinishFixedNeeded.length; i++) {
       const orderNotFinishFixedNeeded = ordersNotFinishFixedNeeded[i];
       const dto: FinishOrderDto = {
