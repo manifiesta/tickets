@@ -373,14 +373,21 @@ export class AdminsService {
       );
       order.vwTransactionId = null;
       await this.sellingInformationRepository.save(order);
-      
+
       const otherVwTransaction = await this.sellingInformationRepository.findOne(
         { where: { vwTransactionId: orderNotFinishFixedNeeded.vwTransactionId } }
       );
+
       if (!otherVwTransaction) {
         order.vwTransactionId = orderNotFinishFixedNeeded.vwTransactionId;
         await this.sellingInformationRepository.save(order);
       } else {
+        order.vwTransactionId = otherVwTransaction.vwTransactionId;
+        order.eventsquareReference = otherVwTransaction.eventsquareReference;
+        order.clientTransactionId = otherVwTransaction.clientTransactionId;
+        await this.sellingInformationRepository.save(order);
+        await this.sellingInformationRepository.delete(otherVwTransaction);
+
         ordersNotFinishFixedNeeded[i]['maybeDuplicate'] = true;
       }
     }
