@@ -384,9 +384,9 @@ export class AdminsService {
       } else {
         order.vwTransactionId = otherVwTransaction.vwTransactionId;
         order.eventsquareReference = otherVwTransaction.eventsquareReference;
-        order.clientTransactionId = otherVwTransaction.clientTransactionId;
+        order.clientTransactionId = orderNotFinishFixedNeeded.clientTransactionId;
         await this.sellingInformationRepository.save(order);
-        await this.sellingInformationRepository.delete(otherVwTransaction);
+        await this.sellingInformationRepository.delete({id: otherVwTransaction.id});
 
         ordersNotFinishFixedNeeded[i]['maybeDuplicate'] = true;
       }
