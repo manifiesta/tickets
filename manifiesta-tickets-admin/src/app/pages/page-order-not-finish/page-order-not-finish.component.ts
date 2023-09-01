@@ -65,8 +65,10 @@ export class PageOrderNotFinishComponent implements OnInit {
           }
         });
 
-        console.log('the final json', jsonData)
-        this.sellersService.finishOrders(jsonData).subscribe(dataR => {
+        const preFilter = jsonData.filter((onf: any) => this.data.find((fo: any) => fo.clientTransactionId === onf.clientTransactionId));
+        console.log('the final json', jsonData, this.data, preFilter)
+
+        this.sellersService.finishOrders(preFilter).subscribe(dataR => {
           console.log('dataR', dataR)
           this.initTable();
 
