@@ -14,6 +14,8 @@ export class PageLongTextComponent implements OnInit {
   newInfosNl: string = '';
   overInfoFr: string = '';
   overInfoNl: string = '';
+  homeFr: string = '';
+  homeNl: string = '';
 
   tinyMceConfig = {
     base_url: '/tinymce',
@@ -23,6 +25,7 @@ export class PageLongTextComponent implements OnInit {
   volunteersBenefits = 'volunteers-benefits';
   generalNewInfos = 'general-new-infos';
   overInfos = 'over-info';
+  home = 'home';
 
   constructor(private longtextService: LongtextService) { }
 
@@ -34,13 +37,17 @@ export class PageLongTextComponent implements OnInit {
       this.longtextService.getOneLongtext(this.generalNewInfos, 'nl'),
       this.longtextService.getOneLongtext(this.overInfos, 'fr'),
       this.longtextService.getOneLongtext(this.overInfos, 'nl'),
-    ]).subscribe(([vbFr, vbNl, niFr, niNl, oiFr, oiNl]) => {
+      this.longtextService.getOneLongtext(this.home, 'fr'),
+      this.longtextService.getOneLongtext(this.home, 'nl'),
+    ]).subscribe(([vbFr, vbNl, niFr, niNl, oiFr, oiNl, hFr, hNl]) => {
       this.volunteerFr = vbFr.text;
       this.volunteerNl = vbNl.text;
       this.newInfosFr = niFr.text;
       this.newInfosNl = niNl.text;
       this.overInfoFr = oiFr.text;
       this.overInfoNl = oiNl.text;
+      this.homeFr = hFr.text;
+      this.homeNl = hNl.text;
     });
   }
 
@@ -66,6 +73,14 @@ export class PageLongTextComponent implements OnInit {
 
   saveOiNl() {
     this.saveGlobal(this.overInfos, 'nl', this.overInfoNl);
+  }
+
+  saveHomeFr() {
+    this.saveGlobal(this.home, 'fr', this.homeFr);
+  }
+
+  saveHomeNl() {
+    this.saveGlobal(this.home, 'nl', this.homeNl);
   }
 
   saveGlobal(label: string, lang: string, text: string) {

@@ -21,6 +21,16 @@
 
 <hr>
 
+<h2>Text for the home page</h2>
+<h3>FR</h3>
+<editor [init]="tinyMceConfig" [(ngModel)]="homeFr"></editor>
+<button mat-raised-button color="primary" (click)="saveHomeFr()">Save</button>
+<h3>NL</h3>
+<editor [init]="tinyMceConfig" [(ngModel)]="homeNl"></editor>
+<button mat-raised-button color="primary" (click)="saveHomeNl()">Save</button>
+
+<hr>
+
 <h2>Text for the "over info" page</h2>
 <h3>FR</h3>
 <editor [init]="tinyMceConfig" [(ngModel)]="overInfoFr"></editor>
