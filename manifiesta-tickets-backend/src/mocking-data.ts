@@ -3,7 +3,7 @@
  * It's to assemble them into some scenario
  */
 
-import { DataSource } from "typeorm";
+import { DataSource, getConnection } from "typeorm";
 import { Admin } from "./api/admins/admin.entity";
 import { Department } from "./api/departments/department.entity";
 import { EncryptionsService } from "./api/encryptions/encryptions.service";
@@ -16,7 +16,7 @@ import { LongText } from "./api/admins/long-text.entity";
 export async function mockingData() {
   const repo = await new DataSource(appDataSourceConfig()).initialize();
   await repo.dropDatabase();
-  repo.initialize();
+  // repo.initialize();
   // we need to recall it to have again the table after the clean up
   await new DataSource(appDataSourceConfig()).initialize();
   const departments = await mockDepartments(repo);
@@ -105,6 +105,35 @@ async function mockSellingInformation(repo) {
   const mainId = process.env.BEEPLE_TEST_ID || '007';
   const sellingInformationRepo = await repo.getRepository(SellingInformation);
   return [
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'failing@manifiesta.com',
+      sellerDepartmentId: 'BASE',
+      sellerPostalCode: '1040',
+      eventsquareReference: null,
+      date: new Date('2021-06-06'),
+      quantity: 4,
+      clientName: 'Ticket pending',
+      clientTransactionId: process.env.MerchantTrnsEx1,
+      clientEmail: process.env.ClientEmailEx1,
+      ticketInfo: [
+        { "ticketId": process.env.EsTestTicketId, "ticketAmount": 2, "ticketLabel": "Testouille", ticketPrice: 0.01 },
+      ]
+    })),
+    await sellingInformationRepo.save(sellingInformationRepo.create({
+      sellerId: 'not-failing@manifiesta.com',
+      sellerDepartmentId: 'BASE',
+      sellerPostalCode: '1040',
+      eventsquareReference: null,
+      vwTransactionId: process.env.VwTransactionIdEx2,
+      clientTransactionId: process.env.MerchantTrnsEx2,
+      date: new Date('2021-06-06'),
+      quantity: 4,
+      clientName: 'Ticket Already selling',
+      clientEmail: process.env.ClientEmailEx1,
+      ticketInfo: [
+        { "ticketId": process.env.EsTestTicketId, "ticketAmount": 2, "ticketLabel": "Testouille", ticketPrice: 0.01 },
+      ]
+    })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'samy@manifiesta.com',
       sellerDepartmentId: 'BASE',

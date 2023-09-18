@@ -16,6 +16,8 @@ import { PreparTicketsDto } from './dto/prepar-tickets.dto';
 import { SellingInformation } from './selling-information.entity';
 // import FormData from 'form-data';
 
+// TODO avoid all duplicate here ! clean code
+
 @Injectable()
 export class TicketsService {
   apiKey = process.env.EVENT_SQUARE_API_KEY;
@@ -40,9 +42,9 @@ export class TicketsService {
     if (!name) {
       return undefined;
     }
-    const split = name.split(' ');
-    const firstName = split.shift();
-    const lastName = split.map((e) => e[0]).join('');
+    const split = name?.split(' ');
+    const firstName = split?.shift();
+    const lastName = split?.map((e) => e[0]).join('');
 
     return `${workGroup && firstName ? firstName[0] : firstName} ${lastName}`
   }
@@ -697,8 +699,157 @@ export class TicketsService {
       orderCodePromise = await this.createPaymentOrder(paymentOrder, forApp);
       orderCode = orderCodePromise.data.orderCode.toString();
       isBadOrderCode = orderCode[0] == '9';
-    } while(isBadOrderCode)
+    } while (isBadOrderCode)
 
     return { orderCode: orderCode.toString() }
+  }
+
+  /**
+   * @param vivaWalletTransactionId the id from the viva wallet selling
+   * @returns the informations of the selling
+   * 
+   * From the Viva Wallet Transaction Id, we get to the API all the information, include the merchand ref
+   * This merchand ref is useful to retrieve the tickets informations for the selling
+   * With all of that, we can finish the order
+   * 
+   * If the vw transaction id is already use, throw error
+   * If the vw transaction id dont exist, throw error
+   * 
+   * TODO see with test ticket in prod mod, not register
+   * TODO throw error if vw transaction id dont exist
+   * TODO throw error if vw transaction id already exist (presence of event square ref)
+   * TODO also have the hours of the event square finish ticket
+   * TODO have firstname and lastname in db for ticket
+   * 
+   * TODO try in full asynchrone
+   */
+  async finishOrderWithVivaWalletTransactionId(vivaWalletTransactionId: string) {
+    const accessToken = await this.getVivaWaletAccessToken();
+
+    const transactionVerification = await firstValueFrom(
+      this.httpService
+        .get<any>(
+          `https://api.vivapayments.com/checkout/v2/transactions/${vivaWalletTransactionId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        )
+        .pipe(
+          // TODO generic map for the .data from AXIOS
+          map((d) => {
+            return d.data;
+          }),
+        ),
+    ).catch((e) => {
+      throw new HttpException(
+        {
+          message: ['error transaction not existing'],
+          code: 'transaction-not-existing',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    });
+
+    const pendingTicket = await this.sellingInformationRepository.findOne({
+      where: { clientTransactionId: transactionVerification.merchantTrns },
+    });
+
+    // And command the EventSquare tickets
+    const cartid = (
+      await firstValueFrom(
+        this.httpService
+          .get<any>(
+            'https://api.eventsquare.io/1.0/store/manifiesta/2023/app?language=nl&pos_token=' +
+            this.posToken,
+            {
+              headers: {
+                apiKey: this.apiKey,
+              },
+            },
+          )
+          .pipe(
+            map((d) => {
+              return d.data;
+            }),
+            catchError((e) => {
+              return e;
+            }),
+          ),
+      )
+    ).edition.cart.cartid;
+
+    const putTicketsInCart = pendingTicket.ticketInfo.map((t) => {
+      return this.httpService.put<any>(
+        `https://api.eventsquare.io/1.0/cart/${cartid}/types/${t.ticketId}?quantity=${t.ticketAmount}`,
+        {},
+        {
+          headers: {
+            apiKey: this.apiKey,
+          },
+        },
+      );
+    });
+
+    await firstValueFrom(forkJoin(putTicketsInCart));
+
+    const FormData = require('form-data');
+    const bodyFormData = new FormData();
+    bodyFormData.append('redirecturl', 'https://www.manifiesta.be');
+    // TODO have firstname and lastname
+    bodyFormData.append('customer[firstname]', pendingTicket.clientName.toLowerCase());
+    bodyFormData.append('customer[lastname]', pendingTicket.clientName.toUpperCase());
+    bodyFormData.append('customer[email]', pendingTicket.clientEmail);
+    bodyFormData.append('customer[agent]', 'ManifiestApp');
+    bodyFormData.append('customer[language]', 'nl');
+    bodyFormData.append('customer[ip]', '127.0.0.1');
+    bodyFormData.append('invoice', 0);
+    bodyFormData.append('customer[sellerId]', pendingTicket.sellerId);
+    bodyFormData.append('testmode', 0);
+
+    const orderid = (
+      await firstValueFrom(
+        this.httpService
+          .post<any>(
+            `https://api.eventsquare.io/1.0/cart/${cartid}`,
+            bodyFormData,
+            {
+              headers: {
+                apiKey: this.apiKey,
+                'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>'
+              },
+            },
+          )
+          .pipe(
+            map((d) => {
+              return d.data;
+            }),
+            // catchError((e) => {
+            //   console.log('perkele', e, e.response, e.response.data)
+            //   return e.response.data;
+            // }),
+          ),
+      )
+    ).order.orderid;
+
+    const finalOrder = await firstValueFrom(
+      this.httpService
+        .get<any>(`https://api.eventsquare.io/1.0/checkout/${orderid}`, {
+          headers: {
+            apiKey: this.apiKey,
+          },
+        })
+        .pipe(
+          map((d) => {
+            return d.data;
+          }),
+        ),
+    );
+
+    pendingTicket.eventsquareReference = finalOrder.order.reference;
+    await this.sellingInformationRepository.save(pendingTicket);
+
+    return finalOrder;
   }
 }

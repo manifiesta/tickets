@@ -71,6 +71,11 @@ export class TicketsController {
     );
   }
 
+  @Get('/finishOrderPending/:vwId')
+  finishOrderWithVivaWalletTransactionId(@Param('vwId') vwId: string) {
+    return this.ticketsService.finishOrderWithVivaWalletTransactionId(vwId);
+  }
+
   @Post('/newsletter-add')
   newsletterAddMember(@Body() newsletterAdd: NewsletterAddDto) {
     return this.ticketsService.newsletterAddMember(newsletterAdd);
