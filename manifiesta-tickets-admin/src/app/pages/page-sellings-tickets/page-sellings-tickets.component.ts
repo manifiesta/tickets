@@ -42,6 +42,25 @@ export class PageSellingsTicketsComponent implements OnInit {
       this.zipList = [...new Set(this.sellingInformationsAllBase.map(s => s.zip))].sort();
       this.channelList = [...new Set(this.sellingInformationsAllBase.map(s => s.channel))].sort();
       this.sellerNameList = [...new Set(this.sellingInformationsAllBase.map(s => s.sellerName))].sort();
+
+      // usefull to get all email adress
+      // const listOfMail: any[] = [...new Set(data.map((d: any) => d.sellerId.toLowerCase()))];
+      // console.log(
+      //   'list of mail', data,
+      //   listOfMail,
+      //   listOfMail.slice(0, 99).join(','),
+      //   listOfMail.slice(99, 199).join(','),
+      //   listOfMail.slice(199, 299).join(','),
+      //   listOfMail.slice(299, 399).join(','),
+      //   listOfMail.slice(399, 499).join(','),
+      //   listOfMail.slice(499, 599).join(','),
+      //   listOfMail.slice(599, 699).join(','),
+      //   listOfMail.slice(699, 799).join(','),
+      //   listOfMail.slice(799, 899).join(','),
+      //   listOfMail.slice(899, 999).join(','),
+      //   listOfMail.slice(999, 1099).join(','),
+      //   listOfMail.slice(1099, 1199).join(','),
+      // )
     });
   }
 
