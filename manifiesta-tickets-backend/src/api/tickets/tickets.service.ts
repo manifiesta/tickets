@@ -74,257 +74,61 @@ export class TicketsService {
   }
 
   async preparOrder(preparTickets: PreparTicketsDto) {
-    if (!this.presenceOfTestTicket(preparTickets)) {
-      const seller = await this.sellerRepository.findOne({
-        where: { email: preparTickets.sellerId },
-      });
-      if (!seller) {
-        await this.sellerRepository.save(
-          await this.sellerRepository.create({
-            email: preparTickets.sellerId,
-            name: preparTickets.sellerName,
-            workGroup: preparTickets.fromWorkGroup,
-          }),
-        );
-      } else {
-        seller.name = preparTickets.sellerName;
-        seller.workGroup = preparTickets.fromWorkGroup;
-        this.sellerRepository.save(seller);
-      }
-
-      let quantity = 0;
-      preparTickets.tickets.forEach((e) => {
-        quantity += e.ticketAmount;
-      });
-
-      const sellingInformation = await this.sellingInformationRepository.save(
-        this.sellingInformationRepository.create({
-          date: new Date(),
-          sellerDepartmentId: preparTickets.sellerDepartmentId,
-          sellerId: preparTickets.sellerId,
-          sellerPostalCode: preparTickets.sellerPostalCode,
-          ticketInfo: preparTickets.tickets,
-          quantity: quantity,
-          clientTransactionId: preparTickets.clientTransactionId,
-          clientName: `${preparTickets.firstname} ${preparTickets.lastname}`,
-          fromWorkGroup: preparTickets.fromWorkGroup,
-          clientEmail: preparTickets.email,
-        }));
-
-      return sellingInformation;
+    const seller = await this.sellerRepository.findOne({
+      where: { email: preparTickets.sellerId },
+    });
+    if (!seller) {
+      await this.sellerRepository.save(
+        await this.sellerRepository.create({
+          email: preparTickets.sellerId,
+          name: preparTickets.sellerName,
+          workGroup: preparTickets.fromWorkGroup,
+        }),
+      );
+    } else {
+      seller.name = preparTickets.sellerName;
+      seller.workGroup = preparTickets.fromWorkGroup;
+      this.sellerRepository.save(seller);
     }
 
-    return preparTickets;
-  }
-
-  // TODO try better way with no async shit
-  // TODO manage lang
-  async confirmOrder(confirmTickets: ConfirmTicketsDto) {
-    const ticketTest = this.presenceOfTestTicket(confirmTickets);
-
     let quantity = 0;
-    confirmTickets.tickets.forEach((e) => {
+    preparTickets.tickets.forEach((e) => {
       quantity += e.ticketAmount;
     });
 
-    // If we find something, it's an error because we cannot have a vw transaction id already use
-    const sellingWithVwTransactionId =
-      await this.sellingInformationRepository.findOne({
-        where: { vwTransactionId: confirmTickets.vwTransactionId },
-      });
+    const sellingInformation = await this.sellingInformationRepository.save(
+      this.sellingInformationRepository.create({
+        orderDate: new Date(),
+        sellerDepartmentId: preparTickets.sellerDepartmentId,
+        sellerId: preparTickets.sellerId,
+        sellerPostalCode: preparTickets.sellerPostalCode,
+        ticketInfo: preparTickets.tickets,
+        quantity: quantity,
+        clientTransactionId: preparTickets.clientTransactionId,
+        clientName: preparTickets.firstname,
+        clientLastName: preparTickets.lastname,
+        fromWorkGroup: preparTickets.fromWorkGroup,
+        clientEmail: preparTickets.email,
+      }));
 
-    if (sellingWithVwTransactionId) {
-      throw new HttpException(
-        {
-          message: ['error transaction already existing'],
-          code: 'transaction-already-done',
-        },
-        HttpStatus.CONFLICT,
-      );
-    }
-
-    let sellingInformation;
-
-    // If there are some testing ticket, we register nothing
-    if (!ticketTest) {
-      const sellingInformationWithClientTransactionId =
-        await this.sellingInformationRepository.findOne({
-          where: { clientTransactionId: confirmTickets.clientTransactionId },
-        });
-
-      if (sellingInformationWithClientTransactionId) {
-        sellingInformation = sellingInformationWithClientTransactionId;
-        sellingInformation.vwTransactionId = confirmTickets.vwTransactionId;
-        await this.sellingInformationRepository.save(sellingInformation);
-      } else {
-        // We stock the first information before the command run, in case of, eventSquereReference will come at the end
-        sellingInformation = await this.sellingInformationRepository.save(
-          this.sellingInformationRepository.create({
-            date: new Date(),
-            sellerDepartmentId: confirmTickets.sellerDepartmentId,
-            sellerId: confirmTickets.sellerId,
-            sellerPostalCode: confirmTickets.sellerPostalCode,
-            ticketInfo: confirmTickets.tickets,
-            quantity: quantity,
-            clientTransactionId: confirmTickets.clientTransactionId,
-            clientName: `${confirmTickets.firstname} ${confirmTickets.lastname}`,
-            vwTransactionId: confirmTickets.vwTransactionId,
-            fromWorkGroup: confirmTickets.fromWorkGroup,
-            clientEmail: confirmTickets.email,
-          }));
-      }
-    }
-
-    // Verification that the transaction id exist in VW
-    // TODO verify that is not already used !
-    const accessToken = await this.getVivaWaletAccessToken();
-
-    const transactionVerification = await firstValueFrom(
-      this.httpService
-        .get<any>(
-          `https://api.vivapayments.com/checkout/v2/transactions/${confirmTickets.vwTransactionId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          },
-        )
-        .pipe(
-          // TODO generic map for the .data from AXIOS
-          map((d) => {
-            return d.data;
-          }),
-        ),
-    ).catch((e) => {
-      throw new HttpException(
-        {
-          message: ['error transaction not existing'],
-          code: 'transaction-not-existing',
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    });
-
-    // If no error throw here, it's good, we can continue
-    // And command the EventSquare tickets
-    const cartid = (
-      await firstValueFrom(
-        this.httpService
-          .get<any>(
-            'https://api.eventsquare.io/1.0/store/manifiesta/2023/app?language=nl&pos_token=' +
-            this.posToken,
-            {
-              headers: {
-                apiKey: this.apiKey,
-              },
-            },
-          )
-          .pipe(
-            // TODO generic map for the .data from AXIOS
-            map((d) => {
-              return d.data;
-            }),
-            catchError((e) => {
-              return e;
-            }),
-          ),
-      )
-    ).edition.cart.cartid;
-
-    const putTicketsInCart = confirmTickets.tickets.map((t) => {
-      return this.httpService.put<any>(
-        `https://api.eventsquare.io/1.0/cart/${cartid}/types/${t.ticketId}?quantity=${t.ticketAmount}`,
-        {},
-        {
-          headers: {
-            apiKey: this.apiKey,
-          },
-        },
-      );
-    });
-
-    await firstValueFrom(forkJoin(putTicketsInCart));
-
-    const FormData = require('form-data');
-    const bodyFormData = new FormData();
-    bodyFormData.append('redirecturl', 'https://www.manifiesta.be');
-    bodyFormData.append('customer[firstname]', confirmTickets.firstname);
-    bodyFormData.append('customer[lastname]', confirmTickets.lastname);
-    bodyFormData.append('customer[email]', confirmTickets.email);
-    bodyFormData.append('customer[agent]', 'ManifiestApp');
-    bodyFormData.append('customer[language]', 'nl');
-    bodyFormData.append('customer[ip]', '127.0.0.1');
-    bodyFormData.append('invoice', 0);
-    bodyFormData.append('customer[sellerId]', confirmTickets.sellerId);
-    bodyFormData.append('testmode', 0);
-
-    // console.log('ok 2', bodyFormData)
-
-    const orderid = (
-      await firstValueFrom(
-        this.httpService
-          .post<any>(
-            `https://api.eventsquare.io/1.0/cart/${cartid}`,
-            bodyFormData,
-            {
-              headers: {
-                apiKey: this.apiKey,
-                'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>'
-              },
-            },
-          )
-          .pipe(
-            // TODO generic map for the .data from AXIOS
-            map((d) => {
-              return d.data;
-            }),
-            // catchError((e) => {
-            //   console.log('perkele', e, e.response, e.response.data)
-            //   return e.response.data;
-            // }),
-          ),
-      )
-    ).order.orderid;
-
-    // console.log('ok 3', orderid)
-
-    const finalOrder = await firstValueFrom(
-      this.httpService
-        .get<any>(`https://api.eventsquare.io/1.0/checkout/${orderid}`, {
-          headers: {
-            apiKey: this.apiKey,
-          },
-        })
-        .pipe(
-          // TODO generic map for the .data from AXIOS
-          map((d) => {
-            return d.data;
-          }),
-        ),
-    );
-
-    if (!ticketTest) {
-      sellingInformation.eventsquareReference = finalOrder.order.reference;
-      await this.sellingInformationRepository.save(sellingInformation);
-    }
 
     // If the client demand a physical ticket
-    if (confirmTickets.askSendTicket) {
+    if (preparTickets.askSendTicket) {
       await this.addressRepository.save(
         await this.addressRepository.create({
-          city: confirmTickets.address.city,
-          eventsquareReference: finalOrder.order.reference,
-          firstName: confirmTickets.firstname,
-          lastName: confirmTickets.lastname,
-          number: confirmTickets.address.number,
-          postCode: confirmTickets.address.postCode,
-          street: confirmTickets.address.street,
+          city: preparTickets.address.city,
+          firstName: preparTickets.firstname,
+          lastName: preparTickets.lastname,
+          number: preparTickets.address.number,
+          postCode: preparTickets.address.postCode,
+          street: preparTickets.address.street,
           sendDone: false,
+          sellingInformationId: sellingInformation.id.toString(),
         }),
       );
     }
 
-    return finalOrder;
+    return sellingInformation;
   }
 
   async getTransactionById(id: string) {
@@ -393,7 +197,7 @@ export class TicketsService {
   async getSellerSellingInformation(id: string) {
     let data = await this.sellingInformationRepository.find({
       where: { sellerId: id, eventsquareReference: Not(IsNull()) },
-      order: { date: 'ASC' },
+      order: { finishDate: 'ASC' },
     });
     data = data.map((d) => {
       return {
@@ -715,16 +519,24 @@ export class TicketsService {
    * If the vw transaction id is already use, throw error
    * If the vw transaction id dont exist, throw error
    * 
-   * TODO see with test ticket in prod mod, not register
-   * TODO throw error if vw transaction id dont exist
-   * TODO throw error if vw transaction id already exist (presence of event square ref)
-   * TODO also have the hours of the event square finish ticket
-   * TODO have firstname and lastname in db for ticket
-   * 
    * TODO try in full asynchrone
    */
   async finishOrderWithVivaWalletTransactionId(vivaWalletTransactionId: string) {
     const accessToken = await this.getVivaWaletAccessToken();
+
+    const findAlreadyUseVwTransactionId = await this.sellingInformationRepository.findOne({
+      where: { vwTransactionId: vivaWalletTransactionId },
+    });
+
+    if (findAlreadyUseVwTransactionId) {
+      throw new HttpException(
+        {
+          message: ['error transaction already existing'],
+          code: 'transaction-already-done',
+        },
+        HttpStatus.CONFLICT,
+      );
+    }
 
     const transactionVerification = await firstValueFrom(
       this.httpService
@@ -737,7 +549,6 @@ export class TicketsService {
           },
         )
         .pipe(
-          // TODO generic map for the .data from AXIOS
           map((d) => {
             return d.data;
           }),
@@ -798,8 +609,8 @@ export class TicketsService {
     const bodyFormData = new FormData();
     bodyFormData.append('redirecturl', 'https://www.manifiesta.be');
     // TODO have firstname and lastname
-    bodyFormData.append('customer[firstname]', pendingTicket.clientName.toLowerCase());
-    bodyFormData.append('customer[lastname]', pendingTicket.clientName.toUpperCase());
+    bodyFormData.append('customer[firstname]', pendingTicket.clientName);
+    bodyFormData.append('customer[lastname]', pendingTicket.clientLastName);
     bodyFormData.append('customer[email]', pendingTicket.clientEmail);
     bodyFormData.append('customer[agent]', 'ManifiestApp');
     bodyFormData.append('customer[language]', 'nl');
@@ -825,10 +636,6 @@ export class TicketsService {
             map((d) => {
               return d.data;
             }),
-            // catchError((e) => {
-            //   console.log('perkele', e, e.response, e.response.data)
-            //   return e.response.data;
-            // }),
           ),
       )
     ).order.orderid;
@@ -848,7 +655,15 @@ export class TicketsService {
     );
 
     pendingTicket.eventsquareReference = finalOrder.order.reference;
+    pendingTicket.vwTransactionId = vivaWalletTransactionId;
+    pendingTicket.finishDate = new Date();
     await this.sellingInformationRepository.save(pendingTicket);
+
+    const addressAsk = await this.addressRepository.findOne({ where: { sellingInformationId: pendingTicket.id.toString() } })
+    if (addressAsk) {
+      addressAsk.eventsquareReference = finalOrder.order.reference;
+      await this.addressRepository.save(addressAsk);
+    }
 
     return finalOrder;
   }

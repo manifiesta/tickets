@@ -33,13 +33,22 @@ export class SellingInformation {
   clientName: string;
 
   @Column({nullable: true, default: null})
+  clientLastName: string;
+
+  @Column({nullable: true, default: null})
   clientEmail: string;
 
   @Column()
-  date: Date;
+  orderDate: Date;
+
+  @Column()
+  finishDate: Date;
 
   @Column()
   quantity: number;
+
+  @Column()
+  edition: string;
 
   // Must seen how to stock that
   // A json string ?

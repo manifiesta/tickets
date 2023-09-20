@@ -28,4 +28,7 @@ export class Address {
 
   @Column({ nullable: true })
   sendDone: boolean;
+
+  @Column()
+  sellingInformationId: string;
 }

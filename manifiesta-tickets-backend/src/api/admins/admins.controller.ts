@@ -68,11 +68,11 @@ export class AdminsController {
     return this.adminsService.getOrderNotFinish();
   }
 
-  @Auth(RoleEnum.Connected)
-  @Post('/sellingsInformations/finish-order')
-  finishOrder(@Body() finishOrder: FinishOrderDto) {
-    return this.adminsService.finishOrder(finishOrder);
-  }
+  // @Auth(RoleEnum.Connected)
+  // @Post('/sellingsInformations/finish-order')
+  // finishOrder(@Body() finishOrder: FinishOrderDto) {
+  //   return this.adminsService.finishOrder(finishOrder);
+  // }
 
   @Get('/longtext/:label/:lang')
   getOneLongText(@Param('label') label: string, @Param('lang') lang: string) {

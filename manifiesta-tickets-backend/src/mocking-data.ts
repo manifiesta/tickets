@@ -87,9 +87,9 @@ async function mockAddress(repo) {
       postCode: '1000',
       city: 'Brussels',
       sendDone: false,
+      sellingInformationId: '2',
     })),
     await addressRepo.save(addressRepo.create({
-      eventsquareReference: 'VNF29658',
       firstName: 'Flotal',
       lastName: 'Inrard',
       street: 'Rue Rosa',
@@ -97,6 +97,7 @@ async function mockAddress(repo) {
       postCode: '1000',
       city: 'Brussels',
       sendDone: true,
+      sellingInformationId: '1',
     })),
   ]
 }
@@ -110,9 +111,10 @@ async function mockSellingInformation(repo) {
       sellerDepartmentId: 'BASE',
       sellerPostalCode: '1040',
       eventsquareReference: null,
-      date: new Date('2021-06-06'),
+      orderDate: new Date('2021-06-06'),
       quantity: 4,
-      clientName: 'Ticket pending',
+      clientName: 'Test Ticket',
+      clientLastName: 'Dev',
       clientTransactionId: process.env.MerchantTrnsEx1,
       clientEmail: process.env.ClientEmailEx1,
       ticketInfo: [
@@ -126,7 +128,7 @@ async function mockSellingInformation(repo) {
       eventsquareReference: null,
       vwTransactionId: process.env.VwTransactionIdEx2,
       clientTransactionId: process.env.MerchantTrnsEx2,
-      date: new Date('2021-06-06'),
+      orderDate: new Date('2021-06-06'),
       quantity: 4,
       clientName: 'Ticket Already selling',
       clientEmail: process.env.ClientEmailEx1,
@@ -140,7 +142,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1040',
       vwTransactionId: '117',
       eventsquareReference: null,
-      date: new Date('2021-06-06'),
+      orderDate: new Date('2021-06-06'),
       quantity: 4,
       clientName: 'Random Client 1',
       ticketInfo: [
@@ -155,7 +157,7 @@ async function mockSellingInformation(repo) {
       fromWorkGroup: true,
       vwTransactionId: '118',
       eventsquareReference: 'PTB-666',
-      date: new Date('2021-04-04'),
+      orderDate: new Date('2021-04-04'),
       quantity: 1,
       clientName: 'Random Client 2',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1, "ticketLabel": "Regular Intal", ticketPrice: 0.01 }]
@@ -166,7 +168,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '5000',
       vwTransactionId: '120',
       eventsquareReference: 'CDH-666',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 3,
       clientName: 'Random Client 3',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 3, "ticketLabel": "Regular Intal", ticketPrice: 0.01 }]
@@ -177,7 +179,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '5000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',
-      date: new Date('2021-08-08'),
+      orderDate: new Date('2021-08-08'),
       quantity: 1,
       clientName: 'Random Client 4',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
@@ -188,7 +190,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: '121',
       eventsquareReference: 'PVDA-667',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 3,
       clientName: 'Random Client 5',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 3, "ticketLabel": "Regular Intal", ticketPrice: 0.01 }]
@@ -199,7 +201,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: '122',
       eventsquareReference: 'PVDA-668',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 7,
       clientName: 'Random Client 6',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 7, "ticketLabel": "Regular Intal", ticketPrice: 0.01 }]
@@ -210,7 +212,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: '122',
       eventsquareReference: 'PVDA-669',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 2,
       clientName: 'Random Client 7',
       ticketInfo: [
@@ -224,7 +226,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',
-      date: new Date('2021-06-06'),
+      orderDate: new Date('2021-06-06'),
       quantity: 1,
       clientName: 'Random Client 8',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
@@ -235,7 +237,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 9',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
@@ -246,7 +248,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 10',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
@@ -257,7 +259,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 11',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
@@ -268,7 +270,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 12',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
@@ -279,7 +281,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 13',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
@@ -290,7 +292,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 14',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
@@ -301,7 +303,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: null,
       eventsquareReference: 'PVDA-666',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 15',
       clientEmail: 'random@client.nl',
@@ -313,7 +315,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 16',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
@@ -324,7 +326,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 17',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
@@ -335,7 +337,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: null,
       eventsquareReference: 'PVDA-666',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 18',
       clientEmail: 'random@client.nl',
@@ -347,7 +349,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: '119',
       eventsquareReference: 'PVDA-666',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 19',
       ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
@@ -358,7 +360,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1000',
       vwTransactionId: null,
       eventsquareReference: 'PVDA-666',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 20',
       clientEmail: 'random@client.nl',
@@ -370,7 +372,7 @@ async function mockSellingInformation(repo) {
       sellerPostalCode: '1040',
       vwTransactionId: null,
       eventsquareReference: 'YOLO',
-      date: new Date(),
+      orderDate: new Date(),
       quantity: 4,
       clientName: 'Random Client 1',
       clientEmail: 'app@manifiesta.be',

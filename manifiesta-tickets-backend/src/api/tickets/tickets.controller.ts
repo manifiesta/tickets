@@ -30,11 +30,6 @@ export class TicketsController {
     return this.ticketsService.preparOrder(preparTickets);
   }
 
-  @Post('/confirm')
-  confirmOrder(@Body() confirmTickets: ConfirmTicketsDto) {
-    return this.ticketsService.confirmOrder(confirmTickets);
-  }
-
   @Get('/transaction/:id')
   getTransactionById(@Param('id') id: string) {
     return this.ticketsService.getTransactionById(id);

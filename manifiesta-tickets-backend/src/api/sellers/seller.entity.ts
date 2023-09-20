@@ -14,7 +14,4 @@ export class Seller {
 
   @Column()
   workGroup: boolean;
-
-  @Column({ nullable: true, default: null })
-  beepleId: string;
 }
