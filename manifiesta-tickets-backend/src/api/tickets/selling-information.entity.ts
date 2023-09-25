@@ -41,13 +41,13 @@ export class SellingInformation {
   @Column()
   orderDate: Date;
 
-  @Column()
+  @Column({nullable: true, default: null})
   finishDate: Date;
 
   @Column()
   quantity: number;
 
-  @Column()
+  @Column({nullable: true, default: null})
   edition: string;
 
   // Must seen how to stock that
