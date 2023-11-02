@@ -635,8 +635,31 @@ export class TicketsService {
     bodyFormData.append('customer[language]', 'nl');
     bodyFormData.append('customer[ip]', '127.0.0.1');
     bodyFormData.append('invoice', 0);
-    bodyFormData.append('customer[sellerId]', pendingTicket.sellerId);
+    bodyFormData.append('customer[data][sellerId]', pendingTicket.sellerId);
     bodyFormData.append('testmode', 0);
+
+    const jsonBody = {
+      customer: {
+        firstname: pendingTicket.clientName,
+        lastname: pendingTicket.clientLastName,
+        email: pendingTicket.clientEmail,
+        agent: 'ManifiestApp',
+        language: 'nl',
+        ip: '127.0.0.1',
+        data: {
+          sellerId: pendingTicket.sellerId,
+          sellerDepartmentId: pendingTicket.sellerDepartmentId,
+          sellerPostalCode: pendingTicket.sellerPostalCode,
+          clientTransactionId: pendingTicket.clientTransactionId,
+          vwTransactionId: pendingTicket.vwTransactionId,
+        }
+      },
+      testmode: 0,
+      redirecturl: 'https://www.manifiesta.be',
+      invoice: 0,
+    }
+
+    // console.log('body', jsonBody)
 
     const orderid = (
       await firstValueFrom(
@@ -655,6 +678,10 @@ export class TicketsService {
             map((d) => {
               return d.data;
             }),
+            catchError(err => {
+              console.warn('errrr', err.response.data)
+              return null;
+            })
           ),
       )
     ).order.orderid;
