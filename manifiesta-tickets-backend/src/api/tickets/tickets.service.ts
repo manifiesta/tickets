@@ -109,6 +109,7 @@ export class TicketsService {
         clientLastName: preparTickets.lastname,
         fromWorkGroup: preparTickets.fromWorkGroup,
         clientEmail: preparTickets.email,
+        edition: preparTickets.edition || new Date().getFullYear().toString(),
       }));
 
 
@@ -197,6 +198,24 @@ export class TicketsService {
   async getSellerSellingInformation(id: string) {
     let data = await this.sellingInformationRepository.find({
       where: { sellerId: id, eventsquareReference: Not(IsNull()) },
+      order: { finishDate: 'ASC' },
+    });
+    data = data.map((d) => {
+      return {
+        ...d,
+        sellerDepartment:
+          departments.find((df) => df.code === d.sellerDepartmentId)?.label ||
+          d.sellerDepartmentId,
+        clientName: this.reduceName(d.clientName),
+      };
+    });
+    return { data, totalAmountTicket: this.getNumberOfTicket(data) };
+  }
+
+  
+  async getSellerSellingInformationForEdition(id: string, edition: string) {
+    let data = await this.sellingInformationRepository.find({
+      where: { sellerId: id, eventsquareReference: Not(IsNull()), edition },
       order: { finishDate: 'ASC' },
     });
     data = data.map((d) => {
@@ -659,12 +678,18 @@ export class TicketsService {
     pendingTicket.finishDate = new Date();
     await this.sellingInformationRepository.save(pendingTicket);
 
+    const allSellerTicketsEdition = await this.getSellerSellingInformationForEdition(pendingTicket.sellerId, pendingTicket.edition);
+
     const addressAsk = await this.addressRepository.findOne({ where: { sellingInformationId: pendingTicket.id.toString() } })
     if (addressAsk) {
       addressAsk.eventsquareReference = finalOrder.order.reference;
       await this.addressRepository.save(addressAsk);
     }
 
-    return finalOrder;
+    return {
+      ...pendingTicket,
+      order: finalOrder.order,
+      totalTicketsForThisEditionForThisSeller: allSellerTicketsEdition.totalAmountTicket,
+    };
   }
 }

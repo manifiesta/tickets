@@ -45,6 +45,11 @@ export class TicketsController {
     return this.ticketsService.getSellerSellingInformation(id);
   }
 
+  @Get('/sellingInformation/seller/:id/:edition')
+  getSellerSellingInformationForEdition(@Param('id') id: string, @Param('edition') edition: string) {
+    return this.ticketsService.getSellerSellingInformationForEdition(id, edition);
+  }
+
   @Get('/sellingInformation/department/top-ten/:id/:postCode')
   getOneDepartmentSellingInformationTopTen(
     @Param('id') id: string,

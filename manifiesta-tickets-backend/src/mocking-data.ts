@@ -107,7 +107,7 @@ async function mockSellingInformation(repo) {
   const sellingInformationRepo = await repo.getRepository(SellingInformation);
   return [
     await sellingInformationRepo.save(sellingInformationRepo.create({
-      sellerId: 'failing@manifiesta.com',
+      sellerId: process.env.ClientEmailEx1,
       sellerDepartmentId: 'BASE',
       sellerPostalCode: '1040',
       eventsquareReference: null,
@@ -119,10 +119,11 @@ async function mockSellingInformation(repo) {
       clientEmail: process.env.ClientEmailEx1,
       ticketInfo: [
         { "ticketId": process.env.EsTestTicketId, "ticketAmount": 2, "ticketLabel": "Testouille", ticketPrice: 0.01 },
-      ]
+      ],
+      edition: '2024',
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
-      sellerId: 'not-failing@manifiesta.com',
+      sellerId: process.env.ClientEmailEx1,
       sellerDepartmentId: 'BASE',
       sellerPostalCode: '1040',
       eventsquareReference: null,
@@ -134,7 +135,8 @@ async function mockSellingInformation(repo) {
       clientEmail: process.env.ClientEmailEx1,
       ticketInfo: [
         { "ticketId": process.env.EsTestTicketId, "ticketAmount": 2, "ticketLabel": "Testouille", ticketPrice: 0.01 },
-      ]
+      ],
+      edition: '2024',
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'samy@manifiesta.com',

@@ -41,6 +41,7 @@ export class PreparTicketsDto {
   @IsArray()
   readonly tickets: { ticketId: string, ticketAmount: number, ticketLabel: string, ticketPrice: number }[];
   readonly fromWorkGroup: boolean;
+  readonly edition?: string;
   
   readonly askSendTicket: boolean;
   @Validate(AddressNeededValidator)
