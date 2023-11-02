@@ -18,7 +18,12 @@ export class TicketsController {
     private readonly ticketsService: TicketsService,
     private ticketsGateway: TicketsGateway,
     private departmentsService: DepartmentsService
-  ) {}
+  ) { }
+  
+  // @Get(['/test'])
+  // test() {
+  //   return this.ticketsService.test();
+  // }
 
   @Get(['/types/:shop', '/types'])
   findAll(@Param('shop') shop = 'app') {

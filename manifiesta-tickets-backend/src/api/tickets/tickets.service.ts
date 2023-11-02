@@ -26,6 +26,9 @@ export class TicketsService {
   vwSecret = process.env.VIVA_WALLET_SMART_CHECKOUT_SECRET;
   vwClient = process.env.VIVA_WALLET_SMART_CHECKOUT_CLIENT_ID;
 
+  userES = process.env.EVENT_SQUARE_USER;
+  passwordES = process.env.EVENT_SQUARE_PASSWORD;
+
   acceptedShop = ['app', 'comac', 'redfox', 'base', 'gvhv', 'other', 'cubanismo', 'intal', 'marianne'];
 
   constructor(
@@ -212,7 +215,7 @@ export class TicketsService {
     return { data, totalAmountTicket: this.getNumberOfTicket(data) };
   }
 
-  
+
   async getSellerSellingInformationForEdition(id: string, edition: string) {
     let data = await this.sellingInformationRepository.find({
       where: { sellerId: id, eventsquareReference: Not(IsNull()), edition },
@@ -666,11 +669,12 @@ export class TicketsService {
         this.httpService
           .post<any>(
             `https://api.eventsquare.io/1.0/cart/${cartid}`,
-            bodyFormData,
+          // bodyFormData,
+          jsonBody,
             {
               headers: {
                 apiKey: this.apiKey,
-                'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>'
+                // 'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>'
               },
             },
           )
@@ -679,7 +683,7 @@ export class TicketsService {
               return d.data;
             }),
             catchError(err => {
-              console.warn('errrr', err.response.data)
+              console.warn('err for creating event square ticket', err.response.data)
               return null;
             })
           ),
@@ -718,5 +722,24 @@ export class TicketsService {
       order: finalOrder.order,
       totalTicketsForThisEditionForThisSeller: allSellerTicketsEdition.totalAmountTicket,
     };
+  }
+
+  async test() {
+    const token = await firstValueFrom(this.httpService.post<any>(`https://api.eventsquare.io/1.0/authenticate`, {
+      email: this.userES,
+      password: this.passwordES,
+    }, {
+      headers: {
+        apiKey: this.apiKey,
+      },
+    }).pipe(
+      catchError(err => {
+        console.warn('err for get token', err.response.data)
+        return null;
+      })
+    )
+    );
+    console.log('get token', token)
+    return token;
   }
 }
