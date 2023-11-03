@@ -641,6 +641,8 @@ export class TicketsService {
     bodyFormData.append('customer[data][sellerId]', pendingTicket.sellerId);
     bodyFormData.append('testmode', 0);
 
+    console.log('the seller', pendingTicket.sellerId, pendingTicket.sellerDepartmentId)
+
     const jsonBody = {
       customer: {
         firstname: pendingTicket.clientName,
@@ -669,8 +671,8 @@ export class TicketsService {
         this.httpService
           .post<any>(
             `https://api.eventsquare.io/1.0/cart/${cartid}`,
-          // bodyFormData,
-          jsonBody,
+            // bodyFormData,
+            jsonBody,
             {
               headers: {
                 apiKey: this.apiKey,
@@ -724,8 +726,9 @@ export class TicketsService {
     };
   }
 
-  async test() {
-    const token = await firstValueFrom(this.httpService.post<any>(`https://api.eventsquare.io/1.0/authenticate`, {
+  // TODO refactor, in other place
+  async authentificationEventSquare(): Promise<any> {
+    return await firstValueFrom(this.httpService.post<any>(`https://api.eventsquare.io/1.0/authenticate`, {
       email: this.userES,
       password: this.passwordES,
     }, {
@@ -733,13 +736,17 @@ export class TicketsService {
         apiKey: this.apiKey,
       },
     }).pipe(
+      map((d) => {
+        return d.data;
+      }),
       catchError(err => {
         console.warn('err for get token', err.response.data)
         return null;
       })
-    )
-    );
-    console.log('get token', token)
-    return token;
+    ));
+  }
+
+  async test() {
+    return 'hello world'
   }
 }

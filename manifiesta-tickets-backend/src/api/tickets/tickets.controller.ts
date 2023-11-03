@@ -20,10 +20,10 @@ export class TicketsController {
     private departmentsService: DepartmentsService
   ) { }
   
-  // @Get(['/test'])
-  // test() {
-  //   return this.ticketsService.test();
-  // }
+  @Get(['/test'])
+  test() {
+    return this.ticketsService.test();
+  }
 
   @Get(['/types/:shop', '/types'])
   findAll(@Param('shop') shop = 'app') {
