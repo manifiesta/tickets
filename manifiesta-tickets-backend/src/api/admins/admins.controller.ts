@@ -91,4 +91,10 @@ export class AdminsController {
     return this.adminsService.finishOrderWithArrayOfTransactionId(finishOrders);
   }
 
+  @Auth(RoleEnum.Connected)
+  @Get('/beeple/functions')
+  beepleFunctions() {
+    return this.adminsService.beepleFunctions();
+  }
+
 }

@@ -10,4 +10,7 @@ export class Admin {
 
   @Column()
   password: string;
+
+  @Column("simple-json")
+  extra: {roles: any[]};
 }

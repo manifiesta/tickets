@@ -1,6 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { LongtextService } from 'src/app/shared/services/api/longtext.service';
+import { SellersService } from 'src/app/shared/services/api/sellers.service';
+import { ExcelService } from 'src/app/shared/services/communication/excel.service';
 
 @Component({
   selector: 'app-page-volunteer',
@@ -27,7 +29,11 @@ export class PageLongTextComponent implements OnInit {
   overInfos = 'over-info';
   home = 'home';
 
-  constructor(private longtextService: LongtextService) { }
+  constructor(
+    private longtextService: LongtextService,
+    private sellersService: SellersService,
+    private excelService: ExcelService,
+  ) { }
 
   ngOnInit(): void {
     forkJoin([
@@ -40,14 +46,14 @@ export class PageLongTextComponent implements OnInit {
       this.longtextService.getOneLongtext(this.home, 'fr'),
       this.longtextService.getOneLongtext(this.home, 'nl'),
     ]).subscribe(([vbFr, vbNl, niFr, niNl, oiFr, oiNl, hFr, hNl]) => {
-      this.volunteerFr = vbFr.text;
-      this.volunteerNl = vbNl.text;
-      this.newInfosFr = niFr.text;
-      this.newInfosNl = niNl.text;
-      this.overInfoFr = oiFr.text;
-      this.overInfoNl = oiNl.text;
-      this.homeFr = hFr.text;
-      this.homeNl = hNl.text;
+      this.volunteerFr = vbFr?.text;
+      this.volunteerNl = vbNl?.text;
+      this.newInfosFr = niFr?.text;
+      this.newInfosNl = niNl?.text;
+      this.overInfoFr = oiFr?.text;
+      this.overInfoNl = oiNl?.text;
+      this.homeFr = hFr?.text;
+      this.homeNl = hNl?.text;
     });
   }
 
@@ -90,6 +96,22 @@ export class PageLongTextComponent implements OnInit {
       text,
     }).subscribe(() => {
       console.log('good edit')
+    });
+  }
+
+  getBeepleFunctions() {
+    this.sellersService.beepleFunctions().subscribe(data => {
+      this.excelService.exportAsExcelFile(data.functions.map((d: any) => {
+        return {
+          id: d.id,
+          name: d.name,
+          name_fr: d.name_i18n?.fr,
+          name_nl: d.name_i18n?.nl,
+          description: d.description,
+          description_fr: d.description_i18n?.fr,
+          description_nl: d.description_i18n?.nl,
+        }
+      }), 'beeple-function')
     });
   }
 

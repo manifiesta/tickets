@@ -9,15 +9,16 @@ import { LoginResolver } from './shared/login.resolver';
 import { PageOrderNotFinishComponent } from './pages/page-order-not-finish/page-order-not-finish.component';
 import { PageSellingsTicketsComponent } from './pages/page-sellings-tickets/page-sellings-tickets.component';
 import { PageLongTextComponent } from './pages/page-volunteer/page-volunteer.component';
+import { RoleEnum } from './shared/services/communication/role.enum';
 
 const routes: Routes = [
-  { path: 'home', component: PageHomeComponent, resolve: { login: LoginResolver } },
-  { path: 'departments', component: PageDepartmentsComponent, resolve: { login: LoginResolver } },
-  { path: 'sellings-tickets', component: PageSellingsTicketsComponent, resolve: { login: LoginResolver } },
-  { path: 'sellers', component: PageSellerComponent, resolve: { login: LoginResolver } },
-  { path: 'physical-tickets', component: PagePhysicalTicketsComponent, resolve: { login: LoginResolver } },
-  { path: 'order-not-finish', component: PageOrderNotFinishComponent, resolve: { login: LoginResolver } },
-  { path: 'longtext', component: PageLongTextComponent, resolve: { login: LoginResolver } },
+  { path: 'home', component: PageHomeComponent, resolve: { login: LoginResolver }, data: {role: RoleEnum.SECRETARY} },
+  { path: 'departments', component: PageDepartmentsComponent, resolve: { login: LoginResolver }, data: {role: RoleEnum.SECRETARY} },
+  { path: 'sellings-tickets', component: PageSellingsTicketsComponent, resolve: { login: LoginResolver }, data: {role: RoleEnum.SECRETARY} },
+  { path: 'sellers', component: PageSellerComponent, resolve: { login: LoginResolver }, data: {role: RoleEnum.SECRETARY} },
+  { path: 'physical-tickets', component: PagePhysicalTicketsComponent, resolve: { login: LoginResolver }, data: {role: RoleEnum.AFTER_SALE_SERVICE} },
+  { path: 'order-not-finish', component: PageOrderNotFinishComponent, resolve: { login: LoginResolver }, data: {role: RoleEnum.AFTER_SALE_SERVICE} },
+  { path: 'longtext', component: PageLongTextComponent, resolve: { login: LoginResolver }, data: {role: RoleEnum.VOLUNTEER_TEAM} },
   { path: 'login', component: PageLoginComponent },
 
   { path: '', redirectTo: '/home', pathMatch: 'full' },

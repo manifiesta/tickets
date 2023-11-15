@@ -79,4 +79,11 @@ export class SellersService {
     );
   }
 
+  beepleFunctions(): Observable<any> {
+    return this.http.get<any>(
+      `${environment.apiUrl}admins/beeple/functions`,
+      { headers: { token: localStorage.getItem('admin-token') as string } }
+    );
+  }
+
 }

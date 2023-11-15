@@ -19,6 +19,11 @@ export class LoginService {
     this.user = user;
     this.user$.next(this.user);
     localStorage.setItem('admin-token', user.token as string);
+    localStorage.setItem('roles', ((user.extra.roles) as string[]).join());
+  }
+
+  getRoles() {
+    return localStorage.getItem('roles')?.split(',');
   }
 
   getUser(): User {

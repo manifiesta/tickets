@@ -12,6 +12,7 @@ import { Address } from "./api/tickets/address.entity";
 import { SellingInformation } from "./api/tickets/selling-information.entity";
 import { appDataSourceConfig } from "./data-source";
 import { LongText } from "./api/admins/long-text.entity";
+import { RoleEnum } from "./api/admins/role.enum";
 
 export async function mockingData() {
   const repo = await new DataSource(appDataSourceConfig()).initialize();
@@ -39,8 +40,10 @@ async function mockAdmins(repo) {
   const adminRepo = repo.getRepository(Admin);
   const e = new EncryptionsService();
   return [
-    await adminRepo.save(await adminRepo.create({ email: 'samy@manifiesta.com', password: await e.hash('qwerty') })),
-    await adminRepo.save(await adminRepo.create({ email: 'rosa@manifiesta.com', password: await e.hash('qwertz') })),
+    await adminRepo.save(await adminRepo.create({
+      email: 'samy@manifiesta.com', password: await e.hash('qwerty'), extra: { roles: [RoleEnum.SECRETARY, RoleEnum.VOLUNTEER_TEAM] }
+    })),
+    await adminRepo.save(await adminRepo.create({ email: 'rosa@manifiesta.com', password: await e.hash('qwertz'), extra: { roles: [RoleEnum.ADMIN] } })),
   ];
 }
 

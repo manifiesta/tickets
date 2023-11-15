@@ -15,6 +15,8 @@ import { isNumber } from 'class-validator';
 import { LongText } from './long-text.entity';
 import { EditLongtextDto } from './dto/edit-long-text.dto';
 import { FinishOrderTransactionIdDto } from './dto/finish-order-transaction-id.dto';
+import { SellersService } from '../sellers/sellers.service';
+import { env } from 'process';
 
 @Injectable()
 export class AdminsService {
@@ -40,10 +42,11 @@ export class AdminsService {
     private readonly longtextRepository: Repository<LongText>,
     private readonly encryptionService: EncryptionsService,
     private httpService: HttpService,
+    private sellersService: SellersService,
   ) { }
 
   createUserToken(admin: Admin) {
-    return this.jwt.sign({ email: admin.email, id: admin.id }, process.env.JWT_SECURITY_KEY);
+    return this.jwt.sign({ email: admin.email, id: admin.id, extra: admin.extra }, process.env.JWT_SECURITY_KEY);
   }
 
   async login(loginDto: LoginDto) {
@@ -61,7 +64,7 @@ export class AdminsService {
 
     const token = await this.createUserToken(admin);
 
-    return { token, email: admin.email };
+    return { token, email: admin.email, extra: admin.extra };
   }
 
   findUserByEmailAdmin(email: string) {
@@ -69,7 +72,7 @@ export class AdminsService {
   }
 
   getAllPhysicalTickets() {
-    return this.addressRepository.find({where: {eventsquareReference: Not(IsNull())}});
+    return this.addressRepository.find({ where: { eventsquareReference: Not(IsNull()) } });
   }
 
   private getNumberOfTicket(data: any[]): number {
@@ -179,7 +182,7 @@ export class AdminsService {
             workGroup: db.fromWorkGroup,
             merchRef: db.clientTransactionId,
           })
-        }        
+        }
       });
     })
     return dataNet;
@@ -248,7 +251,7 @@ export class AdminsService {
   async finishOrderWithArrayOfTransactionId(finishOrders: FinishOrderTransactionIdDto[]) {
     const ordersNotFinish = await this.getOrderNotFinish();
     let ordersNotFinishFixedNeeded = ordersNotFinish.filter(onf => finishOrders.find(fo => fo.clientTransactionId === onf.clientTransactionId));
-    
+
     ordersNotFinishFixedNeeded = ordersNotFinishFixedNeeded.map(o => {
       return {
         ...o,
@@ -276,7 +279,7 @@ export class AdminsService {
         order.eventsquareReference = otherVwTransaction.eventsquareReference;
         order.clientTransactionId = orderNotFinishFixedNeeded.clientTransactionId;
         await this.sellingInformationRepository.save(order);
-        await this.sellingInformationRepository.delete({id: otherVwTransaction.id});
+        await this.sellingInformationRepository.delete({ id: otherVwTransaction.id });
 
         ordersNotFinishFixedNeeded[i]['maybeDuplicate'] = true;
       }
@@ -295,6 +298,16 @@ export class AdminsService {
     }
 
     return ordersNotFinishFixedNeeded;
+  }
+
+  async beepleFunctions() {
+    const token = (await this.sellersService.connectBeeple({ email: env.BEEPLE_ADMIN_MAIL, password: env.BEEPLE_ADMIN_PASSWORD, department: null })).token;
+    return this.httpService.get<any>(`https://volunteers.manifiesta.be/api/v1/admin/functions`, { headers: { Token: token } }).pipe(
+      map(d => {
+        return d.data;
+      })
+    );
+
   }
 
 }
