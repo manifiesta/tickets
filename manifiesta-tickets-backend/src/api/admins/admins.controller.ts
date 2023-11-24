@@ -38,15 +38,33 @@ export class AdminsController {
   }
 
   @Auth(RoleEnum.Connected)
+  @Get('/sellingsInformations/:edition')
+  getAllSellingsInformationByEdition(@Param('edition') edition: string) {
+    return this.adminsService.getAllSellingsInformationByEdition(edition);
+  }
+
+  @Auth(RoleEnum.Connected)
   @Get('/sellingsInformations/sellers')
   getAllSellersSellingsInformation() {
     return this.adminsService.getAllSellersSellingsInformation();
   }
 
   @Auth(RoleEnum.Connected)
+  @Get('/sellingsInformations/sellers/:edition')
+  getAllSellersSellingsInformationByEdition(@Param('edition') edition: string) {
+    return this.adminsService.getAllSellersSellingsInformationByEdition(edition);
+  }
+
+  @Auth(RoleEnum.Connected)
   @Get('/sellingsInformations/sellings')
   getAllFinishSellingsInformation() {
     return this.adminsService.getAllFinishSellingsInformation();
+  }
+
+  @Auth(RoleEnum.Connected)
+  @Get('/sellingsInformations/sellings/:edition')
+  getAllFinishSellingsInformationByEdition(@Param('edition') edition: string) {
+    return this.adminsService.getAllFinishSellingsInformationByEdition(edition);
   }
 
   // For this route, we extract directly the tickets informations
@@ -56,6 +74,13 @@ export class AdminsController {
     return this.adminsService.getAllFinishSellingsInformationTickets();
   }
 
+  // For this route, we extract directly the tickets informations
+  @Auth(RoleEnum.Connected)
+  @Get('/sellingsInformations/sellings-tickets/:edition')
+  getAllFinishSellingsInformationTicketsByEdition(@Param('edition') edition: string) {
+    return this.adminsService.getAllFinishSellingsInformationTicketsByEdition(edition);
+  }
+
   @Auth(RoleEnum.Connected)
   @Get('/sellingsInformations/departments')
   getAllDepartmentsSellingsInformations() {
@@ -63,9 +88,21 @@ export class AdminsController {
   }
 
   @Auth(RoleEnum.Connected)
+  @Get('/sellingsInformations/departments/:edition')
+  getAllDepartmentsSellingsInformationsByEdition(@Param('edition') edition: string) {
+    return this.adminsService.getAllDepartmentsSellingsInformationsByEdition(edition);
+  }
+
+  @Auth(RoleEnum.Connected)
   @Get('/sellingsInformations/order-not-finish')
   getOrderNotFinish() {
     return this.adminsService.getOrderNotFinish();
+  }
+
+  @Auth(RoleEnum.Connected)
+  @Get('/sellingsInformations/order-not-finish/:edition')
+  getOrderNotFinishByEdition(@Param('edition') edition: string) {
+    return this.adminsService.getOrderNotFinishByEdition(edition);
   }
 
   // @Auth(RoleEnum.Connected)

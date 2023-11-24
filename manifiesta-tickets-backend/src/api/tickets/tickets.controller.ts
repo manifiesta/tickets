@@ -40,9 +40,9 @@ export class TicketsController {
     return this.ticketsService.getTransactionById(id);
   }
 
-  @Get('/sellingInformation/seller/top-ten')
-  getAllSellerSellingInformationTopTen() {
-    return this.ticketsService.getTopTenSeller();
+  @Get('/sellingInformation/seller/top-ten/:edition')
+  getAllSellerSellingInformationTopTen(@Param('edition') edition: string) {
+    return this.ticketsService.getTopTenSeller(edition);
   }
 
   @Get('/sellingInformation/seller/:id')
@@ -55,24 +55,27 @@ export class TicketsController {
     return this.ticketsService.getSellerSellingInformationForEdition(id, edition);
   }
 
-  @Get('/sellingInformation/department/top-ten/:id/:postCode')
+  @Get('/sellingInformation/department/top-ten/:id/:postCode/:edition')
   getOneDepartmentSellingInformationTopTen(
     @Param('id') id: string,
     @Param('postCode') postCode: string,
+    @Param('edition') edition: string,
   ) {
-    return this.ticketsService.getMyDepartmentTopTen(id, postCode);
+    return this.ticketsService.getMyDepartmentTopTen(id, postCode, edition);
   }
 
-  @Get('/sellingInformation/postCode/:postCode/:departmentCode/:fromWorkGroup')
+  @Get('/sellingInformation/postCode/:postCode/:departmentCode/:fromWorkGroup/:edition')
   getOnePostCodeSellingInformation(
     @Param('postCode') postCode: string,
     @Param('departmentCode') departmentCode: string,
     @Param('fromWorkGroup') fromWorkGroup: string,
+    @Param('edition') edition: string
   ) {
     return this.ticketsService.getOnePostCodeSellingInformation(
       postCode,
       departmentCode,
       fromWorkGroup,
+      edition,
     );
   }
 

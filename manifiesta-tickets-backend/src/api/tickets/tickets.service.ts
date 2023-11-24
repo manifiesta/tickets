@@ -233,17 +233,17 @@ export class TicketsService {
     return { data, totalAmountTicket: this.getNumberOfTicket(data) };
   }
 
-  async getTopTenSeller() {
-    const myDepartmentInfo = await this.getAllSellerSellingInformation();
+  async getTopTenSeller(edition: string) {
+    const myDepartmentInfo = await this.getAllSellerSellingInformation(edition);
     return myDepartmentInfo.data.slice(0, 10);
   }
 
-  async getAllSellerSellingInformation(): Promise<{
+  async getAllSellerSellingInformation(edition: string): Promise<{
     data: any[];
     totalAmountTicket: number;
   }> {
     const data = await this.sellingInformationRepository.find({
-      where: { eventsquareReference: Not(IsNull()) },
+      where: { eventsquareReference: Not(IsNull()), edition },
       order: { sellerId: 'ASC' },
     });
 
@@ -285,10 +285,12 @@ export class TicketsService {
   async getMyDepartmentTopTen(
     sellerdepartmentId: string,
     sellerPostCode: string,
+    edition: string,
   ) {
     const myDepartmentInfo = await this.getOneDepartmentSellingInformation(
       sellerdepartmentId,
       sellerPostCode,
+      edition,
     );
     return myDepartmentInfo.bestSelling.slice(0, 10);
   }
@@ -296,6 +298,7 @@ export class TicketsService {
   async getOneDepartmentSellingInformation(
     sellerdepartmentId: string,
     sellerPostCode: string,
+    edition: string,
   ): Promise<{ data: any[]; bestSelling: any[]; totalAmountTicket: number }> {
     let province;
     const postCodeNumber = parseInt(sellerPostCode);
@@ -311,6 +314,7 @@ export class TicketsService {
       where: {
         sellerDepartmentId: sellerdepartmentId,
         eventsquareReference: Not(IsNull()),
+        edition,
       },
     });
 
@@ -360,6 +364,7 @@ export class TicketsService {
     postalCode: string,
     departmentCode: string,
     fromWorkGroup: string,
+    edition: string,
   ): Promise<{ data: any[]; bestSelling: any[]; totalAmountTicket: number }> {
     const dataBrut = await this.sellingInformationRepository.find({
       where: {
@@ -367,6 +372,7 @@ export class TicketsService {
         eventsquareReference: Not(IsNull()),
         sellerDepartmentId: departmentCode,
         fromWorkGroup: fromWorkGroup === 'true',
+        edition,
       },
     });
 

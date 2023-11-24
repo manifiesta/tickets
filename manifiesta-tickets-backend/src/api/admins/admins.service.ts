@@ -18,6 +18,7 @@ import { FinishOrderTransactionIdDto } from './dto/finish-order-transaction-id.d
 import { SellersService } from '../sellers/sellers.service';
 import { env } from 'process';
 
+// TODO refactor to avoid dublon with or without by edition
 @Injectable()
 export class AdminsService {
 
@@ -94,9 +95,49 @@ export class AdminsService {
     return { data, totalAmountTicket: this.getNumberOfTicket(data) };
   }
 
+  async getAllSellingsInformationByEdition(edition: string) {
+    const data = await this.sellingInformationRepository.find({where: {edition}});
+    return { data, totalAmountTicket: this.getNumberOfTicket(data) };
+  }
+
   async getAllSellersSellingsInformation(): Promise<{ data: any[], totalAmountTicket: number }> {
     const data = await this.sellingInformationRepository.find({
       where: { eventsquareReference: Not(IsNull()) },
+      order: { sellerId: 'ASC' },
+    });
+
+    const dataGroupBySellerId = [];
+
+    data.forEach(d => {
+      const index = dataGroupBySellerId.findIndex(x => x.sellerId === d.sellerId);
+      if (index > -1) {
+        dataGroupBySellerId[index].quantity += d.quantity;
+        dataGroupBySellerId[index].details.push(d);
+      } else {
+        dataGroupBySellerId.push({
+          sellerId: d.sellerId,
+          quantity: d.quantity,
+          details: [d],
+        });
+      }
+    });
+
+    for (let i = 0; i < dataGroupBySellerId.length; i++) {
+      const u = await this.sellerRepository.findOne({ where: { email: dataGroupBySellerId[i].sellerId } })
+      dataGroupBySellerId[i].name = u?.name;
+    }
+
+    dataGroupBySellerId.sort((a, b) => {
+      return b.quantity - a.quantity;
+    });
+
+    return { data: dataGroupBySellerId, totalAmountTicket: this.getNumberOfTicket(dataGroupBySellerId) };
+  }
+
+  // TODO refactor with the one without edition
+  async getAllSellersSellingsInformationByEdition(edition: string): Promise<{ data: any[], totalAmountTicket: number }> {
+    const data = await this.sellingInformationRepository.find({
+      where: { eventsquareReference: Not(IsNull()), edition },
       order: { sellerId: 'ASC' },
     });
 
@@ -163,9 +204,69 @@ export class AdminsService {
     };
   }
 
+  async getAllFinishSellingsInformationByEdition(edition: string) {
+    const sellers = await this.sellerRepository.find();
+    const data = await firstValueFrom(
+      from(this.sellingInformationRepository.find({
+        where: { eventsquareReference: Not(IsNull()), edition },
+      })).pipe(
+        map(dataPipe => {
+          return dataPipe.map(d => {
+            const postCodeNumber = parseInt(d.sellerPostalCode);
+            let sellerDepartmentLabel = '';
+            if (d.sellerDepartmentId === 'BASE' && isNumber(postCodeNumber)) {
+              const province = provinces.find((p) =>
+                p.ranges.find((r) => {
+                  return r.start <= postCodeNumber && r.end >= postCodeNumber;
+                }),
+              );
+              sellerDepartmentLabel = province.label;
+            } else {
+              sellerDepartmentLabel = departments.find(dep => dep.code === d.sellerDepartmentId).labelNl;
+            }
+            const sellerName = sellers.find(s => s.email === d.sellerId)?.name;
+            return {
+              ...d, sellerDepartmentLabel, sellerName
+            }
+          })
+        })
+      )
+    );
+
+    return {
+      data,
+      totalAmountTicket: this.getNumberOfTicket(data)
+    };
+  }
+
   async getAllFinishSellingsInformationTickets() {
     const dataNet = [];
     const dataBrut = await this.getAllFinishSellingsInformation();
+    dataBrut.data.forEach(db => {
+      db.ticketInfo.forEach(ti => {
+        // TODO Check if we can put the field ticketAmount instead of push one by amount ...
+        for (let i = 0; i < ti.ticketAmount; i++) {
+          dataNet.push({
+            type: ti.ticketLabel,
+            channel: db['sellerDepartmentLabel'],
+            zip: db.sellerPostalCode,
+            price: ti.ticketPrice,
+            clientName: db.clientName,
+            sellerId: db.sellerId,
+            sellerName: db['sellerName'],
+            date: db.finishDate,
+            workGroup: db.fromWorkGroup,
+            merchRef: db.clientTransactionId,
+          })
+        }
+      });
+    })
+    return dataNet;
+  }
+
+  async getAllFinishSellingsInformationTicketsByEdition(edition: string) {
+    const dataNet = [];
+    const dataBrut = await this.getAllFinishSellingsInformationByEdition(edition);
     dataBrut.data.forEach(db => {
       db.ticketInfo.forEach(ti => {
         // TODO Check if we can put the field ticketAmount instead of push one by amount ...
@@ -231,9 +332,59 @@ export class AdminsService {
     };
   }
 
+  async getAllDepartmentsSellingsInformationsByEdition(edition: string) {
+    const data = await this.sellingInformationRepository.find({
+      where: { eventsquareReference: Not(IsNull()), edition },
+      order: { sellerDepartmentId: 'ASC' }
+    });
+
+    const dataGroupBySellerDepartmentId = [];
+
+    data.forEach(d => {
+
+      const postCodeNumber = parseInt(d.sellerPostalCode);
+      if (d.sellerDepartmentId === 'BASE' && isNumber(postCodeNumber)) {
+        const province = provinces.find((p) =>
+          p.ranges.find((r) => {
+            return r.start <= postCodeNumber && r.end >= postCodeNumber;
+          }),
+        );
+        d.sellerDepartmentId = province.code;
+        d['name'] = province.label;
+      }
+
+      const index = dataGroupBySellerDepartmentId.findIndex(
+        x => x.sellerDepartmentId === d.sellerDepartmentId
+      );
+      if (index > -1) {
+        dataGroupBySellerDepartmentId[index].quantity += d.quantity;
+        dataGroupBySellerDepartmentId[index].details.push(d);
+      } else {
+        dataGroupBySellerDepartmentId.push({
+          sellerDepartmentId: d.sellerDepartmentId,
+          quantity: d.quantity,
+          name: d['name'] || departments.find(department => department.code === d.sellerDepartmentId)?.label,
+          details: [d],
+        });
+      }
+    });
+
+    return {
+      data: dataGroupBySellerDepartmentId,
+      totalAmountTicket: this.getNumberOfTicket(dataGroupBySellerDepartmentId)
+    };
+  }
+
+
   async getOrderNotFinish() {
     return this.sellingInformationRepository.find({
       where: { eventsquareReference: IsNull() }
+    });
+  }
+
+  async getOrderNotFinishByEdition(edition: string) {
+    return this.sellingInformationRepository.find({
+      where: { eventsquareReference: IsNull(), edition }
     });
   }
 
