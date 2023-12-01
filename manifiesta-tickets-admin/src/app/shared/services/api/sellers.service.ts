@@ -11,26 +11,26 @@ export class SellersService {
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<any[]> {
-    return this.http.get<any[]>(`${environment.apiUrl}sellers`);
+    return this.http.get<any[]>(`${environment.apiUrl}sellers/2024`);
   }
 
   getAllSellingInformation(): Observable<any> {
     return this.http.get<any>(
-      `${environment.apiUrl}admins/sellingsInformations`,
+      `${environment.apiUrl}admins/sellingsInformations/2024`,
       { headers: { token: localStorage.getItem('admin-token') as string } }
     );
   }
 
   getAllSellerSellingInformation(): Observable<any> {
     return this.http.get<any>(
-      `${environment.apiUrl}admins/sellingsInformations/sellers`,
+      `${environment.apiUrl}admins/sellingsInformations/sellers/2024`,
       { headers: { token: localStorage.getItem('admin-token') as string } }
     );
   }
 
   getAllDepartmentSellingInformation(): Observable<any> {
     return this.http.get<any>(
-      `${environment.apiUrl}admins/sellingsInformations/departments`,
+      `${environment.apiUrl}admins/sellingsInformations/departments/2024`,
       { headers: { token: localStorage.getItem('admin-token') as string } }
     );
   }
@@ -51,7 +51,7 @@ export class SellersService {
 
   getOrderNotFinish(): Observable<any> {
     return this.http.get<any>(
-      `${environment.apiUrl}admins/sellingsInformations/order-not-finish`,
+      `${environment.apiUrl}admins/sellingsInformations/order-not-finish/2024`,
       { headers: { token: localStorage.getItem('admin-token') as string } }
     );
   }
@@ -66,7 +66,7 @@ export class SellersService {
 
   getAllFinishSellingsInformationTickets(): Observable<any> {
     return this.http.get<any>(
-      `${environment.apiUrl}admins/sellingsInformations/sellings-tickets`,
+      `${environment.apiUrl}admins/sellingsInformations/sellings-tickets/2024`,
       { headers: { token: localStorage.getItem('admin-token') as string } }
     );
   }
