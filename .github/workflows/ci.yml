@@ -16,7 +16,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: registry.digitalocean.com/manifiesta/app-backend
+          images: registry.digitalocean.com/manifiesta/tickets-backend
           flavor: |
             latest=true
       - name: Set up QEMU
