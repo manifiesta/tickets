@@ -16,9 +16,6 @@ WORKDIR /app
 
 COPY --from=build /app/dist ./dist
 
-COPY package.json ./package.json
-COPY package-lock.json ./package-lock.json
-
 EXPOSE 3000
 
-CMD [ "npm", "run", "start:prod" ]
+CMD [ "node", "dist/main" ]
