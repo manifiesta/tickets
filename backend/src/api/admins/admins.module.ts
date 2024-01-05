@@ -10,6 +10,7 @@ import { AdminsService } from './admins.service';
 import { HttpModule } from '@nestjs/axios';
 import { LongText } from './long-text.entity';
 import { SellersService } from '../sellers/sellers.service';
+import { TicketsService } from '../tickets/tickets.service';
 
 @Module({
   imports: [
@@ -18,6 +19,6 @@ import { SellersService } from '../sellers/sellers.service';
     HttpModule,
   ],
   controllers: [AdminsController],
-  providers: [AdminsService, SellersService]
+  providers: [AdminsService, SellersService, TicketsService]
 })
 export class AdminsModule {}

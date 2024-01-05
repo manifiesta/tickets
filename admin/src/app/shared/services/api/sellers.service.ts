@@ -8,29 +8,31 @@ import { environment } from 'src/environments/environment';
 })
 export class SellersService {
 
+  edition = '2024'
+
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<any[]> {
-    return this.http.get<any[]>(`${environment.apiUrl}sellers/2024`);
+    return this.http.get<any[]>(`${environment.apiUrl}sellers/${this.edition}`);
   }
 
   getAllSellingInformation(): Observable<any> {
     return this.http.get<any>(
-      `${environment.apiUrl}admins/sellingsInformations/2024`,
+      `${environment.apiUrl}admins/sellingsInformations/${this.edition}`,
       { headers: { token: localStorage.getItem('admin-token') as string } }
     );
   }
 
   getAllSellerSellingInformation(): Observable<any> {
     return this.http.get<any>(
-      `${environment.apiUrl}admins/sellingsInformations/sellers/2024`,
+      `${environment.apiUrl}admins/sellingsInformations/sellers/${this.edition}`,
       { headers: { token: localStorage.getItem('admin-token') as string } }
     );
   }
 
   getAllDepartmentSellingInformation(): Observable<any> {
     return this.http.get<any>(
-      `${environment.apiUrl}admins/sellingsInformations/departments/2024`,
+      `${environment.apiUrl}admins/sellingsInformations/departments/${this.edition}`,
       { headers: { token: localStorage.getItem('admin-token') as string } }
     );
   }
@@ -51,7 +53,7 @@ export class SellersService {
 
   getOrderNotFinish(): Observable<any> {
     return this.http.get<any>(
-      `${environment.apiUrl}admins/sellingsInformations/order-not-finish/2024`,
+      `${environment.apiUrl}admins/sellingsInformations/order-not-finish/${this.edition}`,
       { headers: { token: localStorage.getItem('admin-token') as string } }
     );
   }
@@ -66,7 +68,7 @@ export class SellersService {
 
   getAllFinishSellingsInformationTickets(): Observable<any> {
     return this.http.get<any>(
-      `${environment.apiUrl}admins/sellingsInformations/sellings-tickets/2024`,
+      `${environment.apiUrl}admins/sellingsInformations/sellings-tickets/${this.edition}`,
       { headers: { token: localStorage.getItem('admin-token') as string } }
     );
   }

@@ -147,7 +147,7 @@ async function mockSellingInformation(repo) {
       sellerDepartmentId: 'BASE',
       sellerPostalCode: '1040',
       vwTransactionId: '117',
-      eventsquareReference: null,
+      eventsquareReference: 'HO',
       orderDate: new Date('2021-06-06'),
       quantity: 4,
       clientName: 'Random Client 1',

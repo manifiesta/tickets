@@ -17,6 +17,7 @@ import { EditLongtextDto } from './dto/edit-long-text.dto';
 import { FinishOrderTransactionIdDto } from './dto/finish-order-transaction-id.dto';
 import { SellersService } from '../sellers/sellers.service';
 import { env } from 'process';
+import { TicketsService } from '../tickets/tickets.service';
 
 // TODO refactor to avoid dublon with or without by edition
 @Injectable()
@@ -44,6 +45,7 @@ export class AdminsService {
     private readonly encryptionService: EncryptionsService,
     private httpService: HttpService,
     private sellersService: SellersService,
+    private ticketsService: TicketsService,
   ) { }
 
   createUserToken(admin: Admin) {
@@ -92,12 +94,22 @@ export class AdminsService {
 
   async getAllSellingsInformation() {
     const data = await this.sellingInformationRepository.find();
-    return { data, totalAmountTicket: this.getNumberOfTicket(data) };
+    return {
+      data: data.filter(d => {
+        return !this.ticketsService.presenceOfTestTicket(d);
+      }),
+      totalAmountTicket: this.getNumberOfTicket(data)
+    };
   }
 
   async getAllSellingsInformationByEdition(edition: string) {
-    const data = await this.sellingInformationRepository.find({where: {edition}});
-    return { data, totalAmountTicket: this.getNumberOfTicket(data) };
+    const data = await this.sellingInformationRepository.find({ where: { edition } });
+    return {
+      data: data.filter(d => {
+        return !this.ticketsService.presenceOfTestTicket(d);
+      }),
+      totalAmountTicket: this.getNumberOfTicket(data)
+    };
   }
 
   async getAllSellersSellingsInformation(): Promise<{ data: any[], totalAmountTicket: number }> {
@@ -108,7 +120,9 @@ export class AdminsService {
 
     const dataGroupBySellerId = [];
 
-    data.forEach(d => {
+    data.filter(d => {
+      return !this.ticketsService.presenceOfTestTicket(d);
+    }).forEach(d => {
       const index = dataGroupBySellerId.findIndex(x => x.sellerId === d.sellerId);
       if (index > -1) {
         dataGroupBySellerId[index].quantity += d.quantity;
@@ -143,7 +157,9 @@ export class AdminsService {
 
     const dataGroupBySellerId = [];
 
-    data.forEach(d => {
+    data.filter(d => {
+      return !this.ticketsService.presenceOfTestTicket(d);
+    }).forEach(d => {
       const index = dataGroupBySellerId.findIndex(x => x.sellerId === d.sellerId);
       if (index > -1) {
         dataGroupBySellerId[index].quantity += d.quantity;
@@ -176,7 +192,9 @@ export class AdminsService {
         where: { eventsquareReference: Not(IsNull()) },
       })).pipe(
         map(dataPipe => {
-          return dataPipe.map(d => {
+          return dataPipe.filter(d => {
+            return !this.ticketsService.presenceOfTestTicket(d);
+          }).map(d => {
             const postCodeNumber = parseInt(d.sellerPostalCode);
             let sellerDepartmentLabel = '';
             if (d.sellerDepartmentId === 'BASE' && isNumber(postCodeNumber)) {
@@ -211,7 +229,9 @@ export class AdminsService {
         where: { eventsquareReference: Not(IsNull()), edition },
       })).pipe(
         map(dataPipe => {
-          return dataPipe.map(d => {
+          return dataPipe.filter(d => {
+            return !this.ticketsService.presenceOfTestTicket(d);
+          }).map(d => {
             const postCodeNumber = parseInt(d.sellerPostalCode);
             let sellerDepartmentLabel = '';
             if (d.sellerDepartmentId === 'BASE' && isNumber(postCodeNumber)) {
@@ -242,7 +262,9 @@ export class AdminsService {
   async getAllFinishSellingsInformationTickets() {
     const dataNet = [];
     const dataBrut = await this.getAllFinishSellingsInformation();
-    dataBrut.data.forEach(db => {
+    dataBrut.data.filter(d => {
+      return !this.ticketsService.presenceOfTestTicket(d);
+    }).forEach(db => {
       db.ticketInfo.forEach(ti => {
         // TODO Check if we can put the field ticketAmount instead of push one by amount ...
         for (let i = 0; i < ti.ticketAmount; i++) {
@@ -267,7 +289,9 @@ export class AdminsService {
   async getAllFinishSellingsInformationTicketsByEdition(edition: string) {
     const dataNet = [];
     const dataBrut = await this.getAllFinishSellingsInformationByEdition(edition);
-    dataBrut.data.forEach(db => {
+    dataBrut.data.filter(d => {
+      return !this.ticketsService.presenceOfTestTicket(d);
+    }).forEach(db => {
       db.ticketInfo.forEach(ti => {
         // TODO Check if we can put the field ticketAmount instead of push one by amount ...
         for (let i = 0; i < ti.ticketAmount; i++) {
@@ -297,7 +321,9 @@ export class AdminsService {
 
     const dataGroupBySellerDepartmentId = [];
 
-    data.forEach(d => {
+    data.filter(d => {
+      return !this.ticketsService.presenceOfTestTicket(d);
+    }).forEach(d => {
 
       const postCodeNumber = parseInt(d.sellerPostalCode);
       if (d.sellerDepartmentId === 'BASE' && isNumber(postCodeNumber)) {
@@ -340,7 +366,9 @@ export class AdminsService {
 
     const dataGroupBySellerDepartmentId = [];
 
-    data.forEach(d => {
+    data.filter(d => {
+      return !this.ticketsService.presenceOfTestTicket(d);
+    }).forEach(d => {
 
       const postCodeNumber = parseInt(d.sellerPostalCode);
       if (d.sellerDepartmentId === 'BASE' && isNumber(postCodeNumber)) {
@@ -377,14 +405,18 @@ export class AdminsService {
 
 
   async getOrderNotFinish() {
-    return this.sellingInformationRepository.find({
+    return (await this.sellingInformationRepository.find({
       where: { eventsquareReference: IsNull() }
+    })).filter(d => {
+      return !this.ticketsService.presenceOfTestTicket(d);
     });
   }
 
   async getOrderNotFinishByEdition(edition: string) {
-    return this.sellingInformationRepository.find({
+    return (await this.sellingInformationRepository.find({
       where: { eventsquareReference: IsNull(), edition }
+    })).filter(d => {
+      return !this.ticketsService.presenceOfTestTicket(d);
     });
   }
 
