@@ -143,6 +143,7 @@ async function mockSellingInformation(repo) {
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'samy@manifiesta.com',
+      edition: '1871',
       sellerDepartmentId: 'BASE',
       sellerPostalCode: '1040',
       vwTransactionId: '117',
@@ -157,6 +158,7 @@ async function mockSellingInformation(repo) {
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'samy@manifiesta.com',
+      edition: '1871',
       sellerDepartmentId: 'BASE',
       sellerPostalCode: '1040',
       fromWorkGroup: true,
@@ -180,6 +182,7 @@ async function mockSellingInformation(repo) {
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'samy@manifiesta.com',
+      edition: '1871',
       sellerDepartmentId: 'Comac',
       sellerPostalCode: '5000',
       vwTransactionId: '119',
@@ -227,6 +230,7 @@ async function mockSellingInformation(repo) {
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'samy@manifiesta.com',
+      edition: '1871',
       sellerDepartmentId: 'Comac',
       sellerPostalCode: '1000',
       vwTransactionId: '119',
@@ -373,6 +377,7 @@ async function mockSellingInformation(repo) {
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'samy@manifiesta.com',
+      edition: '1871',
       sellerDepartmentId: 'BASE',
       sellerPostalCode: '1040',
       vwTransactionId: null,
@@ -385,6 +390,7 @@ async function mockSellingInformation(repo) {
       ticketInfo: [
         { "ticketId": "328253926372", "ticketAmount": 2, "ticketLabel": "Regular Intal", ticketPrice: 0.01, ticketTotalPrice: 0.02 },
         { "ticketId": "328253926372", "ticketAmount": 2, "ticketLabel": "Weekend Intal", ticketPrice: 0.02, ticketTotalPrice: 0.04 },
+        { "ticketId": "2", "ticketAmount": 2, "ticketLabel": "[TEST]", ticketPrice: 0.02 },
       ]
     })),
   ]

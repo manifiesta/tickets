@@ -70,9 +70,9 @@ export class TicketsService {
     );
   }
 
-  presenceOfTestTicket(preparTickets: PreparTicketsDto | ConfirmTicketsDto): boolean {
-    return preparTickets.tickets.findIndex(ts => {
-      return ts.ticketLabel.includes('[TEST]')
+  presenceOfTestTicket(sellingInfo: SellingInformation): boolean {
+    return sellingInfo.ticketInfo.findIndex(ts => {
+      return ts?.ticketLabel?.includes('[TEST]')
     }) > -1;
   }
 
@@ -203,7 +203,9 @@ export class TicketsService {
       where: { sellerId: id, eventsquareReference: Not(IsNull()) },
       order: { finishDate: 'ASC' },
     });
-    data = data.map((d) => {
+    data = data.filter(d => {
+      return !this.presenceOfTestTicket(d);
+    }).map((d) => {
       return {
         ...d,
         sellerDepartment:
@@ -221,7 +223,9 @@ export class TicketsService {
       where: { sellerId: id, eventsquareReference: Not(IsNull()), edition },
       order: { finishDate: 'ASC' },
     });
-    data = data.map((d) => {
+    data = data.filter(d => {
+      return !this.presenceOfTestTicket(d);
+    }).map((d) => {
       return {
         ...d,
         sellerDepartment:
@@ -318,6 +322,10 @@ export class TicketsService {
       },
     });
 
+    dataBrut = dataBrut.filter(d => {
+      return !this.presenceOfTestTicket(d);
+    });
+
     if (province) {
       dataBrut = dataBrut.filter((d) => {
         return province.ranges.find((r) => {
@@ -366,7 +374,7 @@ export class TicketsService {
     fromWorkGroup: string,
     edition: string,
   ): Promise<{ data: any[]; bestSelling: any[]; totalAmountTicket: number }> {
-    const dataBrut = await this.sellingInformationRepository.find({
+    let dataBrut = await this.sellingInformationRepository.find({
       where: {
         sellerPostalCode: postalCode,
         eventsquareReference: Not(IsNull()),
@@ -374,6 +382,10 @@ export class TicketsService {
         fromWorkGroup: fromWorkGroup === 'true',
         edition,
       },
+    });
+
+    dataBrut = dataBrut.filter(d => {
+      return !this.presenceOfTestTicket(d);
     });
 
     const bestSelling = [];
