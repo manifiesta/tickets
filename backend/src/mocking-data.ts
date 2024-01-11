@@ -380,7 +380,7 @@ async function mockSellingInformation(repo) {
       edition: '1871',
       sellerDepartmentId: 'BASE',
       sellerPostalCode: '1040',
-      vwTransactionId: null,
+      vwTransactionId: 'lolololol',
       eventsquareReference: 'YOLO',
       orderDate: new Date(),
       quantity: 4,
