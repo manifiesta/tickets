@@ -56,7 +56,7 @@ export class TicketsService {
     // return [];
     return firstValueFrom(
       this.httpService.get<any>(
-        `https://api.eventsquare.io/1.0/store/manifiesta/2023/${this.acceptedShop.includes(shop.toLowerCase())
+        `https://api.eventsquare.io/1.0/store/manifiesta/2024/${this.acceptedShop.includes(shop.toLowerCase())
           ? shop.toLowerCase() : 'app'}`, {
         headers: {
           apiKey: this.apiKey,
@@ -612,7 +612,7 @@ export class TicketsService {
       await firstValueFrom(
         this.httpService
           .get<any>(
-            'https://api.eventsquare.io/1.0/store/manifiesta/2023/app?language=nl&pos_token=' +
+            'https://api.eventsquare.io/1.0/store/manifiesta/2024/app?language=nl&pos_token=' +
             this.posToken,
             {
               headers: {
