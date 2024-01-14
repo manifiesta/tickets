@@ -246,12 +246,16 @@ export class TicketsService {
     data: any[];
     totalAmountTicket: number;
   }> {
-    const data = await this.sellingInformationRepository.find({
+    let data = await this.sellingInformationRepository.find({
       where: { eventsquareReference: Not(IsNull()), edition },
       order: { sellerId: 'ASC' },
     });
 
     const dataGroupBySellerId = [];
+
+    data = data.filter(d => {
+      return !this.presenceOfTestTicket(d);
+    });
 
     data.forEach((d) => {
       const index = dataGroupBySellerId.findIndex(
