@@ -566,6 +566,20 @@ export class TicketsService {
    * TODO try in full asynchrone
    */
   async finishOrderWithVivaWalletTransactionId(vivaWalletTransactionId: string) {
+    let findAlreadyUseVwTransactionId = await this.sellingInformationRepository.findOne({
+      where: { vwTransactionId: vivaWalletTransactionId },
+    });
+
+    if (findAlreadyUseVwTransactionId) {
+      throw new HttpException(
+        {
+          message: ['error transaction already existing'],
+          code: 'transaction-already-done',
+        },
+        HttpStatus.CONFLICT,
+      );
+    }
+
     const accessToken = await this.getVivaWaletAccessToken();
 
     const transactionVerification = await firstValueFrom(
@@ -593,13 +607,7 @@ export class TicketsService {
       );
     });
 
-    const pendingTicket = await this.sellingInformationRepository.findOne({
-      where: { clientTransactionId: transactionVerification.merchantTrns },
-    });
-
-    pendingTicket.vwTransactionId = vivaWalletTransactionId;
-
-    const findAlreadyUseVwTransactionId = await this.sellingInformationRepository.findOne({
+    findAlreadyUseVwTransactionId = await this.sellingInformationRepository.findOne({
       where: { vwTransactionId: vivaWalletTransactionId },
     });
 
@@ -612,7 +620,11 @@ export class TicketsService {
         HttpStatus.CONFLICT,
       );
     }
-    
+
+    const pendingTicket = await this.sellingInformationRepository.findOne({
+      where: { clientTransactionId: transactionVerification.merchantTrns },
+    });
+    pendingTicket.vwTransactionId = vivaWalletTransactionId;
     await this.sellingInformationRepository.save(pendingTicket);
 
     // And command the EventSquare tickets
