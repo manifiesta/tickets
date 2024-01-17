@@ -278,6 +278,8 @@ export class TicketsService {
         where: { email: dataGroupBySellerId[i].sellerId },
       });
       dataGroupBySellerId[i].name = this.reduceName(u?.name, u?.workGroup);
+      delete dataGroupBySellerId[i].sellerId;
+      delete dataGroupBySellerId[i].details;
     }
 
     dataGroupBySellerId.sort((a, b) => {
