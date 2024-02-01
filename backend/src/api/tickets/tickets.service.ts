@@ -361,6 +361,8 @@ export class TicketsService {
         where: { email: bestSelling[i].sellerId },
       });
       bestSelling[i].name = this.reduceName(u?.name, u?.workGroup);
+      delete bestSelling[i].sellerId;
+      delete bestSelling[i].details;
     }
 
     bestSelling.sort((a, b) => {
@@ -415,6 +417,8 @@ export class TicketsService {
         where: { email: bestSelling[i].sellerId },
       });
       bestSelling[i].name = this.reduceName(u?.name, fromWorkGroup === 'true');
+      delete bestSelling[i].sellerId;
+      delete bestSelling[i].details;
     }
 
     bestSelling.sort((a, b) => {
@@ -422,7 +426,7 @@ export class TicketsService {
     });
 
     return {
-      data: dataBrut,
+      data: [],
       bestSelling: bestSelling,
       totalAmountTicket: this.getNumberOfTicket(bestSelling),
     };

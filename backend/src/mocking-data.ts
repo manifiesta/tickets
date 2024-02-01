@@ -14,6 +14,8 @@ import { appDataSourceConfig } from "./data-source";
 import { LongText } from "./api/admins/long-text.entity";
 import { RoleEnum } from "./api/admins/role.enum";
 
+const edition = '2024';
+
 export async function mockingData() {
   const repo = await new DataSource(appDataSourceConfig()).initialize();
   await repo.dropDatabase();
@@ -123,7 +125,7 @@ async function mockSellingInformation(repo) {
       ticketInfo: [
         { "ticketId": process.env.EsTestTicketId, "ticketAmount": 2, "ticketLabel": "Testouille", ticketPrice: 0.01 },
       ],
-      edition: '2024',
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: process.env.ClientEmailEx1,
@@ -139,11 +141,11 @@ async function mockSellingInformation(repo) {
       ticketInfo: [
         { "ticketId": process.env.EsTestTicketId, "ticketAmount": 2, "ticketLabel": "Testouille", ticketPrice: 0.01 },
       ],
-      edition: '2024',
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'samy@manifiesta.com',
-      edition: '1871',
+      edition,
       sellerDepartmentId: 'BASE',
       sellerPostalCode: '1040',
       vwTransactionId: '117',
@@ -154,11 +156,11 @@ async function mockSellingInformation(repo) {
       ticketInfo: [
         { "ticketId": "1", "ticketAmount": 2, "ticketLabel": "Regular Intal", ticketPrice: 0.01 },
         { "ticketId": "2", "ticketAmount": 2, "ticketLabel": "Weekend Intal", ticketPrice: 0.02 }
-      ]
+      ],
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'samy@manifiesta.com',
-      edition: '1871',
+      edition,
       sellerDepartmentId: 'BASE',
       sellerPostalCode: '1040',
       fromWorkGroup: true,
@@ -178,11 +180,12 @@ async function mockSellingInformation(repo) {
       orderDate: new Date(),
       quantity: 3,
       clientName: 'Random Client 3',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 3, "ticketLabel": "Regular Intal", ticketPrice: 0.01 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 3, "ticketLabel": "Regular Intal", ticketPrice: 0.01 }],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'samy@manifiesta.com',
-      edition: '1871',
+      edition,
       sellerDepartmentId: 'Comac',
       sellerPostalCode: '5000',
       vwTransactionId: '119',
@@ -201,7 +204,8 @@ async function mockSellingInformation(repo) {
       orderDate: new Date(),
       quantity: 3,
       clientName: 'Random Client 5',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 3, "ticketLabel": "Regular Intal", ticketPrice: 0.01 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 3, "ticketLabel": "Regular Intal", ticketPrice: 0.01 }],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'louise@manifiesta.com',
@@ -212,7 +216,8 @@ async function mockSellingInformation(repo) {
       orderDate: new Date(),
       quantity: 7,
       clientName: 'Random Client 6',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 7, "ticketLabel": "Regular Intal", ticketPrice: 0.01 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 7, "ticketLabel": "Regular Intal", ticketPrice: 0.01 }],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'orwell@manifiesta.com',
@@ -226,11 +231,12 @@ async function mockSellingInformation(repo) {
       ticketInfo: [
         { "ticketId": "1", "ticketAmount": 1, "ticketLabel": "Regular Intal", ticketPrice: 0.01 },
         { "ticketId": "1", "ticketAmount": 1, "ticketLabel": "Regular Intal", ticketPrice: 0.01 }
-      ]
+      ],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'samy@manifiesta.com',
-      edition: '1871',
+      edition,
       sellerDepartmentId: 'Comac',
       sellerPostalCode: '1000',
       vwTransactionId: '119',
@@ -238,7 +244,7 @@ async function mockSellingInformation(repo) {
       orderDate: new Date('2021-06-06'),
       quantity: 1,
       clientName: 'Random Client 8',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }],
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'marx@manifiesta.com',
@@ -249,7 +255,8 @@ async function mockSellingInformation(repo) {
       orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 9',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'karl@manifiesta.com',
@@ -260,7 +267,8 @@ async function mockSellingInformation(repo) {
       orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 10',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'ange@manifiesta.com',
@@ -271,7 +279,8 @@ async function mockSellingInformation(repo) {
       orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 11',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'fritz@manifiesta.com',
@@ -282,7 +291,8 @@ async function mockSellingInformation(repo) {
       orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 12',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'samy@manifiesta.com',
@@ -293,7 +303,8 @@ async function mockSellingInformation(repo) {
       orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 13',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'bene@manifiesta.com',
@@ -304,7 +315,8 @@ async function mockSellingInformation(repo) {
       orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 14',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'nota@manifiesta.com',
@@ -316,7 +328,8 @@ async function mockSellingInformation(repo) {
       quantity: 1,
       clientName: 'Random Client 15',
       clientEmail: 'random@client.nl',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'doe@manifiesta.com',
@@ -327,7 +340,8 @@ async function mockSellingInformation(repo) {
       orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 16',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'john@manifiesta.com',
@@ -338,7 +352,8 @@ async function mockSellingInformation(repo) {
       orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 17',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'poutou@manifiesta.com',
@@ -350,7 +365,8 @@ async function mockSellingInformation(repo) {
       quantity: 1,
       clientName: 'Random Client 18',
       clientEmail: 'random@client.nl',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'republique@manifiesta.com',
@@ -361,7 +377,8 @@ async function mockSellingInformation(repo) {
       orderDate: new Date(),
       quantity: 1,
       clientName: 'Random Client 19',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'ric@manifiesta.com',
@@ -373,11 +390,12 @@ async function mockSellingInformation(repo) {
       quantity: 1,
       clientName: 'Random Client 20',
       clientEmail: 'random@client.nl',
-      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }]
+      ticketInfo: [{ "ticketId": "1", "ticketAmount": 1 }],
+      edition,
     })),
     await sellingInformationRepo.save(sellingInformationRepo.create({
       sellerId: 'samy@manifiesta.com',
-      edition: '1871',
+      edition,
       sellerDepartmentId: 'BASE',
       sellerPostalCode: '1040',
       vwTransactionId: 'lolololol',
