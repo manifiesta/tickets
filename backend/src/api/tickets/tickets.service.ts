@@ -577,13 +577,22 @@ export class TicketsService {
     });
 
     if (findAlreadyUseVwTransactionId) {
-      throw new HttpException(
-        {
-          message: ['error transaction already existing'],
-          code: 'transaction-already-done',
-        },
-        HttpStatus.CONFLICT,
-      );
+      const orderDate = new Date(findAlreadyUseVwTransactionId.orderDate);
+      const now = new Date();
+      const diffTime = Math.abs(now.getTime() - orderDate.getTime());
+      // 300 000 milli seconds for 5 minutes
+      // We return just the order
+      if (diffTime < 300000) {
+        return findAlreadyUseVwTransactionId;
+      } else {
+        throw new HttpException(
+          {
+            message: ['error transaction already existing'],
+            code: 'transaction-already-done',
+          },
+          HttpStatus.CONFLICT,
+        );
+      }
     }
 
     const accessToken = await this.getVivaWaletAccessToken();

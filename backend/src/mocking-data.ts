@@ -134,7 +134,7 @@ async function mockSellingInformation(repo) {
       eventsquareReference: null,
       vwTransactionId: process.env.VwTransactionIdEx2,
       clientTransactionId: process.env.MerchantTrnsEx2,
-      orderDate: new Date('2021-06-06'),
+      orderDate: new Date(),
       quantity: 4,
       clientName: 'Ticket Already selling',
       clientEmail: process.env.ClientEmailEx1,
