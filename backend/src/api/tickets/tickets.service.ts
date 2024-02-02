@@ -583,7 +583,11 @@ export class TicketsService {
       // 300 000 milli seconds for 5 minutes
       // We return just the order
       if (diffTime < 300000) {
-        return findAlreadyUseVwTransactionId;
+        return {
+          ...findAlreadyUseVwTransactionId,
+          order: findAlreadyUseVwTransactionId.eventsquareReference,
+          transactionInProgress: true,
+        };
       } else {
         throw new HttpException(
           {
