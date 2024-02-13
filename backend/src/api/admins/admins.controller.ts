@@ -6,6 +6,7 @@ import { LoginDto } from './login.dto';
 import { FinishOrderDto } from './dto/finish-order.dto';
 import { EditLongtextDto } from './dto/edit-long-text.dto';
 import { FinishOrderTransactionIdDto } from './dto/finish-order-transaction-id.dto';
+import { EditSellingsInformationDTO } from './dto/edit-sellings-information.dto';
 
 @Controller('api/admins')
 export class AdminsController {
@@ -132,6 +133,12 @@ export class AdminsController {
   @Get('/beeple/functions')
   beepleFunctions() {
     return this.adminsService.beepleFunctions();
+  }
+
+  @Auth(RoleEnum.Admin, RoleEnum.Secretary)
+  @Put('/sellingsInformations/:id')
+  editOneSellingsInformations(@Body() sellingsInformations: EditSellingsInformationDTO, @Param('id') id: string) {
+    return this.adminsService.editOneSellingsInformations(sellingsInformations, id);
   }
 
 }

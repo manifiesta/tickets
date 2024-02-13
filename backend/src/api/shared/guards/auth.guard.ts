@@ -26,7 +26,7 @@ export class AuthGuard implements CanActivate {
     if (roles.find(x => x === RoleEnum.Connected)) {
       return true;
     }
-    else if (roles.find(x => x === user.role.code)) {
+    else if (roles.find(x => user.extra.roles.includes(x))) {
       return true;
     }
 

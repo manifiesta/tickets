@@ -18,6 +18,7 @@ import { FinishOrderTransactionIdDto } from './dto/finish-order-transaction-id.d
 import { SellersService } from '../sellers/sellers.service';
 import { env } from 'process';
 import { TicketsService } from '../tickets/tickets.service';
+import { EditSellingsInformationDTO } from './dto/edit-sellings-information.dto';
 
 // TODO refactor to avoid dublon with or without by edition
 @Injectable()
@@ -490,6 +491,33 @@ export class AdminsService {
         return d.data;
       })
     );
+  }
+
+  async editOneSellingsInformations(editSellingsInformations: EditSellingsInformationDTO, id: string) {
+    const sellingInformation = await this.sellingInformationRepository.findOne({where: {id: parseInt(id)}});
+
+    if (sellingInformation) {
+      if (editSellingsInformations.sellerPostalCode) {
+        sellingInformation.sellerPostalCode = editSellingsInformations.sellerPostalCode;
+      }
+      if (editSellingsInformations.sellerDepartmentId) {
+        sellingInformation.sellerDepartmentId = editSellingsInformations.sellerDepartmentId;
+      }
+      if (Object.keys(editSellingsInformations).includes('fromWorkGroup')) {
+        sellingInformation.fromWorkGroup = editSellingsInformations.fromWorkGroup;
+      }
+
+      await this.sellingInformationRepository.save(sellingInformation);
+      return sellingInformation;
+    } else {
+      throw new HttpException(
+        {
+          message: ['this selling information dont exist'],
+          code: 'selling-information-unknown',
+        },
+        HttpStatus.NOT_MODIFIED,
+      );
+    }
 
   }
 
