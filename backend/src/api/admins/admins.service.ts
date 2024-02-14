@@ -307,6 +307,7 @@ export class AdminsService {
             date: db.finishDate,
             workGroup: db.fromWorkGroup,
             merchRef: db.clientTransactionId,
+            id: db.id,
           })
         }
       });
