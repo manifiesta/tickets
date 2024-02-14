@@ -308,6 +308,7 @@ export class AdminsService {
             workGroup: db.fromWorkGroup,
             merchRef: db.clientTransactionId,
             id: db.id,
+            department: db.sellerDepartmentId,
           })
         }
       });
