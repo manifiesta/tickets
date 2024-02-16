@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
+import { map } from 'rxjs';
 
 @Injectable()
 export class AppService {
@@ -10,7 +11,7 @@ export class AppService {
     return {version: '0.0.1', name: 'manifiesta-tickets'};
   }
 
-  bypassCors(url: string) {
-    return this.httpService.get(url);
+  async bypassCors(url: string) {
+    return this.httpService.get(url).pipe(map(d => d.data));
   }
 }
