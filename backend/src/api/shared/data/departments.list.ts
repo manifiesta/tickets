@@ -6,7 +6,7 @@ export const departments = [
   { label: 'National', labelFr: 'Autres', labelNl: 'Andere', code: 'Other', id: 5 },
   { label: 'Intal', labelFr: 'Intal', labelNl: 'Intal', code: 'Intal', id: 7 },
   { label: 'Cubanismo', labelFr: 'Cubanismo', labelNl: 'Cubanismo', code: 'Cubanismo', id: 8 },
-  { label: 'Marianne', labelFr: 'Marianne', labelNl: 'Marianne',  code: 'Marianne', id: 9 },
+  { label: 'Zelle', labelFr: 'Zelle', labelNl: 'Zelle',  code: 'Marianne', id: 9 },
 ];
 
 export const provinces: { label: string, code: string, ranges: { start:number, end:number}[]}[] = [
