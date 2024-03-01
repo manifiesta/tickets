@@ -1,5 +1,5 @@
 export const departments = [
-  { label: 'Province', labelFr: 'PTB', labelNl: 'PVDA', code: 'BASE', id: 1},
+  { label: 'Province Section', labelFr: 'PTB', labelNl: 'PVDA', code: 'BASE', id: 1},
   { label: 'GVHV', labelFr: 'MPLP', labelNl: 'GVHV', code: 'GVHV', id: 2},
   { label: 'Comac', labelFr: 'Comac', labelNl: 'Comac', code: 'Comac', id: 3 },
   { label: 'Redfox', labelFr: 'Redfox', labelNl: 'Redfox', code: 'Redfox', id: 6 },
