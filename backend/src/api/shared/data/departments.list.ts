@@ -3,7 +3,6 @@ export const departments = [
   { label: 'GVHV', labelFr: 'MPLP', labelNl: 'GVHV', code: 'GVHV', id: 2},
   { label: 'Comac', labelFr: 'Comac', labelNl: 'Comac', code: 'Comac', id: 3 },
   { label: 'Redfox', labelFr: 'Redfox', labelNl: 'Redfox', code: 'Redfox', id: 6 },
-  { label: 'National', labelFr: 'Autres', labelNl: 'Andere', code: 'Other', id: 5 },
   { label: 'Intal', labelFr: 'Intal', labelNl: 'Intal', code: 'Intal', id: 7 },
   { label: 'Cubanismo', labelFr: 'Cubanismo', labelNl: 'Cubanismo', code: 'Cubanismo', id: 8 },
   { label: 'Zelle', labelFr: 'Zelle', labelNl: 'Zelle',  code: 'Zelle', id: 9 },
