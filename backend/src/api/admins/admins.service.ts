@@ -241,9 +241,9 @@ export class AdminsService {
                   return r.start <= postCodeNumber && r.end >= postCodeNumber;
                 }),
               );
-              sellerDepartmentLabel = province.label;
+              sellerDepartmentLabel = province?.label;
             } else {
-              sellerDepartmentLabel = departments.find(dep => dep.code === d.sellerDepartmentId).labelNl;
+              sellerDepartmentLabel = departments.find(dep => dep.code === d.sellerDepartmentId)?.labelNl;
             }
             const sellerName = sellers.find(s => s.email === d.sellerId)?.name;
             return {
