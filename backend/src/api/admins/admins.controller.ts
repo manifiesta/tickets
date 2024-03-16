@@ -135,7 +135,7 @@ export class AdminsController {
     return this.adminsService.beepleFunctions();
   }
 
-  @Auth(RoleEnum.Admin, RoleEnum.Secretary)
+  @Auth(RoleEnum.Admin)
   @Put('/sellingsInformations/:id')
   editOneSellingsInformations(@Body() sellingsInformations: EditSellingsInformationDTO, @Param('id') id: string) {
     return this.adminsService.editOneSellingsInformations(sellingsInformations, id);
