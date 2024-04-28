@@ -7,12 +7,14 @@ import { FinishOrderDto } from './dto/finish-order.dto';
 import { EditLongtextDto } from './dto/edit-long-text.dto';
 import { FinishOrderTransactionIdDto } from './dto/finish-order-transaction-id.dto';
 import { EditSellingsInformationDTO } from './dto/edit-sellings-information.dto';
+import { TicketsService } from '../tickets/tickets.service';
 
 @Controller('api/admins')
 export class AdminsController {
 
   constructor(
     private readonly adminsService: AdminsService,
+    private readonly ticketsService: TicketsService
   ) { }
 
   @Post('/login')
@@ -139,6 +141,12 @@ export class AdminsController {
   @Put('/sellingsInformations/:id')
   editOneSellingsInformations(@Body() sellingsInformations: EditSellingsInformationDTO, @Param('id') id: string) {
     return this.adminsService.editOneSellingsInformations(sellingsInformations, id);
+  }
+
+  @Auth(RoleEnum.Admin)
+  @Get('/finishOrderPending/:vwId')
+  finishOrderWithVivaWalletTransactionId(@Param('vwId') vwId: string) {
+    return this.ticketsService.finishOrderWithVivaWalletTransactionId(vwId, true);
   }
 
 }

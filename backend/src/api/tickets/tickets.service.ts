@@ -571,12 +571,12 @@ export class TicketsService {
    * 
    * TODO try in full asynchrone
    */
-  async finishOrderWithVivaWalletTransactionId(vivaWalletTransactionId: string) {
+  async finishOrderWithVivaWalletTransactionId(vivaWalletTransactionId: string, avoidVerification = false) {
     let findAlreadyUseVwTransactionId = await this.sellingInformationRepository.findOne({
       where: { vwTransactionId: vivaWalletTransactionId },
     });
 
-    if (findAlreadyUseVwTransactionId) {
+    if (findAlreadyUseVwTransactionId && avoidVerification) {
       const orderDate = new Date(findAlreadyUseVwTransactionId.orderDate);
       const now = new Date();
       const diffTime = Math.abs(now.getTime() - orderDate.getTime());
