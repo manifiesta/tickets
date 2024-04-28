@@ -630,7 +630,7 @@ export class TicketsService {
       where: { vwTransactionId: vivaWalletTransactionId },
     });
 
-    if (findAlreadyUseVwTransactionId) {
+    if (findAlreadyUseVwTransactionId && !avoidVerification) {
       throw new HttpException(
         {
           message: ['error transaction already existing'],
