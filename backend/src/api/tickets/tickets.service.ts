@@ -576,7 +576,7 @@ export class TicketsService {
       where: { vwTransactionId: vivaWalletTransactionId },
     });
 
-    if (findAlreadyUseVwTransactionId && avoidVerification) {
+    if (findAlreadyUseVwTransactionId && !avoidVerification) {
       const orderDate = new Date(findAlreadyUseVwTransactionId.orderDate);
       const now = new Date();
       const diffTime = Math.abs(now.getTime() - orderDate.getTime());
