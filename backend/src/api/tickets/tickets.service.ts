@@ -29,7 +29,7 @@ export class TicketsService {
   userES = process.env.EVENT_SQUARE_USER;
   passwordES = process.env.EVENT_SQUARE_PASSWORD;
 
-  acceptedShop = ['app', 'comac', 'redfox', 'base', 'gvhv', 'other', 'cubanismo', 'intal', 'marianne'];
+  acceptedShop = ['app', 'comac', 'redfox', 'base', 'gvhv', 'other', 'cubanismo', 'intal', 'marianne', 'zelle'];
 
   constructor(
     private httpService: HttpService,
