@@ -134,50 +134,27 @@ export class TicketsController {
   }
 
   @Post('/webhooks/payment/success')
-  async receivePaymentFailedWebhook22(@Body() body: any) {
+  receivePaymentFailedWebhook22(@Body() body: any) {
     console.log('SUCCESS', body);
 
     // Save this in DB for history.
-    const notification = {
-      status: 'success',
-      email: body.EventData?.Email,
-      orderCode: body.EventData?.OrderCode,
-      statusId: body.EventData?.StatusId,
-      transactionId: body.EventData?.TransactionId,
-    };
+    // const notification = {
+    //   status: 'success',
+    //   email: body.EventData?.Email,
+    //   orderCode: body.EventData?.OrderCode,
+    //   statusId: body.EventData?.StatusId,
+    //   transactionId: body.EventData?.TransactionId,
+    // };
 
-    await this.departmentsService.stupidTest('haha', 'hoho');
+    // await this.departmentsService.stupidTest('haha', 'hoho');
 
-    this.ticketsGateway.emitPayment(notification);
+    // this.ticketsGateway.emitPayment(notification);
 
-    return this.getWebhookKey();
+    // return this.getWebhookKey();
   }
 
   @Get('/webhooks/payment/success')
   receivePaymentFailedWebhook2(@Req() req) {
-    return this.getWebhookKey();
-  }
-
-  @Post('/webhooks/payment/fail')
-  receivePaymentFailedWebhookPost(@Body() body: any) {
-    console.log('FAIL', body);
-
-    // Save this in DB for history.
-    const notification = {
-      status: 'fail',
-      email: body.EventData.Email,
-      orderCode: body.EventData.OrderCode,
-      statusId: body.EventData.StatusId,
-      transactionId: body.EventData.TransactionId,
-    };
-
-    this.ticketsGateway.emitPayment(notification);
-
-    return this.getWebhookKey();
-  }
-
-  @Get('/webhooks/payment/fail')
-  receivePaymentFailedWebhook(@Req() req) {
     return this.getWebhookKey();
   }
 }
