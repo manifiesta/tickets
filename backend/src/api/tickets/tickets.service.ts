@@ -804,6 +804,6 @@ export class TicketsService {
   }
 
   async test() {
-    return 'hello world'
+    return 'hello world and comrade'
   }
 }
