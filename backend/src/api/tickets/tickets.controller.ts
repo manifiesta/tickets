@@ -123,6 +123,16 @@ export class TicketsController {
     return promise2;
   }
 
+  @Get('/vw/webhooks/payment/success')
+  getWebhooksVwPaymentSuccess() {
+    return this.getWebhookKey();
+  }
+
+  @Post('/vw/webhooks/payment/success')
+  postWebhooksVwPaymentSuccess(@Body() body: any) {
+    console.log('hello payment success');
+  }
+
   @Post('/webhooks/payment/success')
   async receivePaymentFailedWebhook22(@Body() body: any) {
     console.log('SUCCESS', body);
