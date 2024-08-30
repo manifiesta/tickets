@@ -35,6 +35,11 @@ export class TicketsController {
     return this.ticketsService.preparOrder(preparTickets);
   }
 
+  @Get('/finishOrderPending/:vwId')
+  finishOrderWithVivaWalletTransactionId(@Param('vwId') vwId: string) {
+    return this.ticketsService.finishOrderWithVivaWalletTransactionId(vwId);
+  }
+
   @Get('/transaction/:id')
   getTransactionById(@Param('id') id: string) {
     return this.ticketsService.getTransactionById(id);
@@ -77,11 +82,6 @@ export class TicketsController {
       fromWorkGroup,
       edition,
     );
-  }
-
-  @Get('/finishOrderPending/:vwId')
-  finishOrderWithVivaWalletTransactionId(@Param('vwId') vwId: string) {
-    return this.ticketsService.finishOrderWithVivaWalletTransactionId(vwId);
   }
 
   @Post('/newsletter-add')
@@ -133,28 +133,4 @@ export class TicketsController {
     console.log('hello payment success');
   }
 
-  @Post('/webhooks/payment/success')
-  receivePaymentFailedWebhook22(@Body() body: any) {
-    console.log('SUCCESS', body);
-
-    // Save this in DB for history.
-    // const notification = {
-    //   status: 'success',
-    //   email: body.EventData?.Email,
-    //   orderCode: body.EventData?.OrderCode,
-    //   statusId: body.EventData?.StatusId,
-    //   transactionId: body.EventData?.TransactionId,
-    // };
-
-    // await this.departmentsService.stupidTest('haha', 'hoho');
-
-    // this.ticketsGateway.emitPayment(notification);
-
-    // return this.getWebhookKey();
-  }
-
-  @Get('/webhooks/payment/success')
-  receivePaymentFailedWebhook2(@Req() req) {
-    return this.getWebhookKey();
-  }
 }

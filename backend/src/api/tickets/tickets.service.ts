@@ -806,4 +806,50 @@ export class TicketsService {
   async test() {
     return 'hello world and comrade'
   }
+
+  async poolingTicket(vwId: string) {
+    const accessToken = await this.getVivaWaletAccessToken();
+
+    const vwTransaction = await firstValueFrom(
+      this.httpService
+        .get<any>(
+          `https://api.vivapayments.com/checkout/v2/transactions/${vwId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        )
+        .pipe(
+          map((d) => {
+            return d.data;
+          }),
+        ),
+    ).catch((e) => {
+      throw new HttpException(
+        {
+          message: ['error transaction not existing'],
+          code: 'transaction-not-existing',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    });
+
+    console.log('the transaction', vwTransaction)
+
+    const linkedOrder = await this.sellingInformationRepository.findOne({
+      where: { clientTransactionId: vwTransaction.merchantTrns },
+    });
+
+    if (linkedOrder.eventsquareReference) {
+      // TODO check if it is the return that we want
+      return linkedOrder;
+    } else {
+      // TODO we need to retry, but put some timer, and max one minute
+    }
+
+
+
+  }
+
 }
