@@ -297,6 +297,7 @@ export class AdminsService {
         // TODO Check if we can put the field ticketAmount instead of push one by amount ...
         for (let i = 0; i < ti.ticketAmount; i++) {
           dataNet.push({
+            orderCode: ti.eventsquareReference,
             type: ti.ticketLabel,
             channel: db['sellerDepartmentLabel'],
             zip: db.sellerPostalCode,
