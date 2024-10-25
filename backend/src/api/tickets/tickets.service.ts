@@ -804,7 +804,7 @@ export class TicketsService {
   }
 
   async test() {
-    return 'hello world and comrade'
+    return 'hello world and comrade v1'
   }
 
   async poolingTicket(vwId: string, iteration = 0) {
