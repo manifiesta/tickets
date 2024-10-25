@@ -787,10 +787,13 @@ export class TicketsService {
   }
 
   async test() {
-    return 'hello world and comrade v3'
+    return 'hello world and comrade v4'
   }
 
   async poolingTicket(vwId: string, iteration = 0) {
+
+    await new Promise(resolve => setTimeout(resolve, 10000));
+
     const timing = [1000, 5000, 10000, 15000, 250000];
 
     const accessToken = await this.getVivaWaletAccessToken();
