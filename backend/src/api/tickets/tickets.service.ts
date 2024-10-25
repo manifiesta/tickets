@@ -626,20 +626,6 @@ export class TicketsService {
       );
     });
 
-    findAlreadyUseVwTransactionId = await this.sellingInformationRepository.findOne({
-      where: { vwTransactionId: vivaWalletTransactionId },
-    });
-
-    if (findAlreadyUseVwTransactionId && !avoidVerification) {
-      throw new HttpException(
-        {
-          message: ['error transaction already existing'],
-          code: 'transaction-already-done',
-        },
-        HttpStatus.CONFLICT,
-      );
-    }
-
     const pendingTicket = await this.sellingInformationRepository.findOne({
       where: { clientTransactionId: transactionVerification.merchantTrns },
     });
