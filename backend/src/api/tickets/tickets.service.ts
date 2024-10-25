@@ -808,7 +808,8 @@ export class TicketsService {
   }
 
   async poolingTicket(vwId: string, iteration = 0) {
-    const timing = [1000, 5000, 10000, 15000, 250000]
+    const timing = [1000, 5000, 10000, 15000, 250000];
+
     const accessToken = await this.getVivaWaletAccessToken();
 
     const vwTransaction = await firstValueFrom(
@@ -842,16 +843,16 @@ export class TicketsService {
       where: { clientTransactionId: vwTransaction.merchantTrns },
     });
 
-    if (linkedOrder.eventsquareReference || iteration >= 5) {
+    console.log('link order', linkedOrder)
+
+    if (linkedOrder?.eventsquareReference || iteration >= 5) {
       // TODO check if it is the return that we want
       return linkedOrder;
     } else {
       // TODO we need to retry, but put some timer, and max one minute
+      await setTimeout(() => {}, timing[iteration]);
       return this.poolingTicket(vwId, iteration + 1);
     }
-
-
-
   }
 
 }
