@@ -787,7 +787,7 @@ export class TicketsService {
   }
 
   async test() {
-    return 'hello world and comrade v2'
+    return 'hello world and comrade v3'
   }
 
   async poolingTicket(vwId: string, iteration = 0) {
@@ -811,15 +811,21 @@ export class TicketsService {
           }),
         ),
     )
-    // .catch((e) => {
-    //   throw new HttpException(
-    //     {
-    //       message: ['error transaction not existing'],
-    //       code: 'transaction-not-existing',
-    //     },
-    //     HttpStatus.NOT_FOUND,
-    //   );
-    // });
+    .catch((e) => {
+      if (iteration > 3) {
+        throw new HttpException(
+          {
+            message: ['error transaction not existing'],
+            code: 'transaction-not-existing',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      } else {
+        setTimeout(() => {
+          return this.poolingTicket(vwId, iteration + 1);
+        }, timing[iteration] || timing[4]);
+      }
+    });
 
     console.log('the transaction', vwTransaction)
 
@@ -839,7 +845,7 @@ export class TicketsService {
       // TODO we need to retry, but put some timer, and max one minute
       setTimeout(() => {
         return this.poolingTicket(vwId, iteration + 1);
-      }, timing[iteration]);
+      }, timing[iteration] || timing[4]);
     }
   }
 
