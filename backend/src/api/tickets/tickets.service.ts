@@ -787,12 +787,10 @@ export class TicketsService {
   }
 
   async test() {
-    return 'hello world and comrade v4'
+    return 'hello world and comrade v5'
   }
 
   async poolingTicket(vwId: string, iteration = 0) {
-
-    await new Promise(resolve => setTimeout(resolve, 10000));
 
     const timing = [1000, 5000, 10000, 15000, 250000];
 
@@ -814,7 +812,7 @@ export class TicketsService {
           }),
         ),
     )
-    .catch((e) => {
+    .catch(async (e) => {
       if (iteration > 3) {
         throw new HttpException(
           {
@@ -824,9 +822,8 @@ export class TicketsService {
           HttpStatus.NOT_FOUND,
         );
       } else {
-        setTimeout(() => {
-          return this.poolingTicket(vwId, iteration + 1);
-        }, timing[iteration] || timing[4]);
+        await new Promise(resolve => setTimeout(resolve, timing[iteration] || timing[4]));
+        return this.poolingTicket(vwId, iteration + 1);
       }
     });
 
@@ -846,9 +843,8 @@ export class TicketsService {
       return linkedOrder;
     } else {
       // TODO we need to retry, but put some timer, and max one minute
-      setTimeout(() => {
-        return this.poolingTicket(vwId, iteration + 1);
-      }, timing[iteration] || timing[4]);
+      await new Promise(resolve => setTimeout(resolve, timing[iteration] || timing[4]));
+      return this.poolingTicket(vwId, iteration + 1);
     }
   }
 
