@@ -836,8 +836,9 @@ export class TicketsService {
       return linkedOrder;
     } else {
       // TODO we need to retry, but put some timer, and max one minute
-      await setTimeout(() => {}, timing[iteration]);
-      return this.poolingTicket(vwId, iteration + 1);
+      setTimeout(() => {
+        return this.poolingTicket(vwId, iteration + 1);
+      }, timing[iteration]);
     }
   }
 
