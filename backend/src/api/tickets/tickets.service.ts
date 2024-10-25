@@ -813,20 +813,21 @@ export class TicketsService {
             return d.data;
           }),
         ),
-    ).catch((e) => {
-      throw new HttpException(
-        {
-          message: ['error transaction not existing'],
-          code: 'transaction-not-existing',
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    });
+    )
+    // .catch((e) => {
+    //   throw new HttpException(
+    //     {
+    //       message: ['error transaction not existing'],
+    //       code: 'transaction-not-existing',
+    //     },
+    //     HttpStatus.NOT_FOUND,
+    //   );
+    // });
 
     console.log('the transaction', vwTransaction)
 
     const linkedOrder = await this.sellingInformationRepository.findOne({
-      where: { clientTransactionId: vwTransaction.merchantTrns },
+      where: { clientTransactionId: vwTransaction?.merchantTrns },
     });
 
     console.log('link order', linkedOrder)
