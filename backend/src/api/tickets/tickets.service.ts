@@ -1,16 +1,13 @@
-import puppeteer, { ElementHandle } from 'puppeteer';
 import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { isBoolean, isNumber } from 'class-validator';
-import { log, timeStamp } from 'console';
-import { firstValueFrom, map, forkJoin, catchError, tap } from 'rxjs';
+import { isNumber } from 'class-validator';
+import { firstValueFrom, map, forkJoin, catchError } from 'rxjs';
 import { IsNull, Not, Repository } from 'typeorm';
 import { URLSearchParams } from 'url';
 import { Seller } from '../sellers/seller.entity';
 import { departments, provinces } from '../shared/data/departments.list';
 import { Address } from './address.entity';
-import { ConfirmTicketsDto } from './dto/confirm-tickets.dto';
 import { NewsletterAddDto } from './dto/newsletter-add.dto';
 import { PreparTicketsDto } from './dto/prepar-tickets.dto';
 import { SellingInformation } from './selling-information.entity';
@@ -790,7 +787,7 @@ export class TicketsService {
   }
 
   async test() {
-    return 'hello world and comrade v1'
+    return 'hello world and comrade v2'
   }
 
   async poolingTicket(vwId: string, iteration = 0) {
@@ -826,9 +823,12 @@ export class TicketsService {
 
     console.log('the transaction', vwTransaction)
 
-    const linkedOrder = await this.sellingInformationRepository.findOne({
-      where: { clientTransactionId: vwTransaction?.merchantTrns },
-    });
+    let linkedOrder = null;
+    if (vwTransaction?.merchantTrns) {
+      linkedOrder = await this.sellingInformationRepository.findOne({
+        where: { clientTransactionId: vwTransaction?.merchantTrns },
+      });
+    }
 
     console.log('link order', linkedOrder)
 
