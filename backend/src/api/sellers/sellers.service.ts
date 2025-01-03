@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { ConnectSellerDto } from './dto/connect-seller.dto';
 import { CreateSellerDto } from './dto/create-seller.dto';
 import { Seller } from './seller.entity';
-import * as XLSX from 'xlsx';
 import { HttpService } from '@nestjs/axios';
 import { env } from 'process';
 
@@ -15,7 +14,7 @@ export class SellersService {
   constructor(
     @InjectRepository(Seller)
     private readonly sellerRepository: Repository<Seller>,
-    private httpService: HttpService
+    private readonly httpService: HttpService,
   ) { }
 
   findAll(): Promise<Seller[]> {
@@ -34,21 +33,6 @@ export class SellersService {
 
   createOne(createSeller: CreateSellerDto) {
     return this.sellerRepository.save(this.sellerRepository.create(createSeller));
-  }
-
-  async getBeepleExcelData() {
-    const path = env.BEEPLE_EXCEL_URL;
-    // const data = await (await fetch(path)).arrayBuffer();
-    return firstValueFrom(this.httpService.get<any>(path, { responseType: "arraybuffer" })
-      .pipe(
-        map(d => { return d.data }),
-        map(d => {
-          const readFile = XLSX.read(d);
-          return XLSX.utils.sheet_to_json(readFile.Sheets['COLLABORATORS']);
-        })
-      ));
-    // const readFile = XLSX.read(data);
-    // return XLSX.utils.sheet_to_json(readFile.Sheets['COLLABORATORS']);
   }
 
   async connectBeeple(connectSeller: ConnectSellerDto) {

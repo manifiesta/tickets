@@ -1,12 +1,9 @@
-import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
-import { ConfirmTicketsDto } from './dto/confirm-tickets.dto';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { NewsletterAddDto } from './dto/newsletter-add.dto';
 import { PreparTicketsDto } from './dto/prepar-tickets.dto';
 import { TicketsService } from './tickets.service';
-import { TicketsGateway } from './tickets.gateway';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import { DepartmentsService } from '../departments/departments.service';
 
 @Controller('api/tickets')
 export class TicketsController {
@@ -14,10 +11,8 @@ export class TicketsController {
   vwApiKey = process.env.VIVA_WALLET_API_KEY;
 
   constructor(
-    private httpService: HttpService,
+    private readonly httpService: HttpService,
     private readonly ticketsService: TicketsService,
-    private ticketsGateway: TicketsGateway,
-    private departmentsService: DepartmentsService
   ) { }
   
   @Get(['/test'])
